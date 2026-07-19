@@ -65,8 +65,16 @@ function Invoke-Git {
 
     $safeRoot = (Get-FullPath -Path $SourceRoot).Replace('\', '/')
     $allArguments = @('-c', "safe.directory=$safeRoot", '-C', $SourceRoot) + $Arguments
-    $output = & git @allArguments 2>&1
-    if ($LASTEXITCODE -ne 0) {
+    $oldErrorActionPreference = $ErrorActionPreference
+    try {
+        $ErrorActionPreference = 'Continue'
+        $output = & git @allArguments 2>&1
+        $gitExitCode = $LASTEXITCODE
+    }
+    finally {
+        $ErrorActionPreference = $oldErrorActionPreference
+    }
+    if ($gitExitCode -ne 0) {
         throw "git $($Arguments -join ' ') failed:`n$($output -join [Environment]::NewLine)"
     }
     return $output
@@ -134,8 +142,16 @@ try {
         $oldPythonUtf8 = $env:PYTHONUTF8
         try {
             $env:PYTHONUTF8 = '1'
-            $validationOutput = & $PythonCommand $ValidatorPath $stagedSkill 2>&1
-            if ($LASTEXITCODE -ne 0) {
+            $oldValidationErrorActionPreference = $ErrorActionPreference
+            try {
+                $ErrorActionPreference = 'Continue'
+                $validationOutput = & $PythonCommand $ValidatorPath $stagedSkill 2>&1
+                $validationExitCode = $LASTEXITCODE
+            }
+            finally {
+                $ErrorActionPreference = $oldValidationErrorActionPreference
+            }
+            if ($validationExitCode -ne 0) {
                 throw "Validation failed for '$skillName':`n$($validationOutput -join [Environment]::NewLine)"
             }
         }
