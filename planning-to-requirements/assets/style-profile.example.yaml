@@ -1,0 +1,31 @@
+profile_name: detailed-development
+language: zh-CN
+detail_level: exhaustive
+preserve_source_order: true
+split_to_atomic_features: true
+include_source_trace: true
+include_scope_and_non_scope: true
+include_states_and_lifecycle: true
+include_edge_cases: true
+include_acceptance_criteria: true
+include_test_matrix: true
+include_acsdm_evidence: true
+include_agent_code_block: true
+route_simple_to_abc: true
+route_moderate_to_enhanced_abc: true
+route_complex_to_sdd: true
+unknown_policy: mark_as_pending
+assumption_policy: prohibit_silent_assumptions
+preserve_manual_fields_on_update:
+  - priority
+  - owner
+  - estimate
+  - progress
+  - test_status
+  - notes
+create_planning_confirmation_document: true
+require_planning_confirmation_before_plan: true
+include_short_planner_implementation_description: true
+include_planning_acceptance_checklist: true
+preserve_acceptance_rounds: true
+require_explicit_completion_command: true

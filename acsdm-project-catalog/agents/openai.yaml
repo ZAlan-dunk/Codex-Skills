@@ -1,0 +1,4 @@
+interface:
+  display_name: "ACSDM Project Catalog"
+  short_description: "Project-local catalog docs and rules"
+  default_prompt: "Use $acsdm-project-catalog to initialize the project-local .ACSDM catalog and retrieve relevant project docs."
