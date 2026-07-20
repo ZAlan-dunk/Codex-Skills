@@ -35,8 +35,9 @@
 ## Planning and Implementation Gates
 
 - [ ] Unconfirmed features cannot generate final ABC/SDD.
-- [ ] `开始功能开发` generates a plan only.
-- [ ] Code edits require `开始实施` or equivalent approval.
+- [ ] `开始功能开发` generates a plan only and ends at `technical_plan_status=pending-approval`.
+- [ ] `批准 FEATURE-ID 技术方案` is required to reach `technical_plan_status=approved`.
+- [ ] Code edits require both an approved plan and `开始实施` or equivalent implementation authorization.
 - [ ] SDD still retrieves ACSDM first.
 
 ## Acceptance and Bugs

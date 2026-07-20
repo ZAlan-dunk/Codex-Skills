@@ -66,16 +66,16 @@ When an alias is used, mention it briefly in the working notes and prefer updati
 
 If the same conversation already loaded a relevant module index or document and the user continues the same task, reuse that context. If the user changes module, asks a new feature, or the remembered context is stale or uncertain, read the index again.
 
-## Ask Before Reading
+## Automatic Retrieval vs Asking
 
-If the user does not explicitly request documentation and there is no reliable context memory, ask whether to inspect ACSDM docs when:
+Automatically retrieve ACSDM indexes when:
 
-- The task is new or broad.
-- The module is unclear.
-- The request touches project-specific framework behavior.
-- The request may need historical implementation records.
+- the user explicitly requests project documentation;
+- a rule-first trigger appears;
+- a module keyword confidently matches a broad feature or review;
+- a PCTR lifecycle command requires project evidence.
 
-For tiny, explicit tasks, proceed without asking if no project-specific rule appears relevant.
+Ask before reading when no module matches, multiple modules are plausible, the only likely source is an external folder, access requires new approval, or the user explicitly asks not to inspect docs. For tiny, explicit tasks, proceed without ACSDM retrieval when no project-specific rule or history is relevant.
 
 ## Planning and Authorization
 
@@ -90,9 +90,11 @@ Authorization phrases include:
 开始实施、允许、可以执行、开始吧、按方案做、确认执行、开始实施并记录
 ```
 
-`开始实施` means update an existing relevant document when a record is needed.
+Read-only retrieval and repair proposals may happen before authorization. Creating or repairing catalog files is an edit.
 
-`开始实施并记录` means create a new numbered Markdown document in the matched module and update indexes.
+`开始实施` authorizes the approved project implementation but does not request ACSDM recording by itself.
+
+`开始实施并记录` means update the most relevant existing record, or create a new numbered Markdown document when none exists, then update indexes.
 ## PCTR Feature-ID and Lifecycle Triggers
 
 Recognize stable IDs such as `GUIDE-REMINDER-001` and these explicit commands:

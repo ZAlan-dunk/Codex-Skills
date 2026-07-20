@@ -32,5 +32,5 @@
 - evidence/source mapping：策划确认、ACSDM 和源码证据；
 - unresolved decisions：剩余非阻塞决策。
 
-当前只创建规格；在 SDD 审核通过且收到“开始实施 {{feature_id}}”之前不要修改代码。
+当前只创建规格；SDD 审核通过后仍须收到“批准 {{feature_id}} 技术方案”将方案状态设为 approved，再等待“开始实施 {{feature_id}}”后才可修改代码。
 ```

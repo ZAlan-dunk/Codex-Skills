@@ -13,7 +13,7 @@
 确认摘要：{{confirmed_planning_summary}}
 
 【实施模式】
-使用标准 ACSDM A/B/C，不创建 SDD。“开始功能开发”只生成方案；等待“开始实施 {{feature_id}}”后才改代码。
+使用标准 ACSDM A/B/C，不创建 SDD。“开始功能开发”只生成方案并进入待批准状态；收到“批准 {{feature_id}} 技术方案”后才可批准方案，之后仍须等待“开始实施 {{feature_id}}”才改代码。
 
 【必须先执行的 ACSDM 检索】
 1. 读取项目 .ACSDM 根索引。

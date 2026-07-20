@@ -15,21 +15,21 @@ Keep these states separate:
 ## Legal Transitions
 
 ```text
-pending -> partial -> confirmed
-pending -> confirmed
-pending/partial -> rejected
-confirmed -> pending-plan
-not-created -> creating -> pending-approval -> approved
-not-started -> implementing -> integrating -> submitted-for-planning-acceptance
-submitted-for-planning-acceptance -> bug-fixing -> submitted-for-planning-acceptance
-pending/in-review -> partial/failed/accepted
-accepted -> completed
+planning_confirmation_status: pending -> partial -> confirmed
+planning_confirmation_status: pending -> confirmed
+planning_confirmation_status: pending/partial -> rejected
+technical_plan_status: not-created -> creating -> pending-approval -> approved
+development_status: not-started -> implementing -> integrating -> submitted-for-planning-acceptance
+development_status: submitted-for-planning-acceptance -> bug-fixing -> submitted-for-planning-acceptance
+planning_acceptance_status: pending/in-review -> partial/failed/accepted
+accepted + explicit completion command -> development_status=completed and final_feature_status=completed
 ```
 
 ## Gates
 
 - Final plan generation requires `planning_confirmation_status=confirmed`.
-- Implementation requires a route-appropriate approved plan.
+- Plan approval requires the explicit command `批准 <FEATURE-ID> 技术方案` after a route-appropriate plan is generated and validated.
+- Implementation requires `technical_plan_status=approved` plus an explicit implementation command.
 - Planning acceptance submission requires implementation and technical verification evidence.
 - Completion requires `planning_acceptance_status=accepted`, no open blocking bugs, and the explicit completion command.
 

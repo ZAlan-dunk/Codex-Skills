@@ -119,3 +119,9 @@ Every task capsule begins with:
 ```
 
 After confirmation, include the final planner summary, confirmation revision, route, and applicable authorization command.
+
+## Display and State Mapping
+
+- A generated but unapproved plan displays as `方案待批准` and stores `technical_plan_status: pending-approval`.
+- An explicitly approved plan displays as `方案已批准` and stores `technical_plan_status: approved`.
+- `功能已完成` is only a display label for the combined state `development_status: completed`, `planning_acceptance_status: accepted`, and `final_feature_status: completed`.

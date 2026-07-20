@@ -46,7 +46,7 @@ On synchronization:
 4. Preserve original planning text and conflict history.
 5. Write the final planner conclusion into the requirement document.
 6. Mark resolved questions, recalculate scope/complexity/route, and regenerate the task capsule.
-7. Set the confirmation status to `confirmed` and planning status to `pending-plan`.
+7. Set `planning_confirmation_status=confirmed`. Keep `technical_plan_status=not-created` until development planning starts.
 8. Record both revisions and synchronization time.
 
 If confirmed scope changes identity, preserve the old ID and create child IDs rather than changing its meaning.
@@ -58,13 +58,17 @@ If confirmed scope changes identity, preserve the old ID and create child IDs ra
 1. Validate `planning_confirmation_status=confirmed`.
 2. Read the confirmed requirement and planner summary.
 3. Retrieve ACSDM and inspect referenced code.
-4. Generate default ABC, enhanced ABC, or SDD artifacts according to the route.
-5. Set the plan state appropriately.
-6. Do not edit code until `开始实施 <FEATURE-ID>` or an equivalent explicit authorization.
+4. Set `technical_plan_status=creating` and generate default ABC, enhanced ABC, or SDD artifacts according to the route.
+5. Validate the generated plan and set `technical_plan_status=pending-approval`.
+6. Do not edit code.
 
-## Phase 9: Implement and Submit Acceptance
+## Phase 9: Approve the Technical Plan
 
-After approved implementation and technical verification, `提交 <FEATURE-ID> 策划验收` must:
+`批准 <FEATURE-ID> 技术方案` validates that the route-specific plan is complete, reviewed, and still matches the confirmed requirement revision. Set `technical_plan_status=approved`. This command does not modify code.
+
+## Phase 10: Implement and Submit Acceptance
+
+Only after plan approval may `开始实施 <FEATURE-ID>` modify code. After approved implementation and technical verification, `提交 <FEATURE-ID> 策划验收` must:
 
 - collect implementation version/commit/build and known limitations;
 - populate the planner-readable acceptance checklist;
@@ -72,7 +76,7 @@ After approved implementation and technical verification, `提交 <FEATURE-ID> �
 - set development state to `submitted-for-planning-acceptance`;
 - set planning acceptance state to `pending`.
 
-## Phase 10: Acceptance Failure and Bug Loop
+## Phase 11: Acceptance Failure and Bug Loop
 
 On `<FEATURE-ID> 验收失败存在Bug：...`:
 
@@ -85,7 +89,7 @@ On `<FEATURE-ID> 验收失败存在Bug：...`:
 
 On re-submission, append a new acceptance round; never overwrite the failed round.
 
-## Phase 11: Complete
+## Phase 12: Complete
 
 On `<FEATURE-ID> 策划已验收（任务完毕）`:
 
@@ -93,11 +97,11 @@ On `<FEATURE-ID> 策划已验收（任务完毕）`:
 - verify no blocking bugs remain;
 - verify the feature was confirmed, planned, implemented, and submitted;
 - update the confirmation document to accepted;
-- update the requirement document to `功能已完成`;
+- set `development_status=completed`, `planning_acceptance_status=accepted`, and `final_feature_status=completed`, displayed as `功能已完成`;
 - record completion time and accepted revision;
 - update ACSDM only when the user requests recording.
 
-## Phase 12: Validate
+## Phase 13: Validate
 
 Run:
 

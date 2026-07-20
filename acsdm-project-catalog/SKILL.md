@@ -14,14 +14,14 @@ Core principle: the project-local `.ACSDM` folder is the source of truth. Read i
 ## Quick Workflow
 
 1. Check `<project root>/.ACSDM`.
-2. If `.ACSDM` is missing, initialize it with the eight standard folders and indexes.
-3. If `.ACSDM` exists, verify the root index, standard folders, and module indexes. Create only missing folders/indexes.
-4. Read `.ACSDM/0000ACSDMRootIndex.md` first. If it is missing, create it from folder and Markdown filenames without reading document bodies.
+2. If `.ACSDM` is missing, report it. Initialize only when the user explicitly requests initialization or authorizes catalog edits; never initialize it silently during an unrelated task.
+3. If `.ACSDM` exists, read `.ACSDM/0000ACSDMRootIndex.md` first. If the root index is missing, inspect folder and Markdown filenames only, report the repair need, and create it only after explicit authorization.
+4. After reading the root index, verify the standard folders and module indexes. Repair only authorized missing structure.
 5. Match the request to modules using `references/retrieval-policy.md`.
 6. Read the selected module index, then only the Markdown files directly relevant to the task.
 7. If the request mentions rules, conventions, framework behavior, Lua/C# interaction, UI framework, popups, Excel import/export, or “按照规范”, read `00Rule` before implementation work.
 8. For larger or ambiguous requests, present A/B/C review sections and wait for explicit authorization before editing files.
-9. After authorized implementation, update an existing relevant document, or create a new document only when the user says “开始实施并记录” or confirms creation.
+9. After authorized implementation, update ACSDM only when the user also requests recording. Prefer an existing relevant document; create a new one only when the user says “开始实施并记录” or otherwise confirms creation.
 
 Do not use an external folder as the live catalog root. External document folders can be scanned or migrated only when the user explicitly asks and approval allows access.
 
@@ -47,11 +47,13 @@ C1. ...
 
 Do not edit project files or ACSDM documents until the user says an explicit authorization phrase such as `开始实施`, `允许`, `可以执行`, `开始吧`, or `按方案做`.
 
+Reading indexes, reporting missing structure, and preparing a proposed repair are read-only. Creating or repairing `.ACSDM`, its folders, or its indexes counts as an edit and requires the same authorization gate unless initialization/repair was the user's explicit request.
+
 ## Recording Rules
 
-When the user says `开始实施`, update the most relevant existing ACSDM document and its module index.
+When the user says `开始实施`, implement the approved project change. Do not update ACSDM merely because implementation started.
 
-When the user says `开始实施并记录`, create a new Markdown document in the matched module using the next two-digit sequence number, then update the module index and root index.
+When the user says `开始实施并记录`, update the most relevant existing ACSDM document and its module index. If no relevant document exists, create a new Markdown document using the next two-digit sequence number, then update the module index and root index.
 
 If no module matches, ask whether to create a new module or which existing module should receive the record.
 

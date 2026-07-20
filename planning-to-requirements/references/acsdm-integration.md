@@ -23,6 +23,12 @@ For `开始 <FEATURE-ID> 功能开发`:
 - retrieve ACSDM and code evidence;
 - generate the route-specific plan only.
 
+For `批准 <FEATURE-ID> 技术方案`:
+
+- verify the generated plan still matches the confirmed requirement revision and selected route;
+- set the technical plan state to `approved`;
+- do not modify code or ACSDM records.
+
 For `开始实施 <FEATURE-ID>`:
 
 - require an approved plan;

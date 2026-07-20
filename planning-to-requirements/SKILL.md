@@ -45,12 +45,13 @@ Use stable feature IDs across both documents. Record document IDs, revisions, li
 6. Extract blocking and non-blocking planning questions and create the paired planning confirmation and acceptance document. Give every feature a short planner-readable implementation description.
 7. Keep formal plan generation locked until all blocking questions are confirmed and the user explicitly issues a planning-confirmation synchronization command.
 8. On confirmation, synchronize the final planner wording and source revision back to the requirement document, recalculate scope and route, regenerate the task capsule, and set `planning_confirmation_status=confirmed`.
-9. On `开始 <FEATURE-ID> 功能开发`, read the confirmed requirement, planner decision, ACSDM catalog, and code evidence; generate a detailed plan according to the selected route. Do not modify code.
-10. On `开始实施 <FEATURE-ID>`, implement only an approved plan and follow the ACSDM authorization/recording rules.
-11. On `提交 <FEATURE-ID> 策划验收`, copy planner-readable acceptance points and implementation submission metadata into the acceptance section.
-12. On acceptance failure, record the failed points and planner bug description, set the feature to bug-fix state, retrieve ACSDM/code evidence, and generate a first analysis. Do not mark complete.
-13. On re-submission, preserve earlier rounds and create a new acceptance round.
-14. Only after the explicit command `<FEATURE-ID> 策划已验收（任务完毕）` and successful validation may the requirement document be marked `功能已完成`.
+9. On `开始 <FEATURE-ID> 功能开发`, read the confirmed requirement, planner decision, ACSDM catalog, and code evidence; generate a detailed plan according to the selected route and set `technical_plan_status=pending-approval`. Do not modify code.
+10. On `批准 <FEATURE-ID> 技术方案`, validate the route-appropriate plan and set `technical_plan_status=approved`. Do not modify code.
+11. On `开始实施 <FEATURE-ID>`, implement only an approved plan and follow the ACSDM authorization/recording rules.
+12. On `提交 <FEATURE-ID> 策划验收`, copy planner-readable acceptance points and implementation submission metadata into the acceptance section.
+13. On acceptance failure, record the failed points and planner bug description, set the feature to bug-fix state, retrieve ACSDM/code evidence, and generate a first analysis. Do not mark complete.
+14. On re-submission, preserve earlier rounds and create a new acceptance round.
+15. Only after the explicit command `<FEATURE-ID> 策划已验收（任务完毕）` and successful validation may the requirement document set `development_status=completed`, `planning_acceptance_status=accepted`, and `final_feature_status=completed`, displayed as `功能已完成`.
 
 ## Confirmation Gate
 
@@ -69,6 +70,7 @@ Unconfirmed features may be inspected through ACSDM or code, but may not receive
 - `生成策划确认文档`: create the paired confirmation/acceptance document.
 - `同步策划确认 <FEATURE-ID>` or `<FEATURE-ID> 策划已确认`: validate blocking items, synchronize decisions, recalculate route, and unlock planning.
 - `开始 <FEATURE-ID> 功能开发`: generate the detailed technical plan only.
+- `批准 <FEATURE-ID> 技术方案`: approve the validated route-specific plan and unlock implementation; do not modify code.
 - `开始实施 <FEATURE-ID>`: execute an approved plan.
 - `提交 <FEATURE-ID> 策划验收`: enter planner acceptance and populate the current round.
 - `<FEATURE-ID> 验收失败存在Bug：...`: create/update bug analysis and set bug-fix state.
