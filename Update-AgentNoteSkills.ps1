@@ -158,9 +158,9 @@ if (-not (Test-Path -LiteralPath (Join-Path $SourceRoot '.git'))) {
     throw "Tracking source is not a Git clone: $SourceRoot"
 }
 
-$trackedChanges = @(Invoke-Git status --porcelain --untracked-files=no)
-if ($trackedChanges.Count -gt 0 -and ($trackedChanges -join '').Trim().Length -gt 0) {
-    throw "The tracking clone contains modified tracked files. Commit or discard them before updating:`n$($trackedChanges -join [Environment]::NewLine)"
+$workingChanges = @(Invoke-Git status --porcelain)
+if ($workingChanges.Count -gt 0 -and ($workingChanges -join '').Trim().Length -gt 0) {
+    throw "The tracking clone contains modified or untracked files. Commit, move, or discard them before updating:`n$($workingChanges -join [Environment]::NewLine)"
 }
 
 $currentBranch = (Invoke-Git rev-parse --abbrev-ref HEAD | Select-Object -Last 1).Trim()
@@ -181,6 +181,7 @@ $ahead = [int]$counts[0]
 $behind = [int]$counts[1]
 
 $installedCommit = ''
+$existingManifest = $null
 if (Test-Path -LiteralPath $ManifestPath -PathType Leaf) {
     try {
         $existingManifest = Get-Content -Raw -Encoding UTF8 -LiteralPath $ManifestPath | ConvertFrom-Json
@@ -192,6 +193,22 @@ if (Test-Path -LiteralPath $ManifestPath -PathType Leaf) {
 }
 
 if ($CheckOnly) {
+    $installDrift = @()
+    if ($null -ne $existingManifest) {
+        foreach ($skill in @($existingManifest.skills)) {
+            $targetPath = [string]$skill.target_path
+            $recordedHash = [string]$skill.tree_sha256
+            if (-not (Test-Path -LiteralPath $targetPath -PathType Container)) {
+                $installDrift += "$($skill.name): target missing ($targetPath)"
+                continue
+            }
+            $actualHash = Get-TreeHash -Root $targetPath
+            if ($actualHash -ne $recordedHash) {
+                $installDrift += "$($skill.name): tree hash differs"
+            }
+        }
+    }
+
     Write-Host 'ACSDM/PCTR update status'
     Write-Host "Tracking branch: $currentBranch"
     Write-Host "Tracking commit: $headBefore"
@@ -199,7 +216,11 @@ if ($CheckOnly) {
     Write-Host "Ahead of upstream: $ahead"
     Write-Host "Behind upstream: $behind"
     Write-Host "Installed tracking commit: $installedCommit"
-    if ($installedCommit -ne $headBefore) {
+    if ($installDrift.Count -gt 0) {
+        Write-Host 'Install state: installed skill files differ from the tracking manifest.'
+        $installDrift | ForEach-Object { Write-Host "  $_" }
+    }
+    elseif ($installedCommit -ne $headBefore) {
         Write-Host 'Install state: tracking branch has changes not yet installed.'
     }
     elseif ($behind -gt 0) {
