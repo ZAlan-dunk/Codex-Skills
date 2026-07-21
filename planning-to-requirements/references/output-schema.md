@@ -1,4 +1,6 @@
-# Output Schema
+# PCTR-A Output Schema
+
+Use only when `pctr_mode=A`. PCTR-B uses `pctr-b-output-schema.md`.
 
 ## Paired Document Metadata
 

@@ -1,4 +1,4 @@
 interface:
   display_name: "ACSDM Project Catalog"
-  short_description: "Project-local catalog docs and rules"
-  default_prompt: "Use $acsdm-project-catalog to initialize the project-local .ACSDM catalog and retrieve relevant project docs."
+  short_description: "项目规则目录与PCTR-A/B生命周期证据记录"
+  default_prompt: "Use $acsdm-project-catalog to retrieve project rules and support the active PCTR-A or PCTR-B feature lifecycle."

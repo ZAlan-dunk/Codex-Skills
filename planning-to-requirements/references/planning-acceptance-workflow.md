@@ -1,4 +1,6 @@
-# Planning Acceptance Workflow
+# PCTR-A Planning Acceptance Workflow
+
+Use this human paired-document workflow only when `pctr_mode=A`. PCTR-B keeps detailed rounds in the sidecar and bug artifacts while the single development document lists artifact paths.
 
 ## Submission
 

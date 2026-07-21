@@ -2,6 +2,8 @@
 
 ## State Fields
 
+PCTR-A stores these fields in the paired human documents. PCTR-B stores equivalent machine state in the sidecar and exposes only SDD confirmation checkboxes plus artifact paths in the human document.
+
 Keep these states separate:
 
 | Field | Values |
@@ -11,6 +13,12 @@ Keep these states separate:
 | `development_status` | `not-started`, `implementing`, `integrating`, `submitted-for-planning-acceptance`, `bug-fixing`, `completed` |
 | `planning_acceptance_status` | `not-entered`, `pending`, `in-review`, `partial`, `failed`, `accepted` |
 | `final_feature_status` | `not-started`, `in-progress`, `blocked`, `completed`, `out-of-scope`, `superseded` |
+
+PCTR-B additionally stores:
+
+| Field | Values |
+|---|---|
+| `sdd_confirmation_status` | `pending`, `confirmed`, `ambiguous` |
 
 ## Legal Transitions
 
@@ -28,6 +36,7 @@ accepted + explicit completion command -> development_status=completed and final
 ## Gates
 
 - Final plan generation requires `planning_confirmation_status=confirmed`.
+- In PCTR-B, final plan generation instead requires `sdd_confirmation_status=confirmed`, a current Feishu SDD URL/revision, and no blocking SDD decision.
 - Plan approval requires the explicit command `批准 <FEATURE-ID> 技术方案` after a route-appropriate plan is generated and validated.
 - Implementation requires `technical_plan_status=approved` plus an explicit implementation command.
 - Planning acceptance submission requires implementation and technical verification evidence.

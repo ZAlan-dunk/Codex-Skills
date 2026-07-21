@@ -2,7 +2,10 @@
 
 ## Boundary
 
-PCTR owns requirement translation, planning confirmation, route orchestration, and planning acceptance state. ACSDM owns project-local knowledge retrieval and optional implementation/bug/completion records.
+PCTR owns requirement translation, mode-specific confirmation, route orchestration, and planning acceptance state. ACSDM owns project-local knowledge retrieval and optional implementation/bug/completion records.
+
+- PCTR-A confirmation authority: paired planning confirmation/acceptance document.
+- PCTR-B confirmation authority: uploaded role-based SDD plus its synchronized confirmation state; the single development document is the human index.
 
 ## Retrieval Order
 
@@ -17,9 +20,10 @@ PCTR owns requirement translation, planning confirmation, route orchestration, a
 
 For `开始 <FEATURE-ID> 功能开发`:
 
-- read the confirmed requirement feature section;
-- read the synchronized planner summary;
-- verify confirmation gate;
+- read the active PCTR mode and the matching requirement feature section;
+- PCTR-A: read the synchronized planner summary and confirmation revision;
+- PCTR-B: read the confirmed SDD, Feishu revision, source feature section, and sidecar;
+- verify the mode-specific confirmation gate;
 - retrieve ACSDM and code evidence;
 - generate the route-specific plan only.
 
@@ -57,6 +61,14 @@ Implementation or bug records should include:
 - verification commands/results;
 - planning acceptance rounds and final result;
 - risks, rollback, and completion time.
+
+For PCTR-B, also include:
+
+- PCTR mode `B`;
+- local and Feishu SDD paths/revisions;
+- SDD confirmation result;
+- local implementation-plan artifact path;
+- all bug-record paths linked from the single development document.
 
 ## Missing Catalog
 

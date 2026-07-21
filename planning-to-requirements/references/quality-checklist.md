@@ -13,6 +13,22 @@
 - [ ] Every task capsule contains the planning confirmation gate.
 - [ ] State fields use valid values from `feature-lifecycle.md`.
 
+## PCTR-B Single Document
+
+- [ ] Source heading text and order are preserved exactly.
+- [ ] Leaf/small headings are features; a large heading is a feature only when it has no child heading.
+- [ ] One-click generation covers every non-empty feature heading in the complete planning outline.
+- [ ] Every initial `1. 功能需求说明` body is empty; no planning正文 was automatically copied or summarized.
+- [ ] The feature table contains no planning-progress, confirmation, development-status, or acceptance-status columns.
+- [ ] Every feature contains exactly the five required numbered sections.
+- [ ] Every SDD has one matching PCTR feature ID and at most one selected confirmation checkbox.
+- [ ] Orange-generated SDD identity came from one fresh PCTR-B lookup receipt, not title-only matching.
+- [ ] The SDD metadata source heading path/revision and Feishu development-document target match the registered sidecar.
+- [ ] Confirmed SDDs have a current Feishu URL and revision.
+- [ ] Implementation plans remain local paths unless explicit upload is requested.
+- [ ] Bug record paths are append-only.
+- [ ] Document order and sidecar feature order match.
+
 ## Planning Confirmation Document
 
 - [ ] Every active feature appears in the summary and detailed section.
@@ -34,7 +50,8 @@
 
 ## Planning and Implementation Gates
 
-- [ ] Unconfirmed features cannot generate final ABC/SDD.
+- [ ] PCTR-A unconfirmed features cannot generate final ABC/SDD.
+- [ ] PCTR-B features cannot generate an implementation plan until the uploaded role-based SDD is confirmed.
 - [ ] `开始功能开发` generates a plan only and ends at `technical_plan_status=pending-approval`.
 - [ ] `批准 FEATURE-ID 技术方案` is required to reach `technical_plan_status=approved`.
 - [ ] Code edits require both an approved plan and `开始实施` or equivalent implementation authorization.

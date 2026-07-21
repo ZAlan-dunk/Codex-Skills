@@ -1,5 +1,9 @@
 # ACSDM Retrieval Policy
 
+## Strict External Read Interface
+
+The exact standalone command `调用ACSDM的接口，阅读相关文档` opens a one-response read-only retrieval exception even when full ACSDM is disabled. Follow `orange-read-interface.md`. Do not apply Planning and Authorization, PCTR lifecycle, Recording, initialization, repair, or script workflows in this mode.
+
 ## Core Retrieval Rule
 
 Always retrieve in this order:
@@ -109,15 +113,20 @@ FEATURE-ID 验收失败存在Bug
 FEATURE-ID 重新提交策划验收
 FEATURE-ID 策划已验收（任务完毕）
 FEATURE-ID 策划已验收（任务完毕）并记录
+同步PCTR-B SDD FEATURE-ID
+FEATURE-ID SDD已确认
+FEATURE-ID SDD存在歧义需要修改
 ```
+
+Before PCTR retrieval, read `.codex/skill-gates.json` and branch on `pctr_mode`. Do not apply PCTR-A paired-document assumptions to a PCTR-B feature.
 
 ### Retrieval for Start Development
 
 1. Read the matching PCTR requirement feature section.
-2. Verify planning confirmation is `confirmed`.
-3. Read the synchronized planner summary and confirmation revision.
+2. PCTR-A: verify planning confirmation is `confirmed` and read the synchronized planner summary/revision.
+3. PCTR-B: verify SDD confirmation is `confirmed`; read the local/Feishu SDD, current revision, sidecar, and implementation-plan target path.
 4. Retrieve root index, `00Rule` where applicable, matching module indexes, related documents, and code locations.
-5. Produce default ABC, enhanced ABC, or SDD evidence according to the PCTR route.
+5. Produce default ABC, enhanced ABC, or SDD evidence according to the PCTR route. For PCTR-B, the confirmed role-based SDD already owns design; generate implementation planning evidence instead of a duplicate SDD.
 6. Do not edit code for `开始功能开发`.
 
 ### Retrieval for Acceptance Failure

@@ -1,9 +1,15 @@
 ---
 name: acsdm-project-catalog
-description: Use when working in a project that should keep its ACSDM Markdown knowledge catalog directly under the project root .ACSDM folder, or when a request mentions project rules, conventions, related docs, review, implementation records, PCTR feature IDs, planning-confirmed requirements, starting feature development, implementation, planning acceptance submission, acceptance-failed bugs, re-submission, completion recording, or commands like 查阅相关文档, 开始 FEATURE-ID 功能开发, 开始实施, 验收失败存在Bug, 策划已验收（任务完毕）并记录.
+description: Use when managing the project-local .ACSDM Markdown catalog, retrieving project rules and code evidence, recording implementations/reviews, or supporting PCTR-A paired-document and PCTR-B single-document/SDD lifecycle work. Also expose the exact command 调用ACSDM的接口，阅读相关文档 as a one-response read-only retrieval interface for another active Skill without enabling full ACSDM.
 ---
 
 # ACSDM Project Catalog
+
+## PJ032 Activation Gate
+
+Before using full ACSDM in PJ032, read `<project root>/.codex/skill-gates.json`. Continue only when `acsdm=true`. The only full activation command is the exact standalone line `启用 ACSDM`. Never infer full activation from ACSDM-related wording. ACSDM may coexist with PCTR and Orange Unity Forge when each gate is independently enabled.
+
+The exact standalone command `调用ACSDM的接口，阅读相关文档` is the only exception while `acsdm=false`. It opens the one-response read-only interface defined in `references/orange-read-interface.md`. It does not enable full ACSDM, change gate state, or authorize any write, plan, lifecycle, implementation, repair, or recording behavior.
 
 ## Overview
 
@@ -67,6 +73,7 @@ Read these references only when needed:
 - `references/index-schema.md`: standard folders, root index, and module index fields.
 - `references/document-template.md`: human-readable Markdown document template with YAML metadata.
 - `references/usage-guide.md`: installation, project initialization, testing, sharing, and modification instructions.
+- `references/orange-read-interface.md`: strict read-only retrieval contract for Orange Unity Forge or another active Skill. Read it only after the exact interface command.
 
 Use these scripts when deterministic filesystem operations are helpful:
 
@@ -78,16 +85,18 @@ Use these scripts when deterministic filesystem operations are helpful:
 
 When a request uses a PCTR feature ID or lifecycle command:
 
-1. Read the PCTR requirement feature section and verify the stable feature ID.
-2. For plan generation, require `planning_confirmation_status=confirmed` and read the synchronized planner summary.
-3. Read the ACSDM root index, then `00Rule` for rule-first triggers, matching module indexes, directly relevant documents, and referenced code.
-4. `开始 <FEATURE-ID> 功能开发` means generate a route-appropriate detailed plan only; do not edit code.
-5. `开始实施 <FEATURE-ID>` requires an approved plan and explicit implementation authorization.
-6. For `<FEATURE-ID> 验收失败存在Bug`, read the failed planner acceptance IDs, planner description, confirmed requirement, implementation record, relevant rules, logs, and code; produce first analysis before edits.
-7. Preserve acceptance rounds and bug IDs. Do not mark completion after failed or partial acceptance.
-8. `<FEATURE-ID> 策划已验收（任务完毕）` synchronizes status only. Create/update an ACSDM record only when the command includes `并记录` or the user separately requests recording.
+1. Read `.codex/skill-gates.json`, require `pctr=true`, and branch on `pctr_mode`.
+2. Read the PCTR requirement feature section and verify the stable feature ID.
+3. PCTR-A plan generation requires `planning_confirmation_status=confirmed` and the synchronized planner summary.
+4. PCTR-B plan generation requires `sdd_confirmation_status=confirmed`, a current Feishu SDD URL/revision, the local SDD path, and the single development document feature section.
+5. Read the ACSDM root index, then `00Rule` for rule-first triggers, matching module indexes, directly relevant documents, and referenced code.
+6. `开始 <FEATURE-ID> 功能开发` means generate a route-appropriate detailed plan only; do not edit code. In PCTR-B, do not generate a second SDD; generate the implementation plan referenced by the confirmed SDD.
+7. `开始实施 <FEATURE-ID>` requires an approved plan and explicit implementation authorization.
+8. For `<FEATURE-ID> 验收失败存在Bug`, read the failed planner acceptance IDs or PCTR-B bug record, confirmed requirement/SDD, implementation record, relevant rules, logs, and code; produce first analysis before edits.
+9. Preserve acceptance rounds and bug IDs. PCTR-B appends bug-record paths to the single development document; never overwrite earlier records.
+10. `<FEATURE-ID> 策划已验收（任务完毕）` synchronizes status only. Create/update an ACSDM record only when the command includes `并记录` or the user separately requests recording.
 
-Every PCTR-linked implementation record should include the feature ID, confirmed requirement revision, planning confirmation source, route, approved plan, changed files/methods/lines, verification evidence, planning acceptance rounds, bugs, rollback, and final acceptance result.
+Every PCTR-linked implementation record should include the feature ID, PCTR mode, confirmed requirement/SDD revision, confirmation source, route, approved plan path, changed files/methods/lines, verification evidence, planning acceptance rounds, bugs, rollback, and final acceptance result.
 ## Common Mistakes
 
 - Do not store only a JSON pointer in `.ACSDM`; `.ACSDM` itself must contain the catalog folders and indexes.

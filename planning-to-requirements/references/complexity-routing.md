@@ -67,6 +67,8 @@ Require ACSDM retrieval first, then create or update:
 
 Do not implement until the SDD review gate passes.
 
+In PCTR-B, the role-based SDD is generated as the feature confirmation artifact before implementation planning. Once it is confirmed, `开始 <FEATURE-ID> 功能开发` creates a separate route-appropriate implementation plan; do not generate a second SDD under another name.
+
 ## Guardrails
 
 Detail level does not equal complexity. A long but local UI requirement may remain A/B/C. A short request such as “change save format” may require SDD because of migration risk.

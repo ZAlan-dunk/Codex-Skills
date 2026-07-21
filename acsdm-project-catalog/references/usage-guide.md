@@ -88,3 +88,16 @@ python C:\Users\<user>\.codex\skills\.system\skill-creator\scripts\quick_validat
 ```
 
 Then open a new Codex conversation and try the test prompts above.
+
+## PCTR Dual-Mode Integration
+
+Exact mode commands:
+
+```text
+启用PCTR-A
+启用PCTR-B
+```
+
+- Mode A uses the legacy paired requirement and planning-confirmation/acceptance documents.
+- Mode B uses one human development document, one role-based SDD per feature, local implementation-plan paths, and append-only bug-record paths.
+- ACSDM records must include the active PCTR mode and use the matching confirmation source.

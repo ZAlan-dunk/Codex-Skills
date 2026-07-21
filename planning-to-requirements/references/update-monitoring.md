@@ -2,11 +2,19 @@
 
 ## Monitored Documents
 
-Track three sources:
+PCTR-A tracks three sources:
 
 1. planning source;
 2. requirement development document;
 3. planning confirmation and acceptance document.
+
+PCTR-B tracks:
+
+1. planning source;
+2. single requirement development document;
+3. local sidecar manifest;
+4. per-feature local/Feishu SDD revisions;
+5. referenced implementation-plan and bug-record artifacts.
 
 Record document IDs, revisions, heading fingerprints, feature mappings, last synchronization time, processed change IDs, and human-maintained fields.
 
@@ -17,7 +25,8 @@ Compare heading hierarchy, normalized content, tables/lists, deletion marks, med
 ## Authority
 
 - Planning source: original requirement authority.
-- Planning confirmation document: planner decision and acceptance authority.
+- Planning confirmation document: PCTR-A planner decision and acceptance authority.
+- Uploaded role-based SDD and its mutually exclusive checkbox state: PCTR-B planner decision authority.
 - Requirement document: technical specification, route, development, and completion authority.
 
 ## Synchronization

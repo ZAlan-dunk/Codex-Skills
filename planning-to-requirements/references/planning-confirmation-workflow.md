@@ -1,4 +1,6 @@
-# Planning Confirmation Workflow
+# PCTR-A Planning Confirmation Workflow
+
+Use only when `pctr_mode=A`. PCTR-B uses the uploaded SDD confirmation checkboxes.
 
 ## Purpose
 

@@ -1,4 +1,6 @@
-# Workflow
+# PCTR-A Workflow
+
+This is the backward-compatible paired-document workflow. Use only when `pctr_mode=A`.
 
 ## Phase 1: Resolve Inputs
 
