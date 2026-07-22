@@ -1,9 +1,9 @@
 interface:
   display_name: "策划案 TO 需求（PCTR-A/B）"
-  short_description: "双模式策案转需求、SDD确认、实施计划与Bug闭环"
+  short_description: "双模式策案转需求、序号编码、Markdown附件确认与Bug闭环"
   icon_small: "./assets/planning-to-requirements.svg"
   icon_large: "./assets/planning-to-requirements.svg"
   brand_color: "#6D5DFB"
-  default_prompt: "Use $planning-to-requirements to route a planning document through PCTR-A paired confirmation or PCTR-B single-document SDD handoff."
+  default_prompt: "Use $planning-to-requirements to route a planning document through PCTR-A paired confirmation or PCTR-B one-document requirements with planning-sequence feature IDs and in-section Markdown SDD attachments."
 policy:
   allow_implicit_invocation: true

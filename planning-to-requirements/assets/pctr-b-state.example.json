@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "mode": "B",
   "document_code": "EXAMPLE",
   "source": {
@@ -9,18 +9,26 @@
   "development_document": {
     "url": "",
     "revision": -1,
-    "local_path": "",
-    "feishu_parent_url": ""
+    "local_path": ""
   },
   "features": [
     {
-      "feature_id": "EXAMPLE-F001",
+      "feature_id": "1.1-EXAMPLE-F001",
+      "base_feature_id": "EXAMPLE-F001",
+      "legacy_feature_ids": ["EXAMPLE-F001"],
+      "planning_sequence": "1.1",
       "source_heading": "Feature title",
       "source_heading_path": "Parent / Feature title",
       "source_fingerprint": "",
+      "requirement_summary": "",
+      "requirement_description": "",
+      "requirement_detail_fingerprint": "",
       "sdd_local_path": "",
-      "sdd_feishu_url": "",
-      "sdd_revision": -1,
+      "sdd_attachment_name": "",
+      "sdd_attachment_token": "",
+      "sdd_attachment_url": "",
+      "sdd_attachment_document_revision": -1,
+      "sdd_version": "",
       "sdd_status": "",
       "sdd_confirmation_status": "pending",
       "implementation_plan_path": "",

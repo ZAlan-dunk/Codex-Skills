@@ -36,7 +36,7 @@ accepted + explicit completion command -> development_status=completed and final
 ## Gates
 
 - Final plan generation requires `planning_confirmation_status=confirmed`.
-- In PCTR-B, final plan generation instead requires `sdd_confirmation_status=confirmed`, a current Feishu SDD URL/revision, and no blocking SDD decision.
+- In PCTR-B, final plan generation instead requires `sdd_confirmation_status=confirmed`, one current local SDD Markdown path, a matching attachment reference inside the feature section, the containing development-document revision, and no blocking SDD decision.
 - Plan approval requires the explicit command `批准 <FEATURE-ID> 技术方案` after a route-appropriate plan is generated and validated.
 - Implementation requires `technical_plan_status=approved` plus an explicit implementation command.
 - Planning acceptance submission requires implementation and technical verification evidence.

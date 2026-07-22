@@ -67,7 +67,7 @@ Require ACSDM retrieval first, then create or update:
 
 Do not implement until the SDD review gate passes.
 
-In PCTR-B, the role-based SDD is generated as the feature confirmation artifact before implementation planning. Once it is confirmed, `开始 <FEATURE-ID> 功能开发` creates a separate route-appropriate implementation plan; do not generate a second SDD under another name.
+In PCTR-B, the role-based SDD is generated as a local Markdown feature-confirmation artifact and attached inside the matching feature section of the one Feishu development document. Once it is confirmed, `开始 <FEATURE-ID> 功能开发` creates a separate route-appropriate implementation plan; do not create a separate Feishu SDD document or generate a second SDD under another name.
 
 ## Guardrails
 

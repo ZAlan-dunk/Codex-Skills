@@ -12,6 +12,9 @@ Both documents must record:
 - generation mode and style profile;
 - last synchronization time;
 - stable feature count and out-of-scope count.
+- local artifact paths rooted at `<project root>/.PCTR/A/<document-code>/`.
+
+The paired documents and their mapping/sidecar must not record `docs/pctr/` as an active local output path. When migrating a legacy pair, preserve the old path only as explicitly labeled history and update all active links to `.PCTR/A/<document-code>/`.
 
 ## Requirement Development Document
 

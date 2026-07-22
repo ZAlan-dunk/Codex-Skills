@@ -8,13 +8,14 @@ Orange Unity Forge and PCTR may coexist when independently enabled. Prefer direc
 
 PCTR-B must create and register its local document/sidecar and Feishu development document before Orange generation. When both suites are active, Orange calls `pctr-b-feature-lookup-interface.md` with the source planning identity and exact heading path. Continue only when PCTR-B returns one exact lookup receipt.
 
-Use the receipt, not a user-typed title or filename, as the authority for Feature ID, exact title, source heading path/revision, development-document link, and Feishu SDD target. Zero/multiple matches or stale source identity stop before generation.
+Use the receipt, not a user-typed title or filename, as the authority for full/base Feature IDs, planning sequence, exact title, source heading path/revision, and development-document link. Zero/multiple matches or stale source identity stop before generation.
 
 ## Required SDD Identity
 
 The role-based SDD must contain:
 
 - exact PCTR Feature ID;
+- exact PCTR base Feature ID and planning sequence;
 - exact feature title;
 - exact source planning heading path;
 - source planning URL/token and revision;
@@ -31,31 +32,30 @@ YYYY-MM-DD-<feature-id-lowercase>-<slug>-sdd.md
 
 Identity comes from metadata, not filename-only matching.
 
-## Upload Contract
+## Markdown Attachment Contract
 
-The manual PCTR-B path uses `同步PCTR-B SDD <FEATURE-ID>`. When both suites are active and Orange generated the SDD from a valid lookup receipt, Orange automatically performs the same upload/link-back operation immediately after successful SDD validation.
+The manual PCTR-B path uses `同步PCTR-B SDD <FEATURE-ID>`. When both suites are active and Orange generated the SDD from a valid lookup receipt, Orange may perform the same attachment/link-back operation immediately after successful SDD validation.
 
-The upload workflow may:
+The attachment workflow may:
 
 1. read the matched local Markdown;
 2. validate it;
-3. create a Feishu Docx using the `lark-doc` Markdown creation/import path;
-4. place it under the configured Feishu feature/document parent when available;
-5. update the PCTR-B development document with the local path and Feishu URL;
-6. update the sidecar revision and synchronization metadata.
+3. insert the local `.md` file itself as an attachment directly inside the matching feature section when exact-position insertion can be verified;
+4. update the PCTR-B development document with the local path, attachment reference, status/version, and confirmation blocks;
+5. update the sidecar attachment identity, containing-document revision, and synchronization metadata.
 
-Automatic Orange handoff must leave confirmation pending. Upload does not equal planner confirmation.
+Automatic Orange handoff must leave confirmation pending. Attachment does not equal planner confirmation.
 
-If the target Feishu parent is missing or ambiguous, stop before upload and request the location. Do not upload to an arbitrary personal root.
+If exact-position attachment or the required callout formatting cannot be verified, stop before external write and return a manual-upload handoff. Never create a separate Feishu SDD Docx and never append the file to an unrelated position.
 
 ## Confirmation Contract
 
-Upload does not equal confirmation.
+Attachment does not equal confirmation.
 
-- Draft or In Review SDDs may be uploaded, but plan generation stays locked.
-- `SDD已确认` requires a current uploaded revision and no blocking pending decision.
+- Draft or In Review SDDs may be attached, but plan generation stays locked.
+- `SDD已确认` requires a current local Markdown identity, attachment reference, containing-document revision, and no blocking pending decision.
 - `SDD存在歧义需要修改` records ambiguity and keeps the feature locked.
-- A revised SDD creates a new Feishu revision or replaces the generated body according to the active lark-doc update workflow; never silently overwrite planner-entered notes.
+- A revised SDD replaces or adds a new file attachment snapshot inside the same feature section and advances the containing document revision; never silently overwrite planner-entered notes.
 
 ## Implementation Plan Contract
 

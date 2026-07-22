@@ -2,12 +2,13 @@
 
 ```text
 PCTR Feature ID: {{feature_id}}
+PCTR Base Feature ID: {{base_feature_id}}
+策案序号：{{planning_sequence}}
 功能标题：{{feature_title}}
 策案标题路径：{{source_heading_path}}
 来源策案：{{source_url}}
 来源 Revision：{{source_revision}}
 PCTR-B 飞书开发文档：{{development_document_url}}
-飞书 SDD 目标：{{feishu_parent_url}}
 
 请先按项目门禁发送独立命令 `启用OUF`，再使用 brainstorming-unity 为该功能生成一份角色分区 Draft SDD。
 
@@ -18,7 +19,7 @@ PCTR-B 飞书开发文档：{{development_document_url}}
 - 包含策划规则、程序设计、QA 验收、风险、回滚和待确认项；
 - 同步生成 Context Brief 与 Draft SDD，不生成实施计划、不实施代码；
 - 工件分别保存到 CodexTemp/OrangeUnityForge/briefs/ 与 CodexTemp/OrangeUnityForge/specs/；
-- SDD 静态验证通过后自动调用 PCTR-B 上传接口，并回填上述飞书开发文档的对应功能；确认状态保持 pending；
+- SDD 静态验证通过后调用 PCTR-B Markdown 附件接口，把本地 `.md` 文件直接放到上述飞书开发文档的对应功能章节内；若 IDE/CLI 无法可靠定位并验证附件位置，则停止自动写入，由用户手动上传；不得新建独立飞书 SDD 文档；确认状态保持 pending；
 - 文件名优先使用 YYYY-MM-DD-{{feature_id_lower}}-<slug>-sdd.md。
 
 功能需求说明：

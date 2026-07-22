@@ -6,6 +6,14 @@ This is the backward-compatible paired-document workflow. Use only when `pctr_mo
 
 Collect the planning source, project root, requirement output target, planning-confirmation output target, style profile, existing document links, and operating mode. Continue with labeled limitations when optional inputs are absent.
 
+When targets are not explicitly supplied, use one paired artifact directory:
+
+```text
+<project root>/.PCTR/A/<document-code>/
+```
+
+Place the requirement development document, planning confirmation/acceptance document, mapping/sidecar state, plans, and bug records beneath that directory. Never default to `docs/pctr/` or any other `docs/` path. Legacy `docs/pctr/` content may be copied in as a migration source but must not remain the active path recorded in migrated state.
+
 ## Phase 2: Read and Normalize
 
 Read outline then full content as needed. Preserve headings, source sequence, nested conditions, tables, media references, deletion marks, semantic color notes, document ID, and revision. Treat placeholders and examples as unresolved rather than final values.

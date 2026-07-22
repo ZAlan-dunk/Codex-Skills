@@ -1,6 +1,6 @@
 # PCTR-A Planning Confirmation Workflow
 
-Use only when `pctr_mode=A`. PCTR-B uses the uploaded SDD confirmation checkboxes.
+Use only when `pctr_mode=A`. PCTR-B uses the local SDD Markdown attachment and its confirmation checkboxes inside the single development document.
 
 ## Purpose
 

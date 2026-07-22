@@ -13,6 +13,17 @@ Read `<project root>/.codex/skill-gates.json` before any PCTR action.
 
 Both modes may coexist with Orange Unity Forge and ACSDM when their gates are independently enabled. Do not infer a mode from a document, path, feature ID, or conversation wording.
 
+## Directory Ownership
+
+PCTR owns `<project root>/.PCTR/` for persistent artifacts and never writes new artifacts under `<project root>/docs/`.
+
+| Mode | Default persistent directory |
+|---|---|
+| PCTR-A | `<project root>/.PCTR/A/<document-code>/` |
+| PCTR-B | `<project root>/.PCTR/B/<document-code>/` |
+
+`docs/pctr/` is a legacy migration source only. Orange Unity Forge owns `docs/`; ACSDM owns `.ACSDM/`; Orange working artifacts may use `CodexTemp/OrangeUnityForge/` under its own rules.
+
 ## PCTR-A
 
 Use the legacy paired-document workflow:
@@ -35,13 +46,13 @@ Use the single-development-document workflow:
 ```text
 planning source
   -> one concise development document
-  -> one role-based SDD confirmation document per feature
+  -> one local role-based SDD Markdown attachment inside each matching feature section
   -> local implementation-plan artifact path
   -> implementation
   -> local bug-fix record paths
 ```
 
-The human-facing Feishu document stays compact. A local sidecar manifest carries machine lifecycle state and stable source mapping.
+The human-facing Feishu document stays compact but contains planning-grounded requirement descriptions. It is the only Feishu document PCTR-B creates. A local sidecar manifest carries machine lifecycle state, planning-sequence IDs, attachment references, and stable source mapping.
 
 ## No Mixed Documents
 

@@ -21,13 +21,18 @@ def replace_metadata_row(text: str, label: str, value: str) -> str:
     return pattern.sub(f"| {label} | {table_value(value)} |", text, count=1)
 
 
+def remove_metadata_row(text: str, label: str) -> str:
+    pattern = re.compile(rf"^\|\s*{re.escape(label)}\s*\|.*\|\s*\r?\n?", re.M)
+    return pattern.sub("", text)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("document")
     parser.add_argument("state")
     parser.add_argument("--feishu-url", required=True)
     parser.add_argument("--revision", type=int, required=True)
-    parser.add_argument("--sdd-parent-url", required=True)
+    parser.add_argument("--sdd-parent-url", default="", help=argparse.SUPPRESS)
     parser.add_argument("--synced-at")
     parser.add_argument("--out-document", required=True)
     parser.add_argument("--out-state", required=True)
@@ -37,20 +42,18 @@ def main() -> int:
         raise SystemExit("Feishu development-document URL is empty")
     if args.revision < 0:
         raise SystemExit("Feishu development-document revision must be non-negative")
-    if not args.sdd_parent_url.strip():
-        raise SystemExit("Feishu SDD parent/target URL is empty")
 
     document_path = Path(args.document)
     state_path = Path(args.state)
     text = document_path.read_text(encoding="utf-8-sig")
     state = json.loads(state_path.read_text(encoding="utf-8-sig"))
-    if state.get("mode") != "B":
-        raise SystemExit("state mode is not PCTR-B")
+    if state.get("mode") != "B" or state.get("schema_version") != 2:
+        raise SystemExit("state schema/mode is not PCTR-B v2")
 
     synced_at = args.synced_at or datetime.now(timezone.utc).isoformat()
     text = replace_metadata_row(text, "本开发文档", args.feishu_url)
     text = replace_metadata_row(text, "本文档 Revision", str(args.revision))
-    text = replace_metadata_row(text, "飞书 SDD 目标目录", args.sdd_parent_url)
+    text = remove_metadata_row(text, "飞书 SDD 目标目录")
     text = replace_metadata_row(text, "最后同步时间", synced_at)
 
     development_document = state.setdefault("development_document", {})
@@ -58,7 +61,6 @@ def main() -> int:
         {
             "url": args.feishu_url,
             "revision": args.revision,
-            "feishu_parent_url": args.sdd_parent_url,
             "last_sync_at": synced_at,
         }
     )
@@ -69,7 +71,7 @@ def main() -> int:
     )
     print(
         "registered PCTR-B Feishu development document; "
-        f"revision={args.revision}; target={args.sdd_parent_url}"
+        f"revision={args.revision}"
     )
     return 0
 

@@ -4,8 +4,12 @@
 
 PCTR owns requirement translation, mode-specific confirmation, route orchestration, and planning acceptance state. ACSDM owns project-local knowledge retrieval and optional implementation/bug/completion records.
 
+- PCTR persistent artifacts live under `<project root>/.PCTR/`.
+- ACSDM persistent catalog records live under `<project root>/.ACSDM/`.
+- Neither suite creates active artifacts under `<project root>/docs/`, which is reserved for Orange Unity Forge.
+
 - PCTR-A confirmation authority: paired planning confirmation/acceptance document.
-- PCTR-B confirmation authority: uploaded role-based SDD plus its synchronized confirmation state; the single development document is the human index.
+- PCTR-B confirmation authority: the local role-based SDD Markdown attached inside the matching section of the single development document plus its synchronized confirmation state; no separate Feishu SDD document is created.
 
 ## Retrieval Order
 
@@ -22,7 +26,7 @@ For `开始 <FEATURE-ID> 功能开发`:
 
 - read the active PCTR mode and the matching requirement feature section;
 - PCTR-A: read the synchronized planner summary and confirmation revision;
-- PCTR-B: read the confirmed SDD, Feishu revision, source feature section, and sidecar;
+- PCTR-B: read the confirmed local SDD Markdown, its attachment reference, the containing development-document revision, source feature section, and sidecar;
 - verify the mode-specific confirmation gate;
 - retrieve ACSDM and code evidence;
 - generate the route-specific plan only.
@@ -65,7 +69,7 @@ Implementation or bug records should include:
 For PCTR-B, also include:
 
 - PCTR mode `B`;
-- local and Feishu SDD paths/revisions;
+- local SDD path, attachment token/URL/name, and containing development-document revision;
 - SDD confirmation result;
 - local implementation-plan artifact path;
 - all bug-record paths linked from the single development document.
