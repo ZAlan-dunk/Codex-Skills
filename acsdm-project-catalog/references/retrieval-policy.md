@@ -124,7 +124,7 @@ Before PCTR retrieval, read `.codex/skill-gates.json` and branch on `pctr_mode`.
 
 1. Read the matching PCTR requirement feature section.
 2. PCTR-A: verify planning confirmation is `confirmed` and read the synchronized planner summary/revision.
-3. PCTR-B: verify SDD confirmation is `confirmed`; read the local/Feishu SDD, current revision, sidecar, and implementation-plan target path.
+3. PCTR-B: verify SDD confirmation is `confirmed`; read the local SDD Markdown, its attachment identity, the containing development-document revision, the sidecar, and the implementation-plan target path.
 4. Retrieve root index, `00Rule` where applicable, matching module indexes, related documents, and code locations.
 5. Produce default ABC, enhanced ABC, or SDD evidence according to the PCTR route. For PCTR-B, the confirmed role-based SDD already owns design; generate implementation planning evidence instead of a duplicate SDD.
 6. Do not edit code for `开始功能开发`.

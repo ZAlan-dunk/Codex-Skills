@@ -41,6 +41,8 @@ The skill should create or repair:
 
 It should add `.ACSDM/` to `<project root>/.git/info/exclude` when the project is a valid git repository. It must not modify project `.gitignore` unless the user explicitly requests it.
 
+Do not initialize, export, or migrate ACSDM into `<project root>/docs/`. That directory is reserved for Orange Unity Forge. When ACSDM records reference PCTR artifacts, use `<project root>/.PCTR/A/<document-code>/` or `<project root>/.PCTR/B/<document-code>/` according to the active mode.
+
 ## External Notes
 
 External folders such as `F:\AAAASMWORK\ALLNote\M032` are examples, references, or migration sources. They are not the live catalog root. Use them only when the user explicitly asks to scan or migrate content.
@@ -101,3 +103,4 @@ Exact mode commands:
 - Mode A uses the legacy paired requirement and planning-confirmation/acceptance documents.
 - Mode B uses one human development document, one role-based SDD per feature, local implementation-plan paths, and append-only bug-record paths.
 - ACSDM records must include the active PCTR mode and use the matching confirmation source.
+- PCTR-A persistent paths use `.PCTR/A/<document-code>/`; PCTR-B persistent paths use `.PCTR/B/<document-code>/`.

@@ -17,6 +17,8 @@ Use ACSDM to manage a project-local directory-style Markdown knowledge catalog. 
 
 Core principle: the project-local `.ACSDM` folder is the source of truth. Read indexes first, read only task-relevant documents, and do not modify project files or catalog documents until the user's intent is clear and authorized.
 
+`.ACSDM/` is ACSDM's only persistent artifact root. Never create new ACSDM indexes, records, plans, reports, or migration outputs under `<project root>/docs/`; that tree is reserved for Orange Unity Forge. Historical ACSDM records may retain old external `docs/...` references as evidence, but mark them legacy/stale when encountered and never use them as the destination for new records. PCTR links must point to `.PCTR/A/...` or `.PCTR/B/...`.
+
 ## Quick Workflow
 
 1. Check `<project root>/.ACSDM`.
@@ -88,7 +90,7 @@ When a request uses a PCTR feature ID or lifecycle command:
 1. Read `.codex/skill-gates.json`, require `pctr=true`, and branch on `pctr_mode`.
 2. Read the PCTR requirement feature section and verify the stable feature ID.
 3. PCTR-A plan generation requires `planning_confirmation_status=confirmed` and the synchronized planner summary.
-4. PCTR-B plan generation requires `sdd_confirmation_status=confirmed`, a current Feishu SDD URL/revision, the local SDD path, and the single development document feature section.
+4. PCTR-B plan generation requires `sdd_confirmation_status=confirmed`, the current local SDD Markdown path, its attachment identity, the containing Feishu development-document revision, and the matching feature section.
 5. Read the ACSDM root index, then `00Rule` for rule-first triggers, matching module indexes, directly relevant documents, and referenced code.
 6. `开始 <FEATURE-ID> 功能开发` means generate a route-appropriate detailed plan only; do not edit code. In PCTR-B, do not generate a second SDD; generate the implementation plan referenced by the confirmed SDD.
 7. `开始实施 <FEATURE-ID>` requires an approved plan and explicit implementation authorization.
@@ -105,3 +107,4 @@ Every PCTR-linked implementation record should include the feature ID, PCTR mode
 - Do not write `.ACSDM/` to project `.gitignore` unless the user explicitly asks. Prefer `.git/info/exclude` when the project is a valid git repository.
 - Do not create new ACSDM documents for every task. Update existing relevant documents unless the user asks to record a new document.
 - Do not bypass the A/B/C planning gate for broad feature requests.
+- Do not create or migrate active ACSDM artifacts under `docs/`.

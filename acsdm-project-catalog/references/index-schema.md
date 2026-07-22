@@ -10,6 +10,8 @@ The catalog root is always:
 
 Do not store only a pointer file in `.ACSDM`. The folders and indexes below live directly inside `.ACSDM`.
 
+This is ACSDM's exclusive persistent root. New ACSDM content must not be written to `<project root>/docs/`, which is reserved for Orange Unity Forge. Links to PCTR artifacts should use `.PCTR/A/...` or `.PCTR/B/...`; old `docs/...` links may remain only as labeled historical evidence.
+
 ## Standard Modules
 
 ACSDM creates eight generic modules by default. Project-specific modules can be added later, but these eight are the baseline.
