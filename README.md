@@ -1,4 +1,4 @@
-# Codex Skills
+# Dawnsdew-Feature Development
 
 This repository contains two reusable Codex skills for project knowledge retrieval and planning-to-development workflows.
 
