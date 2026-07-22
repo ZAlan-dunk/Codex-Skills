@@ -9,7 +9,7 @@
 ## Requirement Document
 
 - [ ] Every active feature has source trace, goal, scope, non-scope, flow, lifecycle, edge cases, evidence, acceptance, and route.
-- [ ] Every unresolved planning item has owner and blocking status.
+- [ ] Every unresolved planning item has owner and required-decision status.
 - [ ] Every task capsule contains the planning confirmation gate.
 - [ ] State fields use valid values from `feature-lifecycle.md`.
 
@@ -45,7 +45,7 @@
 - [ ] Every feature has a short planner-readable implementation description.
 - [ ] Every planning ambiguity or agent-uncertain behavior is mirrored.
 - [ ] Confirmation IDs are unique.
-- [ ] Blocking items cannot remain pending when the feature is confirmed.
+- [ ] Required decision items cannot remain pending when the feature is confirmed.
 - [ ] Final planner summary, confirmer, time, document ID, and revision exist for confirmed features.
 - [ ] Every feature has planner-readable acceptance items.
 
@@ -61,7 +61,8 @@
 ## Planning and Implementation Gates
 
 - [ ] PCTR-A unconfirmed features cannot generate final ABC/SDD.
-- [ ] PCTR-B features cannot generate an implementation plan until the attached role-based local SDD is confirmed.
+- [ ] PCTR-B features cannot generate a detailed OUF SDD until lightweight planner confirmation is confirmed.
+- [ ] PCTR-B features cannot generate an implementation plan or implementation checklist until the detailed local SDD is confirmed by program review.
 - [ ] `开始功能开发` generates a plan only and ends at `technical_plan_status=pending-approval`.
 - [ ] `批准 FEATURE-ID 技术方案` is required to reach `technical_plan_status=approved`.
 - [ ] Code edits require both an approved plan and `开始实施` or equivalent implementation authorization.
@@ -75,7 +76,7 @@
 - [ ] Bug analysis precedes edits.
 - [ ] Re-submission creates a new round.
 - [ ] Partial/failed acceptance cannot complete a feature.
-- [ ] Completion requires all mandatory points passed, no blocking bugs, and explicit completion command.
+- [ ] Completion requires all mandatory points passed, no unresolved bugs, and explicit completion command.
 
 ## Claims
 

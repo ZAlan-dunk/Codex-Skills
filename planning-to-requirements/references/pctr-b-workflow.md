@@ -68,33 +68,55 @@ Generate every feature from the complete planning outline in exact source order.
 
 Store the authored active-feature text in sidecar `requirement_description` so deterministic regeneration preserves it. Store `requirement_detail_fingerprint` as the fingerprint of the rendered section body, including the empty body for undeveloped features.
 
-## 5. Generate the Role-Based SDD in a Separate Orange Phase
+## 5. Generate the Lightweight Planner Confirmation Document
 
-PCTR-B and Orange may coexist when both gates are enabled. If Orange is disabled, PCTR-B may still prepare the feature ID and SDD request but must not invoke Orange.
+On `阅读这个功能生成策划确认文档`, PCTR-B creates the planner-facing confirmation artifact before any Orange SDD is generated.
+
+Required sequence:
+
+1. Resolve exactly one feature from the sidecar/development document. If the feature is ambiguous, stop.
+2. Read the matched source planning section and record the source URL/revision.
+3. Save the raw source snapshot to `.PCTR/B/<document-code>/snapshots/<FEATURE-ID>-source-snapshot.md`.
+4. Ask ACSDM for related project rules, historical development docs, and code-evidence indexes when ACSDM is available. Keep only compact paths/headings/facts; do not paste full ACSDM bodies.
+5. Write `.PCTR/B/<document-code>/decompositions/<FEATURE-ID>-planning-decomposition.md` with the full functional understanding, functional breakdown, evidence index, real ambiguities, planner-facing confirmation/improvement items, and current status.
+6. Render `.PCTR/B/<document-code>/confirmations/<FEATURE-ID>-planner-confirmation.md` from `assets/pctr-b-planner-confirmation-template.md`. Upload to Feishu only when the user explicitly asks.
+7. Update sidecar `planner_confirmation.status=pending`, paths, source revision, source snapshot hash, must-answer ambiguity IDs, and confirmation item IDs.
+
+The confirmation document must place the ambiguity list and confirmation/improvement list near the top, followed only by one short feature-demand description. Full functional understanding, functional breakdown, and later verification details stay in the local decomposition file. It must not contain a document-level reply section. Every ambiguity and every planner-facing confirmation/improvement item must contain its own reply code block immediately below the item detail.
+
+Do not fabricate ambiguities. If no must-answer ambiguity exists, write `本轮未发现需要策划确认的歧义点。` and keep only useful non-must-answer confirmation/improvement items.
+
+On `策划已确认`, parse each per-item reply code block, update the decomposition with selected options and supplements, and set `planner_confirmation.status=confirmed` only when every must-answer ambiguity is answered. If any must-answer item is empty or invalid, set `needs_revision` and stop before SDD generation.
+
+## 6. Generate the Role-Based SDD in a Separate Orange Phase
+
+PCTR-B and Orange may coexist when both gates are enabled. If Orange is disabled, PCTR-B may still prepare the feature ID and SDD request but must not invoke Orange. Detailed SDD generation requires `planner_confirmation.status=confirmed` and a current decomposition file.
 
 Preferred same-session sequence when both are enabled:
 
 1. Run `生成 PCTR-B 功能需求开发文档`; create the local development document and sidecar, upload/create the single Feishu development document, and register its URL/revision.
-2. In a later Orange task, pass the source planning URL/revision and exact heading path to `pctr-b-feature-lookup-interface.md`.
-3. PCTR-B returns one lookup receipt containing the exact full/base Feature IDs, planning sequence, title, source identity, development-document link, and sidecar path. The lookup is read-only.
-4. Orange generates the Context Brief and one role-based Draft SDD whose metadata copies the exact lookup receipt fields.
-5. After static SDD validation, Orange calls the PCTR-B Markdown-attachment handoff interface.
-6. The interface attaches the local `.md` file directly inside the matching feature section only when exact-position insertion can be verified. Otherwise it returns a manual-upload handoff and does not create another Feishu document. Confirmation remains pending.
+2. Run `阅读这个功能生成策划确认文档` for the target feature.
+3. After planner replies, run `策划已确认`; PCTR-B updates the decomposition and unlocks SDD only if must-answer planner ambiguities are resolved.
+4. In a later Orange task, pass the source planning URL/revision, exact heading path, and confirmed decomposition path to `pctr-b-feature-lookup-interface.md`.
+5. PCTR-B returns one lookup receipt containing the exact full/base Feature IDs, planning sequence, title, source identity, development-document link, sidecar path, and confirmed decomposition identity. The lookup is read-only.
+6. Orange generates the Context Brief and one role-based Draft SDD whose metadata copies the exact lookup receipt fields and uses the confirmed decomposition as its product-rule source.
+7. After static SDD validation, Orange calls the PCTR-B Markdown-attachment handoff interface.
+8. The interface attaches the local `.md` file directly inside the matching feature section only when exact-position insertion can be verified. Otherwise it returns a manual-upload handoff and does not create another Feishu document. Confirmation remains pending.
 
-If the PCTR-B development document, sidecar, Feishu document link, or source match is missing/ambiguous, stop before SDD generation. Never generate an unbound SDD and later guess its feature by title.
+If the PCTR-B development document, sidecar, Feishu document link, confirmed decomposition, planner confirmation, or source match is missing/ambiguous, stop before SDD generation. Never generate an unbound SDD and later guess its feature by title.
 
 Fallback cross-task sequence when they are not enabled together:
 
-1. Keep or export the PCTR-B feature ID and requirement description.
+1. Keep or export the PCTR-B feature ID, requirement description, and confirmed decomposition path.
 2. Enable Orange Unity Forge in a later turn.
-3. Generate one role-based Draft SDD whose metadata includes the exact PCTR feature ID.
+3. Generate one role-based Draft SDD whose metadata includes the exact PCTR feature ID and confirmed decomposition identity.
 4. Review and revise the SDD.
 5. Re-enable PCTR-B.
 6. Run `同步PCTR-B SDD <FEATURE-ID>` to attempt exact-position attachment, or upload the `.md` manually and run `登记PCTR-B Markdown附件 <FEATURE-ID>`.
 
 See `pctr-b-feature-lookup-interface.md` and `orange-sdd-handoff.md`.
 
-## 6. Synchronize the Local Markdown Attachment
+## 7. Synchronize the Local Markdown Attachment
 
 On the exact command `同步PCTR-B SDD <FEATURE-ID>`:
 
@@ -108,26 +130,27 @@ On the exact command `同步PCTR-B SDD <FEATURE-ID>`:
 
 If zero or multiple SDDs match, stop and report candidates. Do not match by title alone when a feature ID is available.
 
-## 7. Confirm or Return the SDD
+## 8. Confirm or Return the SDD
 
-- `<FEATURE-ID> SDD已确认`: require the current local Markdown identity, a matching attachment reference inside the feature section, the containing development-document revision, and no blocking pending decision; set the SDD status to `Approved`, select only `已确认`, and set sidecar `sdd_status=Approved`, `sdd_confirmation_status=confirmed`.
+- `<FEATURE-ID> SDD已确认` or `<FEATURE-ID> 程序已确认`: require the current local Markdown identity, confirmed decomposition, and no must-answer SDD decision. If the SDD is attached in Feishu, require a matching attachment reference and containing development-document revision; set sidecar `sdd_status=Approved`, `sdd_confirmation_status=confirmed`, and `program_confirmation.status=confirmed`.
 - `<FEATURE-ID> SDD存在歧义需要修改`: select only the ambiguity checkbox; record the issue; set `sdd_confirmation_status=ambiguous`; keep planning locked.
 
 Exactly one checkbox may be selected after a decision. Both unchecked means pending. Both checked is invalid.
 
-## 8. Generate the Implementation Plan
+## 9. Generate the Implementation Plan
 
 `开始 <FEATURE-ID> 功能开发` requires:
 
-- `sdd_confirmation_status=confirmed`;
-- current local SDD path, attachment reference, and containing development-document revision;
+- `planner_confirmation.status=confirmed`;
+- `sdd_confirmation_status=confirmed` or explicit programmer confirmation recorded for the current local SDD;
+- current local SDD path; if the SDD was attached or synchronized to Feishu, the attachment reference and containing development-document revision must also match;
 - matching source revision;
 - ACSDM and code evidence;
-- no unresolved blocking decision.
+- no unresolved must-answer decision.
 
-Generate the route-appropriate implementation plan locally and write its path under `3. 实施计划工件的路径`. Do not upload it automatically. Program upload remains manual unless explicitly requested.
+Generate the route-appropriate implementation plan locally and write its path under `3. 实施计划工件的路径`. For small low-risk work where the user says `程序已确认，开始实施`, a short local implementation checklist may replace the full plan; cross-module, high-risk, save/protocol, architecture, SDK, or external-write work still requires a full plan and approval. Do not upload implementation artifacts automatically.
 
-## 9. Implement, Accept, and Record Bugs
+## 10. Implement, Accept, and Record Bugs
 
 Plan approval and implementation commands retain their existing meanings. PCTR-B keeps visible lifecycle data minimal:
 
@@ -136,7 +159,7 @@ Plan approval and implementation commands retain their existing meanings. PCTR-B
 - append bug paths under `4. 功能 Bug 修复记录文件路径` without deleting earlier records;
 - keep detailed state and acceptance rounds in the sidecar and bug artifacts, not as feature-table columns.
 
-## 10. Update Mode
+## 11. Update Mode
 
 When the planning source changes:
 
@@ -148,7 +171,7 @@ When the planning source changes:
 6. preserve SDD attachment references, confirmation decisions, plan paths, bug paths, work-hour cells, and human edits;
 7. stop on concurrent conflicting edits.
 
-## 11. Validate
+## 12. Validate
 
 Run:
 

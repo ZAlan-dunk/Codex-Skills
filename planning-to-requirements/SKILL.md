@@ -1,6 +1,6 @@
 ---
 name: planning-to-requirements
-description: Convert Feishu Wiki/Docx planning documents and game-design plans into development-ready requirements through one of two strict modes. PCTR-A preserves the legacy paired requirement plus planning-confirmation/acceptance workflow with atomic decomposition and multi-block interaction. PCTR-B preserves planning heading order, creates one Feishu development document with concise feature-table summaries, leaves undeveloped feature requirement sections empty, and keeps only an active feature's authored description and key points in its section without copying source prose or media. It prefixes feature IDs with planning-outline sequence numbers and places each local role-based SDD Markdown artifact inside the matching feature section as an attachment instead of creating a separate Feishu SDD document. Use for planning-source conversion, traceable feature IDs, ACSDM-backed evidence, Markdown attachment handoff, plan/implementation gates, acceptance, and bug lifecycle work.
+description: Convert planning docs into PCTR-A paired requirements or PCTR-B single-doc workflows with lightweight planner confirmation, local decomposition, ACSDM evidence, OUF SDD handoff, implementation, acceptance, and bug lifecycle support.
 ---
 
 # Planning to Requirements
@@ -80,10 +80,12 @@ PCTR-A creates and maintains two paired documents:
 
 Use stable feature IDs across both documents. Record document IDs, revisions, links, and last synchronization time.
 
-PCTR-B creates and maintains one human-facing development document plus one local machine-state manifest:
+PCTR-B creates and maintains one human-facing development document, lightweight per-feature planner confirmation files, local decomposition files, and one local machine-state manifest:
 
 1. **Single SDD artifact development document**: one-click generation enumerates every non-empty feature from the complete planning outline in exact source order. Its feature table uses exactly `功能编码 / 策案标题 / 策案标题路径 / 功能需求说明 / 工时`. Every table description is concise and strips source markup/media. The matching `1. 功能需求说明` starts empty unless that feature is currently being designed or developed; an active feature contains only a short authored description and main functional points, not copied planning prose or media.
-2. **Sidecar state manifest**: preserves the planning sequence, base/legacy IDs, source fingerprints, local SDD path, embedded attachment reference, confirmation state, plan path, bug paths, revisions, and sync times. It is not uploaded and is not a second human document.
+2. **Planner confirmation document**: one lightweight Markdown document per active feature before SDD generation. It lists only real planner-facing ambiguities and useful confirmation/improvement items. It does not include a document-level reply section; every ambiguity or confirmation item carries its own reply code block. Full functional understanding and breakdown stay in the local decomposition file.
+3. **Local decomposition file**: the living PCTR-B input to OUF after planner decisions are synchronized.
+4. **Sidecar state manifest**: preserves the planning sequence, base/legacy IDs, source fingerprints, planner-confirmation state, decomposition path, local SDD path, embedded attachment reference, confirmation state, plan path, bug paths, revisions, and sync times. It is not uploaded and is not a second human document.
 
 ## Core Workflow
 
@@ -94,8 +96,8 @@ Select exactly one mode from the gate and follow its reference. The following ru
 3. Retrieve ACSDM evidence where a project root is available. Separate planning facts, project rules, code facts, recommendations, and unresolved questions.
 4. Score and pre-route each function to default ABC, enhanced ABC, or SDD.
 5. Create the mode-specific requirement development document.
-6. PCTR-A creates the paired planning confirmation/acceptance document. PCTR-B uses the local role-based SDD Markdown attached inside the matching feature section and its mutually exclusive confirmation checkboxes as the planning confirmation surface.
-7. Keep formal plan generation locked until the active mode's confirmation gate passes.
+6. PCTR-A creates the paired planning confirmation/acceptance document. PCTR-B first creates a lightweight per-feature planner confirmation Markdown and local decomposition; only after planner confirmation may OUF generate a detailed role-based SDD Markdown.
+7. Keep SDD generation locked until PCTR-B planner confirmation passes; keep formal plan or implementation locked until the active mode's SDD/program confirmation gate passes.
 8. On confirmation, synchronize the authoritative planner decision, source revision, route, and local state manifest.
 9. On `开始 <FEATURE-ID> 功能开发`, read the confirmed requirement, planner decision, ACSDM catalog, and code evidence; generate a detailed plan according to the selected route and set `technical_plan_status=pending-approval`. Do not modify code.
 10. On `批准 <FEATURE-ID> 技术方案`, validate the route-appropriate plan and set `technical_plan_status=approved`. Do not modify code.
@@ -107,7 +109,7 @@ Select exactly one mode from the gate and follow its reference. The following ru
 
 ## Confirmation Gate
 
-PCTR-A keeps the existing confirmation requirements below. PCTR-B requires one uniquely matched local SDD Markdown path, an attachment reference in the matching feature section (automatic or user-uploaded), the containing development-document revision, and exactly one selected checkbox; only `已确认` unlocks planning. `存在歧义需要修改` blocks planning and requires a revised Markdown attachment/synchronization.
+PCTR-A keeps the existing confirmation requirements below. PCTR-B has two gates: first the lightweight planner confirmation document must resolve every must-answer planner ambiguity and update the decomposition; then the detailed local SDD Markdown must be reviewed by the programmer and synchronized/confirmed when an attachment is used. The planner confirmation document does not use a document-level reply section; every ambiguity or confirmation item must have its own reply code block immediately below it.
 
 Before formal plan generation, require:
 
@@ -123,10 +125,13 @@ Unconfirmed features may be inspected through ACSDM or code, but may not receive
 
 - `生成策划确认文档`: create the paired confirmation/acceptance document.
 - `生成 PCTR-B 功能需求开发文档`: read the complete planning outline and every selected feature body, derive the planning sequence, migrate IDs to `<序号>-<原编码>`, generate every feature in exact source order with concise table descriptions, leave undeveloped feature requirement sections empty, preserve any validated active-feature authored description, create the local document and sidecar, then import/create the one corresponding Feishu development document and register its URL/revision.
+- `阅读这个功能生成策划确认文档`: for exactly one PCTR-B feature, save the source snapshot, ask ACSDM for related rule/history indexes when available, write the local decomposition, and render a lightweight planner confirmation Markdown. Do not upload to Feishu unless explicitly requested.
+- `策划已确认`: parse each per-item reply code block from the current PCTR-B planner confirmation document, update the decomposition and sidecar, and unlock detailed SDD generation only when all must-answer planner ambiguities are resolved.
+- `生成详细 SDD 工件`: after planner confirmation, pass the confirmed decomposition to Orange Unity Forge to generate one detailed role-based local SDD Markdown; keep it Draft until programmer review.
 - `OUF → PCTR-B 功能编码查询`: internal read-only lookup used only when both suites are active; return one exact Feature ID and target receipt without changing state.
 - `同步PCTR-B SDD <FEATURE-ID>`: locate and validate the uniquely matched local SDD Markdown. Attach the file directly inside the matching feature section only when the available Feishu tooling can deterministically insert and verify the attachment at that exact position; otherwise stop before external write, preserve the local path/code block, and ask the user to upload the file manually. Never create a separate Feishu SDD document.
 - `登记PCTR-B Markdown附件 <FEATURE-ID>`: after automatic or manual insertion, record the attachment token/URL/name and the containing development-document revision, then leave confirmation pending.
-- `<FEATURE-ID> SDD已确认`: require the current local Markdown identity and matching attachment reference, select `已确认`, clear `存在歧义需要修改`, synchronize the containing document revision, and unlock plan generation.
+- `<FEATURE-ID> SDD已确认` or `<FEATURE-ID> 程序已确认`: require the current local Markdown identity, confirmed decomposition, and no blocking SDD decision; when an attachment is used, require its matching attachment reference, select `已确认`, clear `存在歧义需要修改`, synchronize the containing document revision, and unlock plan generation or explicit implementation according to risk.
 - `<FEATURE-ID> SDD存在歧义需要修改`: select the ambiguity checkbox, clear `已确认`, record the issue, and keep planning locked.
 - `同步策划确认 <FEATURE-ID>` or `<FEATURE-ID> 策划已确认`: validate blocking items, synchronize decisions, recalculate route, and unlock planning.
 - `开始 <FEATURE-ID> 功能开发`: generate the detailed technical plan only.
@@ -145,7 +150,7 @@ Follow `references/command-contract.md`; do not infer a state-changing command f
 - Enhanced ABC: moderate work inside existing architecture requiring explicit state, files, regression, and rollback.
 - SDD: hard triggers or high complexity such as migration, public framework changes, three or more modules, complex state machines, external SDKs, global locking/concurrency, or high-cost ambiguity.
 
-Confirmation precedes every final route. In PCTR-B, the role-based local SDD Markdown attached within the single development document is the confirmation artifact and must retrieve ACSDM evidence when ACSDM is enabled. The later implementation plan is a separate local artifact path, not a second SDD.
+Confirmation precedes every final route. In PCTR-B, the lightweight planner confirmation document confirms product rules first; the role-based local SDD Markdown is generated later from the confirmed decomposition and must retrieve ACSDM evidence when ACSDM is enabled. The later implementation plan or checklist is a separate local artifact path, not a second SDD.
 
 ## Acceptance Rules
 

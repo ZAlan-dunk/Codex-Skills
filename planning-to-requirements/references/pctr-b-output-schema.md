@@ -97,6 +97,38 @@ The two checkboxes are mutually exclusive.
 
 `3. 实施计划工件的路径` uses a plain-text code block. `4. 功能 Bug 修复记录文件路径` uses a four-column Bug table with at least two initially empty numbered rows. The Feishu version uses orange callouts for the three highlighted SDD blocks. If exact styling or exact-position attachment cannot be verified through the current IDE/CLI path, stop before the write and let the user upload/format manually.
 
+## Planner Confirmation and Decomposition
+
+PCTR-B uses a lightweight per-feature planner confirmation document before OUF SDD generation. It is not the same as the role-based SDD.
+
+Default paths:
+
+```text
+.PCTR/B/<document-code>/snapshots/<FEATURE-ID>-source-snapshot.md
+.PCTR/B/<document-code>/decompositions/<FEATURE-ID>-planning-decomposition.md
+.PCTR/B/<document-code>/confirmations/<FEATURE-ID>-planner-confirmation.md
+```
+
+The planner confirmation document must contain:
+
+1. a top ambiguity list;
+2. a top planner-facing confirmation/improvement list;
+3. natural-language functional understanding;
+4. functional breakdown;
+5. detail sections for every ambiguity and confirmation/improvement item;
+6. one reply code block immediately under each item detail;
+7. compact evidence index.
+
+Forbidden in the planner confirmation document:
+
+- a document-level reply section;
+- fabricated ambiguity points;
+- long ACSDM body copies;
+- source planning prose copied paragraph by paragraph;
+- implementation code drafts or long class/file lists unless they are necessary evidence.
+
+Allowed item statuses: `must_answer`, `optional`, `resolved`, `needs_revision`.
+
 ## Sidecar Manifest
 
 The sidecar is machine state, not a second human document. Store:
@@ -120,6 +152,31 @@ The sidecar is machine state, not a second human document. Store:
       "requirement_summary": "",
       "requirement_description": "",
       "requirement_detail_fingerprint": "",
+      "source_snapshot_path": "",
+      "source_snapshot_hash": "",
+      "planner_confirmation": {
+        "status": "missing",
+        "local_path": "",
+        "feishu_url": "",
+        "document_revision": -1,
+        "must_answer_ambiguities": [],
+        "confirmation_items": [],
+        "resolved_decisions": []
+      },
+      "decomposition_path": "",
+      "decomposition_hash": "",
+      "sdd_generation": {
+        "status": "locked",
+        "input_decomposition_path": "",
+        "generated_by": "",
+        "generated_at": ""
+      },
+      "program_confirmation": {
+        "status": "pending",
+        "reviewer": "",
+        "confirmed_at": "",
+        "open_items": []
+      },
       "sdd_local_path": "",
       "sdd_attachment_name": "",
       "sdd_attachment_token": "",
@@ -135,6 +192,8 @@ The sidecar is machine state, not a second human document. Store:
   ]
 }
 ```
+
+Allowed `planner_confirmation.status`: `missing`, `pending`, `confirmed`, `needs_revision`. Allowed `sdd_generation.status`: `locked`, `ready`, `draft`, `approved`. Allowed `program_confirmation.status`: `pending`, `confirmed`, `needs_revision`.
 
 Allowed `sdd_confirmation_status`: `pending`, `confirmed`, `ambiguous`.
 

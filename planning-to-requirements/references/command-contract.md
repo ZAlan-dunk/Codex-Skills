@@ -6,6 +6,11 @@ State-changing actions require explicit commands. Do not infer them from discuss
 |---|---|---:|
 | `生成策划确认文档` | Create paired planner document | No |
 | `生成 PCTR-B 功能需求开发文档` | Create the local Mode-B development document and sidecar with planning-sequence IDs and requirement descriptions, import/create the one Feishu development document, and register its URL/revision | Feishu document only |
+| `阅读这个功能生成策划确认文档` | For one PCTR-B feature, save source snapshot, collect ACSDM rule/history indexes, write local decomposition, and render a lightweight planner confirmation Markdown with per-item reply blocks | No by default; Feishu only if explicitly requested |
+| `策划已确认` | Parse every per-item reply code block from the current PCTR-B planner confirmation document, update decomposition/sidecar, and unlock detailed SDD generation only if all must-answer ambiguities are resolved | No |
+| `生成详细 SDD 工件` | After PCTR-B planner confirmation, hand the confirmed decomposition to OUF and generate one role-based local SDD Markdown | No |
+| `<FEATURE-ID> 程序已确认` | Confirm programmer review of the current detailed SDD and unlock implementation according to risk | No |
+| `程序已确认，开始实施` | Confirm programmer review and, when explicitly authorized, proceed to implementation; high-risk or cross-module work still needs a local plan/checklist gate | Yes only after risk gate |
 | `同步PCTR-B SDD <FEATURE-ID>` | Validate the matched local Markdown and attach it inside the matching feature section only when exact-position insertion is reliable; otherwise prepare manual upload | Feishu document only when automatic attachment is safe |
 | `登记PCTR-B Markdown附件 <FEATURE-ID>` | Register an automatically or manually inserted Markdown attachment and containing document revision | No new document |
 | `<FEATURE-ID> SDD已确认` | Confirm the attached local SDD snapshot and unlock plan generation | No |
@@ -31,7 +36,9 @@ Reject or stop when:
 - PCTR-B development-document generation lacks an unambiguous Feishu development-document target;
 - a selected feature lacks a planning sequence or planning-grounded requirement content when the source contains content;
 - Orange feature lookup has zero/multiple feature matches or stale source identity;
-- formal plan is requested before planner confirmation;
+- detailed SDD generation is requested before PCTR-B planner confirmation;
+- formal plan or implementation is requested before required SDD/program confirmation;
+- a planner confirmation document has a document-level reply section instead of per-item reply code blocks;
 - PCTR-B SDD synchronization has zero or multiple matching local artifacts;
 - PCTR-B confirmation is requested without a current local Markdown identity, attachment reference, or containing development-document revision;
 - both PCTR-B confirmation checkboxes are selected;
@@ -46,4 +53,4 @@ Reject or stop when:
 - Default ABC: A implementation path; B files/config/resources/tests; C risks/ambiguity/regression.
 - Enhanced ABC: default output plus state/sequence, exact integration, staged implementation, compatibility, rollback, and test matrix.
 - SDD route in PCTR-A: requirements, design, tasks, test-plan, evidence/source mapping, and unresolved decisions.
-- PCTR-B: the confirmed role-based local Markdown attachment is the design/confirmation artifact; `开始功能开发` generates a separate implementation plan and records only its local path.
+- PCTR-B: the confirmed planner-confirmation document is the product-rule gate; the confirmed role-based local Markdown SDD is the technical design artifact. `开始功能开发` normally generates a separate implementation plan and records only its local path; small low-risk work may use a short local checklist when the user explicitly asks to proceed after programmer confirmation.

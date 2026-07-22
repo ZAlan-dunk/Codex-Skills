@@ -15,7 +15,9 @@
     {
       "feature_id": "1.1-EXAMPLE-F001",
       "base_feature_id": "EXAMPLE-F001",
-      "legacy_feature_ids": ["EXAMPLE-F001"],
+      "legacy_feature_ids": [
+        "EXAMPLE-F001"
+      ],
       "planning_sequence": "1.1",
       "source_heading": "Feature title",
       "source_heading_path": "Parent / Feature title",
@@ -23,6 +25,31 @@
       "requirement_summary": "",
       "requirement_description": "",
       "requirement_detail_fingerprint": "",
+      "source_snapshot_path": "",
+      "source_snapshot_hash": "",
+      "planner_confirmation": {
+        "status": "missing",
+        "local_path": "",
+        "feishu_url": "",
+        "document_revision": -1,
+        "confirmation_items": [],
+        "resolved_decisions": [],
+        "must_answer_ambiguities": []
+      },
+      "decomposition_path": "",
+      "decomposition_hash": "",
+      "sdd_generation": {
+        "status": "locked",
+        "input_decomposition_path": "",
+        "generated_by": "",
+        "generated_at": ""
+      },
+      "program_confirmation": {
+        "status": "pending",
+        "reviewer": "",
+        "confirmed_at": "",
+        "open_items": []
+      },
       "sdd_local_path": "",
       "sdd_attachment_name": "",
       "sdd_attachment_token": "",
