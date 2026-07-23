@@ -130,6 +130,24 @@ ACSDM 还提供一个不启用完整 ACSDM 的一次性只读接口：
 生成策划确认文档
 ```
 
+
+### 2.5 一键同步到项目
+
+如果本仓库放在项目外部，项目内的 Skill 不需要手动复制。直接在本仓库根目录运行：
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\Sync-ProjectCodexSkills.ps1 -ProjectRoot "F:\AASMWORK\UnityProject\PJ032"
+```
+
+工具会先自动拉取 GitHub 最新内容；拉取成功后，只把当前仓库中受 Git 管理的 `acsdm-project-catalog` 和 `planning-to-requirements` 同步到：
+
+```text
+<项目根目录>\.codex\skills\acsdm-project-catalog
+<项目根目录>\.codex\skills\planning-to-requirements
+```
+
+如果项目内已安装 Skill 与当前仓库版本存在差异，工具会列出差异项并询问 `yes/no`。输入 `yes` 使用当前仓库最新版本覆盖；输入 `no` 暂不同步。旧版本备份和差异报告会保存到 `F:\AAAASMWORK\AgentProject\SkillSync`。
+
 ## 3. 产物目录与所有权
 
 不同 Skill 必须使用各自目录，避免相互覆盖。

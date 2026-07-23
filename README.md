@@ -72,6 +72,35 @@ git config --local https.proxy http://127.0.0.1:7897
 
 Use `-SkipPull` only for an offline reinstall from the commit already present in that tracking clone.
 
+## One-command project sync
+
+If you keep this repository outside your Unity project and want to refresh the project-installed skills, run from this repository root:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\Sync-ProjectCodexSkills.ps1 -ProjectRoot "F:\AASMWORK\UnityProject\PJ032"
+```
+
+Default behavior:
+
+1. pulls `origin/main` with `git pull --ff-only`;
+2. exports only Git-versioned files from `acsdm-project-catalog` and `planning-to-requirements`;
+3. compares them with `<ProjectRoot>\.codex\skills\...`;
+4. lists added/modified/extra target files when differences exist;
+5. prompts `yes/no`;
+6. on `yes`, backs up the old project-installed skills under `F:\AAAASMWORK\AgentProject\SkillSync\backups\...` and overwrites them with the latest external repository version.
+
+Useful options:
+
+```powershell
+# only show differences, do not write project files
+powershell -ExecutionPolicy Bypass -File .\Sync-ProjectCodexSkills.ps1 -ProjectRoot "F:\AASMWORK\UnityProject\PJ032" -CheckOnly
+
+# auto-confirm overwrite after a successful pull
+powershell -ExecutionPolicy Bypass -File .\Sync-ProjectCodexSkills.ps1 -ProjectRoot "F:\AASMWORK\UnityProject\PJ032" -Yes
+```
+
+`-SkipPull` exists only for offline/local testing. Normal project updates should let the script pull first; if the pull fails, synchronization stops before touching the project-installed skills.
+
 ## Validation
 
 Run the bundled Codex skill validator against each directory:
