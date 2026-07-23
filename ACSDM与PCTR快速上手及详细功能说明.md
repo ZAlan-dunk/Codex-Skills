@@ -136,7 +136,9 @@ ACSDM 还提供一个不启用完整 ACSDM 的一次性只读接口：
 如果本仓库放在项目外部，项目内的 Skill 不需要手动复制。直接在本仓库根目录运行：
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File .\Sync-ProjectCodexSkills.ps1 -ProjectRoot "F:\AASMWORK\UnityProject\PJ032"
+powershell -ExecutionPolicy Bypass -File .\Sync-ProjectCodexSkills.ps1 `
+  -ProjectRoot "F:\AASMWORK\UnityProject\PJ032" `
+  -WorkRoot "F:\AAAASMWORK\AgentProject\SkillSync"
 ```
 
 工具会先自动拉取 GitHub 最新内容；拉取成功后，只把当前仓库中受 Git 管理的 `acsdm-project-catalog` 和 `planning-to-requirements` 同步到：

@@ -11,7 +11,8 @@ param(
 
     [switch]$SkipPull,
 
-    [string]$WorkRoot = 'E:\AgentSkill\ACSDM\SkillSybc'
+    [Parameter(Mandatory = $true)]
+    [string]$WorkRoot
 )
 
 Set-StrictMode -Version Latest

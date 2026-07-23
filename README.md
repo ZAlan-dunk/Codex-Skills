@@ -77,7 +77,9 @@ Use `-SkipPull` only for an offline reinstall from the commit already present in
 If you keep this repository outside your Unity project and want to refresh the project-installed skills, run from this repository root:
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File .\Sync-ProjectCodexSkills.ps1 -ProjectRoot "F:\AASMWORK\UnityProject\PJ032"
+powershell -ExecutionPolicy Bypass -File .\Sync-ProjectCodexSkills.ps1 `
+  -ProjectRoot "F:\AASMWORK\UnityProject\PJ032" `
+  -WorkRoot "F:\AAAASMWORK\AgentProject\SkillSync"
 ```
 
 Default behavior:
@@ -93,13 +95,19 @@ Useful options:
 
 ```powershell
 # only show differences, do not write project files
-powershell -ExecutionPolicy Bypass -File .\Sync-ProjectCodexSkills.ps1 -ProjectRoot "F:\AASMWORK\UnityProject\PJ032" -CheckOnly
+powershell -ExecutionPolicy Bypass -File .\Sync-ProjectCodexSkills.ps1 `
+  -ProjectRoot "F:\AASMWORK\UnityProject\PJ032" `
+  -WorkRoot "F:\AAAASMWORK\AgentProject\SkillSync" `
+  -CheckOnly
 
 # auto-confirm overwrite after a successful pull
-powershell -ExecutionPolicy Bypass -File .\Sync-ProjectCodexSkills.ps1 -ProjectRoot "F:\AASMWORK\UnityProject\PJ032" -Yes
+powershell -ExecutionPolicy Bypass -File .\Sync-ProjectCodexSkills.ps1 `
+  -ProjectRoot "F:\AASMWORK\UnityProject\PJ032" `
+  -WorkRoot "F:\AAAASMWORK\AgentProject\SkillSync" `
+  -Yes
 ```
 
-`-SkipPull` exists only for offline/local testing. Normal project updates should let the script pull first; if the pull fails, synchronization stops before touching the project-installed skills.
+`-SkipPull` exists only for offline/local testing. Normal project updates should let the script pull first; if the pull fails, synchronization stops before touching the project-installed skills. The work root is an external input too, so you can keep it on any machine-specific path without editing the script.
 
 ## Validation
 
