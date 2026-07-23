@@ -41,7 +41,7 @@ Read the current feature's planner confirmation document, parse every per-item r
 Required actions:
 
 1. Locate exactly one current planner confirmation document from sidecar or Feature ID.
-2. Parse the reply code block below each ambiguity / confirmation item. Do not rely on a document-level reply section.
+2. Parse the reply code block below each ambiguity / confirmation item. Use the item heading number as the identity; do not require or parse an item ID inside the code block. Do not rely on a document-level reply section.
 3. If any must-answer ambiguity has an empty or invalid reply, set `planner_confirmation.status=needs_revision` and stop.
 4. Write the selected option, planner supplement, resolved rule, and unresolved items back into the decomposition file.
 5. If all must-answer ambiguities are resolved, set `planner_confirmation.status=confirmed` and `sdd_generation.status=ready`.
@@ -78,7 +78,7 @@ If no must-answer ambiguity exists, write: `本轮未发现需要策划确认的
 
 ## Per-Item Reply Blocks
 
-There is no document-level reply section. Every ambiguity and every planner-facing confirmation / improvement item must include its own reply code block immediately under the item.
+There is no document-level reply section. Every ambiguity and every planner-facing confirmation / improvement item must include its own reply code block immediately under the item. The code block contains only two fields: `选择：` and `补充：`; the item number comes from the heading above it.
 
 Required ambiguity item format:
 
@@ -98,7 +98,8 @@ Required ambiguity item format:
 影响：<short implementation / QA / player impact>
 
 ```text
-A-01: 选择 A / B / C，补充：
+选择：
+补充：
 ```
 ````
 
@@ -112,7 +113,8 @@ Required confirmation / improvement item format:
 推荐处理：<recommendation>
 
 ```text
-C-01: 接受 / 不接受 / 调整为：
+选择：
+补充：
 ```
 ````
 
@@ -120,7 +122,7 @@ C-01: 接受 / 不接受 / 调整为：
 
 The planner confirmation document should be short and readable:
 
-- write natural-language feature understanding;
+- write only a short feature-demand description in the planner confirmation document; keep full understanding and breakdown in the local decomposition file;
 - separate planner-facing issues from programmer/resource/owner issues;
 - do not include implementation class names, API sketches, code drafts, or long file path lists unless necessary for evidence;
 - do not paste source planning prose, Feishu XML, images, tables, or ACSDM full bodies;

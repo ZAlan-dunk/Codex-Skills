@@ -113,11 +113,12 @@ The planner confirmation document must contain:
 
 1. a top ambiguity list;
 2. a top planner-facing confirmation/improvement list;
-3. natural-language functional understanding;
-4. functional breakdown;
-5. detail sections for every ambiguity and confirmation/improvement item;
-6. one reply code block immediately under each item detail;
-7. compact evidence index.
+3. one short feature-demand description;
+4. detail sections for every ambiguity and confirmation/improvement item;
+5. one reply code block immediately under each item detail, using exactly two fields: `选择：` and `补充：`;
+6. compact evidence index marked as planner-optional.
+
+Full functional understanding and functional breakdown must stay in the local decomposition file, not in the planner confirmation document.
 
 Forbidden in the planner confirmation document:
 
@@ -125,7 +126,8 @@ Forbidden in the planner confirmation document:
 - fabricated ambiguity points;
 - long ACSDM body copies;
 - source planning prose copied paragraph by paragraph;
-- implementation code drafts or long class/file lists unless they are necessary evidence.
+- implementation code drafts or long class/file lists unless they are necessary evidence;
+- full functional understanding or full functional breakdown sections.
 
 Allowed item statuses: `must_answer`, `optional`, `resolved`, `needs_revision`.
 

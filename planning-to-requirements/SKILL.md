@@ -109,7 +109,7 @@ Select exactly one mode from the gate and follow its reference. The following ru
 
 ## Confirmation Gate
 
-PCTR-A keeps the existing confirmation requirements below. PCTR-B has two gates: first the lightweight planner confirmation document must resolve every must-answer planner ambiguity and update the decomposition; then the detailed local SDD Markdown must be reviewed by the programmer and synchronized/confirmed when an attachment is used. The planner confirmation document does not use a document-level reply section; every ambiguity or confirmation item must have its own reply code block immediately below it.
+PCTR-A keeps the existing confirmation requirements below. PCTR-B has two gates: first the lightweight planner confirmation document must resolve every must-answer planner ambiguity and update the decomposition; then the detailed local SDD Markdown must be reviewed by the programmer and synchronized/confirmed when an attachment is used. The planner confirmation document does not use a document-level reply section; every ambiguity or confirmation item must have its own reply code block immediately below it. The code block itself uses only two lines: `选择：` and `补充：`; the item identity comes from the heading above the block.
 
 Before formal plan generation, require:
 
