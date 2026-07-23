@@ -194,13 +194,25 @@ def main() -> int:
         expected = {"pending": (False, False), "confirmed": (True, False), "ambiguous": (False, True)}[status]
         if (yes, no) != expected:
             errors.append(f"{feature_id}: checkbox state does not match sidecar status")
-        has_attachment = bool(item.get("sdd_attachment_token") or item.get("sdd_attachment_url"))
-        if status == "confirmed" and (
-            not item.get("sdd_local_path")
-            or not has_attachment
-            or int(item.get("sdd_attachment_document_revision", -1)) < 0
-        ):
-            errors.append(f"{feature_id}: confirmed without local Markdown attachment identity/revision")
+        attachment_name = str(item.get("sdd_attachment_name", "")).strip()
+        attachment_token = str(item.get("sdd_attachment_token", "")).strip()
+        attachment_url = str(item.get("sdd_attachment_url", "")).strip()
+        attachment_revision = int(item.get("sdd_attachment_document_revision", -1))
+        has_attachment_metadata = bool(
+            attachment_name
+            or attachment_token
+            or attachment_url
+            or attachment_revision >= 0
+        )
+        if has_attachment_metadata:
+            if attachment_name != "B-01-runtime-sdd.md":
+                errors.append(f"{feature_id}: SDD attachment name must be B-01-runtime-sdd.md")
+            if not attachment_token and not attachment_url:
+                errors.append(f"{feature_id}: SDD attachment token or URL is missing")
+            if attachment_revision < 0:
+                errors.append(f"{feature_id}: SDD containing-document revision is missing")
+        if status == "confirmed" and not item.get("sdd_local_path"):
+            errors.append(f"{feature_id}: confirmed without current local Markdown identity")
         if status == "confirmed" and item.get("sdd_status") != "Approved":
             errors.append(f"{feature_id}: confirmed SDD status must be Approved")
         if status == "confirmed" and not item.get("sdd_version"):

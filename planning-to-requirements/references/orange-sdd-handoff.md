@@ -52,11 +52,12 @@ If exact-position attachment or the required callout formatting cannot be verifi
 
 Attachment does not equal confirmation.
 
-- Draft or In Review SDDs may be attached, but plan generation stays locked.
-- `SDD已确认` requires a current local Markdown identity, attachment reference, containing-document revision, and no blocking pending decision.
-- `SDD存在歧义需要修改` records ambiguity and keeps the feature locked.
+- Draft or In Review SDDs may be attached. After planner confirmation, a local `Draft / pending-approval` implementation plan may be generated for joint review even while SDD confirmation is pending.
+- `SDD已确认` requires a current local Markdown identity, explicit programmer/user approval, and no blocking pending decision. A Feishu attachment is optional for local approval; if registered, its attachment reference and containing-document revision must be complete and current.
+- `SDD存在歧义需要修改` records ambiguity and keeps plan approval/implementation locked; an existing review plan remains pending and may be revised with the SDD.
+- `<FEATURE-ID> 程序已确认，开始实施` validates current SDD/plan identities and blocking decisions, then atomically approves both before implementation.
 - A revised SDD updates the same `B-01-runtime-sdd.md` and replaces or adds a new file attachment snapshot inside the same feature section and advances the containing document revision; never silently overwrite planner-entered notes.
 
 ## Implementation Plan Contract
 
-The implementation plan remains a local artifact path in PCTR-B. Do not auto-upload it. After successful development, program staff may upload it manually and update the path/link when explicitly requested.
+The implementation plan remains a local artifact path in PCTR-B. It may be generated together with a Draft SDD after planner confirmation, but must remain `Draft / pending-approval` until program/user review. Do not auto-upload it. After successful development, program staff may upload it manually and update the path/link when explicitly requested.

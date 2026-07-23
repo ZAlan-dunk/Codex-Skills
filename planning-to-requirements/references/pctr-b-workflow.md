@@ -113,8 +113,9 @@ Preferred same-session sequence when both are enabled:
 4. In a later Orange task, pass the source planning URL/revision, exact heading path, and confirmed `A-02-feature-decomposition.md` to `pctr-b-feature-lookup-interface.md`. Provide the expected `B-01-runtime-sdd.md` path only when a PCTR-bound SDD snapshot is requested.
 5. PCTR-B returns one lookup receipt containing the exact full/base Feature IDs, planning sequence, title, source identity, development-document link, sidecar path, feature artifact folder, confirmed decomposition identity, and B-01 output identity. The lookup is read-only.
 6. Orange may generate its normal OUF artifacts under `docs/forge-artifacts/` and, when requested by the active workflow, also generate or export a PCTR-bound Draft SDD at `.PCTR/<planning-version>/<FEATURE-ID>/B-01-runtime-sdd.md`. Its metadata copies the exact lookup receipt fields and uses the confirmed `A-02-feature-decomposition.md` as its product-rule source.
-7. After static validation, register the OUF artifact paths/hashes in the PCTR sidecar using `register_pctr_b_ouf_artifact.py`.
-8. If a PCTR-bound `B-01-runtime-sdd.md` exists, PCTR returns the local path and exact target feature heading for manual Feishu upload. After upload, `登记PCTR-B Markdown附件 <FEATURE-ID>` records attachment identity. Confirmation remains pending.
+7. Once the Draft SDD is structurally complete, Orange may immediately generate a linked implementation plan for joint review. The plan must be marked `Draft / pending-approval`, cite the exact Draft SDD path/hash, carry unresolved technical review decisions forward, and must not authorize code, Unity assets, or plan execution.
+8. After static validation, register the OUF artifact paths/hashes in the PCTR sidecar using `register_pctr_b_ouf_artifact.py`.
+9. If a PCTR-bound `B-01-runtime-sdd.md` exists, PCTR returns the local path and exact target feature heading for manual Feishu upload. After upload, `登记PCTR-B Markdown附件 <FEATURE-ID>` records attachment identity. Confirmation remains pending. Local review-plan generation does not require attachment registration.
 
 If the PCTR-B development document, sidecar, Feishu document link, confirmed decomposition, planner confirmation, or source match is missing/ambiguous, stop before SDD generation. Never generate an unbound SDD and later guess its feature by title.
 
@@ -123,7 +124,7 @@ Fallback cross-task sequence when they are not enabled together:
 1. Keep or export the PCTR-B feature ID, requirement description, confirmed `A-02-feature-decomposition.md` path, and expected `B-01-runtime-sdd.md` path.
 2. Enable Orange Unity Forge in a later turn.
 3. Generate one role-based Draft SDD at the expected `B-01-runtime-sdd.md` path. Its metadata must include the exact PCTR feature ID and confirmed decomposition identity.
-4. Review and revise the SDD.
+4. Generate the linked `Draft / pending-approval` implementation plan and review/revise it together with the SDD.
 5. Re-enable PCTR-B.
 6. Register OUF artifact paths in PCTR, then upload any required `.md` manually and run `登记PCTR-B Markdown附件 <FEATURE-ID>`.
 
@@ -143,25 +144,27 @@ On the exact command `同步PCTR-B SDD <FEATURE-ID>`:
 
 If zero or multiple SDDs match, stop and report candidates. Do not match by title alone when a feature ID is available.
 
-## 8. Confirm or Return the SDD
+## 8. Confirm or Return the Joint Review Package
 
-- `<FEATURE-ID> SDD已确认` or `<FEATURE-ID> 程序已确认`: require the current local Markdown identity, confirmed decomposition, and no must-answer SDD decision. If the SDD is attached in Feishu, require a matching attachment reference and containing development-document revision; set sidecar `sdd_status=Approved`, `sdd_confirmation_status=confirmed`, and `program_confirmation.status=confirmed`.
-- `<FEATURE-ID> SDD存在歧义需要修改`: select only the ambiguity checkbox; record the issue; set `sdd_confirmation_status=ambiguous`; keep planning locked.
+- `<FEATURE-ID> SDD已确认` or `<FEATURE-ID> 程序已确认`: require the current local Markdown identity, confirmed decomposition, and no must-answer SDD decision. If the SDD is attached in Feishu, require a matching attachment reference and containing development-document revision; set sidecar `sdd_status=Approved`, `sdd_confirmation_status=confirmed`, and `program_confirmation.status=confirmed`. A linked plan may still remain pending approval.
+- `<FEATURE-ID> 程序已确认，开始实施`: require the current local SDD and plan identities/hashes, confirmed decomposition, no blocking SDD or plan decision, and explicit implementation authority. Atomically set `sdd_status=Approved`, `sdd_confirmation_status=confirmed`, `program_confirmation.status=confirmed`, and `technical_plan_status=approved`, then enter implementation. Any stale identity or unresolved blocking decision stops the command before state or code changes.
+- `<FEATURE-ID> SDD存在歧义需要修改`: select only the ambiguity checkbox; record the issue; set `sdd_confirmation_status=ambiguous`; keep plan approval and implementation locked. The existing review plan may be revised with the SDD but remains pending.
 
 Exactly one checkbox may be selected after a decision. Both unchecked means pending. Both checked is invalid.
 
 ## 9. Generate the Implementation Plan
 
-`开始 <FEATURE-ID> 功能开发` requires:
+Generating the joint-review implementation plan through `开始 <FEATURE-ID> 功能开发` requires:
 
 - `planner_confirmation.status=confirmed`;
-- `sdd_confirmation_status=confirmed` or explicit programmer confirmation recorded for the current local SDD;
 - current local SDD path; if the SDD was attached or synchronized to Feishu, the attachment reference and containing development-document revision must also match;
 - matching source revision;
 - ACSDM and code evidence;
-- no unresolved must-answer decision.
+- no unresolved must-answer planner decision.
 
-Generate the route-appropriate implementation plan locally and write its path under `3. 实施计划工件的路径`. For small low-risk work where the user says `程序已确认，开始实施`, a short local implementation checklist may replace the full plan; cross-module, high-risk, save/protocol, architecture, SDK, or external-write work still requires a full plan and approval. Do not upload implementation artifacts automatically.
+Generate the route-appropriate implementation plan locally, mark it `Draft / pending-approval`, cite the current Draft SDD identity, and write its path under `3. 实施计划工件的路径`. Copy unresolved technical/program review decisions into the plan as blocking review items; do not invent resolutions. The Draft SDD and pending plan are reviewed together. For small low-risk work, a short local implementation checklist may replace the full plan only when the user explicitly asks; cross-module, high-risk, save/protocol, architecture, SDK, or external-write work still requires a full plan. Do not upload implementation artifacts automatically.
+
+Plan approval and implementation require the current SDD and plan identities, no blocking review item, `sdd_status=Approved`, `sdd_confirmation_status=confirmed`, and `technical_plan_status=approved`. These states may be set separately through the compatible commands or atomically through `<FEATURE-ID> 程序已确认，开始实施`.
 
 ## 10. Implement, Accept, and Record Bugs
 

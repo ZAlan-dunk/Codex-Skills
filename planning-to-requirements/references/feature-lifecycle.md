@@ -18,6 +18,7 @@ PCTR-B additionally stores:
 
 | Field | Values |
 |---|---|
+| `sdd_status` | `Draft`, `In Review`, `Approved` |
 | `sdd_confirmation_status` | `pending`, `confirmed`, `ambiguous` |
 
 ## Legal Transitions
@@ -35,11 +36,11 @@ accepted + explicit completion command -> development_status=completed and final
 
 ## Gates
 
-- Final plan generation requires `planning_confirmation_status=confirmed`.
+- PCTR-A final plan generation requires `planning_confirmation_status=confirmed` and its existing confirmation gate.
 - In PCTR-B, non-missing planner confirmation also requires a current A-01 local path, attachment token/block identity, and containing development-document revision. A separate planner-confirmation Docx/Wiki URL is invalid.
-- In PCTR-B, final plan generation instead requires `sdd_confirmation_status=confirmed`, one current local SDD Markdown path, a matching attachment reference inside the feature section, the containing development-document revision, and no blocking SDD decision.
+- In PCTR-B, joint-review plan generation requires `planner_confirmation.status=confirmed`, one current local Draft SDD Markdown path, matching source/decomposition identity, and no unresolved must-answer planner decision. It does not require SDD approval or Feishu attachment registration; the plan remains `pending-approval`.
 - Plan approval requires the explicit command `批准 <FEATURE-ID> 技术方案` after a route-appropriate plan is generated and validated.
-- Implementation requires `technical_plan_status=approved` plus an explicit implementation command.
+- Implementation requires the current SDD and plan identities, `sdd_status=Approved`, `sdd_confirmation_status=confirmed`, `technical_plan_status=approved`, no blocking review decision, and an explicit implementation command. `<FEATURE-ID> 程序已确认，开始实施` may validate and set these approval states atomically before execution.
 - Planning acceptance submission requires implementation and technical verification evidence.
 - Completion requires `planning_acceptance_status=accepted`, no open blocking bugs, and the explicit completion command.
 

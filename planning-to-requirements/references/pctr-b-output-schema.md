@@ -273,7 +273,7 @@ For any planner-confirmation status other than `missing`, `attachment_name` may 
 
 Allowed `sdd_confirmation_status`: `pending`, `confirmed`, `ambiguous`.
 
-`sdd_confirmation_status=confirmed` requires `sdd_status=Approved`, a non-empty local SDD path, an attachment token or URL, and a non-negative containing development-document revision.
+`sdd_confirmation_status=confirmed` requires `sdd_status=Approved`, a non-empty current local SDD path, and explicit programmer/user approval. A Feishu SDD attachment is optional for local joint approval and implementation. If any SDD attachment field is registered, `sdd_attachment_name` must equal `B-01-runtime-sdd.md`, a token or URL must be present, and the containing development-document revision must be non-negative and current.
 
 ## Source Authority
 

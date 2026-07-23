@@ -26,7 +26,7 @@ For `开始 <FEATURE-ID> 功能开发`:
 
 - read the active PCTR mode and the matching requirement feature section;
 - PCTR-A: read the synchronized planner summary and confirmation revision;
-- PCTR-B: read the confirmed local SDD Markdown, its attachment reference, the containing development-document revision, source feature section, and sidecar;
+- PCTR-B: read the confirmed local SDD Markdown, source feature section, sidecar, and implementation plan; if a Feishu SDD attachment is registered, also read and validate its attachment reference and containing development-document revision;
 - verify the mode-specific confirmation gate;
 - retrieve ACSDM and code evidence;
 - generate the route-specific plan only.
@@ -69,7 +69,7 @@ Implementation or bug records should include:
 For PCTR-B, also include:
 
 - PCTR mode `B`;
-- local SDD path, attachment token/URL/name, and containing development-document revision;
+- local SDD path; when a Feishu SDD attachment exists, also include its token/URL/name and containing development-document revision;
 - SDD confirmation result;
 - local implementation-plan artifact path;
 - all bug-record paths linked from the single development document.

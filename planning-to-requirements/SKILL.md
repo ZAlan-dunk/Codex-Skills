@@ -101,11 +101,11 @@ Select exactly one mode from the gate and follow its reference. The following ru
 4. Score and pre-route each function to default ABC, enhanced ABC, or SDD.
 5. Create the mode-specific requirement development document.
 6. PCTR-A creates the paired planning confirmation/acceptance document. PCTR-B first creates a lightweight per-feature planner confirmation Markdown and the single local decomposition/context package. PCTR reports the exact Feishu target; the user/program manually uploads the A-01 Markdown and PCTR records the attachment. Only after planner confirmation may OUF generate detailed development artifacts.
-7. Keep SDD generation locked until PCTR-B planner confirmation passes; keep formal plan or implementation locked until the active mode's SDD/program confirmation gate passes.
+7. Keep SDD and review-plan generation locked until PCTR-B planner confirmation passes. After that gate, PCTR-B may generate a joint review package containing a Draft SDD and a `pending-approval` implementation plan. Keep code, Unity asset changes, and plan execution locked until the current SDD and plan pass the program/user approval gate.
 8. On confirmation, synchronize the authoritative planner decision, source revision, route, and local state manifest.
-9. On `开始 <FEATURE-ID> 功能开发`, read the confirmed requirement, planner decision, ACSDM catalog, and code evidence; generate a detailed plan according to the selected route and set `technical_plan_status=pending-approval`. Do not modify code.
-10. On `批准 <FEATURE-ID> 技术方案`, validate the route-appropriate plan and set `technical_plan_status=approved`. Do not modify code.
-11. On `开始实施 <FEATURE-ID>`, implement only an approved plan and follow the ACSDM authorization/recording rules.
+9. On `开始 <FEATURE-ID> 功能开发`, read the confirmed requirement, planner decision, ACSDM catalog, current Draft SDD, and code evidence; generate or refresh the detailed implementation plan, mark it `Draft / pending-approval`, and present it together with the Draft SDD for joint review. Do not modify code.
+10. On `批准 <FEATURE-ID> 技术方案`, validate the route-appropriate plan and set `technical_plan_status=approved`. Do not modify code. The compatible combined command `<FEATURE-ID> 程序已确认，开始实施` validates the current SDD and plan identities, resolves all blocking review decisions, atomically sets the SDD and plan to approved, and then authorizes implementation.
+11. On `开始实施 <FEATURE-ID>`, implement only an approved plan against an Approved SDD and follow the ACSDM authorization/recording rules.
 12. On `提交 <FEATURE-ID> 策划验收`, PCTR-A updates the paired acceptance document; PCTR-B records the submission and any later bug artifact path in the single development document and sidecar.
 13. On acceptance failure, record the failed points and planner bug description, set the feature to bug-fix state, retrieve ACSDM/code evidence, and generate a first analysis. Do not mark complete.
 14. On re-submission, preserve earlier rounds and create a new acceptance round.
@@ -115,13 +115,17 @@ Select exactly one mode from the gate and follow its reference. The following ru
 
 PCTR-A keeps the existing confirmation requirements below. PCTR-B has two gates: first the lightweight planner confirmation document must resolve every must-answer planner ambiguity and update the decomposition; then the detailed local SDD Markdown must be reviewed by the programmer and synchronized/confirmed when an attachment is used. The planner confirmation document does not use a document-level reply section. Every ambiguity or confirmation item must list two to six meaningful lettered preselection options, then state `推荐选择：<代码>` and `推荐原因：<原因>` separately, followed immediately by a reply code block containing only `选择：` and `补充：`; the item identity comes from the heading above the block. A listed option code is valid, and an empty `选择：` plus non-empty `补充：` is a valid planner-authored custom solution. Both fields empty means unanswered; an unknown option code is invalid. Optional items may remain unanswered without blocking confirmation, but silence must never be treated as acceptance of the recommendation.
 
-Before formal plan generation, require:
+Before a PCTR-B joint-review implementation plan is generated, require:
 
 - all blocking confirmation items resolved;
 - a planner confirmation summary;
-- confirmation source document ID/revision in PCTR-A, or local SDD identity plus attachment reference and containing development-document revision in PCTR-B;
-- explicit user synchronization/confirmation command;
-- `planning_confirmation_status=confirmed` in PCTR-A, or `sdd_confirmation_status=confirmed` in PCTR-B.
+- the current local Draft SDD identity and confirmed decomposition identity in PCTR-B;
+- explicit planner synchronization/confirmation;
+- `planner_confirmation.status=confirmed` in PCTR-B.
+
+The review plan must be marked `Draft` or `pending-approval`, must cite the exact Draft SDD identity, and must carry every unresolved technical/program review item forward without inventing a decision. SDD attachment registration is not required merely to generate this local review plan.
+
+Before plan approval or implementation, additionally require the current SDD and plan identities, no unresolved blocking review decision, explicit program/user approval, `sdd_confirmation_status=confirmed`, `sdd_status=Approved`, and `technical_plan_status=approved`. If an SDD attachment is used, its attachment reference and containing development-document revision must match before external synchronization or approval.
 
 Unconfirmed features may be inspected through ACSDM or code, but may not receive a final plan, implementation, or completion status.
 
@@ -131,15 +135,16 @@ Unconfirmed features may be inspected through ACSDM or code, but may not receive
 - `生成 PCTR-B 功能需求开发文档`: read the complete planning outline and every selected feature body, derive the planning sequence, migrate IDs to `<序号>-<原编码>`, generate every feature in exact source order with concise table descriptions, leave undeveloped feature requirement sections empty, preserve any validated active-feature authored description, and create the local document plus sidecar under `.PCTR/<planning-version>/`. Feishu creation/upload is manual; after the user/program creates the corresponding Feishu development document, run the registration script to record its URL/revision.
 - `阅读这个功能生成策划确认文档`: for exactly one PCTR-B feature, read only the matched planning section when block/heading identity is available, ask ACSDM for related rule/history/OUF-link indexes when available, write the single local `A-02-feature-decomposition.md`, and render `A-01-planner-confirmation-snapshot.md`. Return the exact target feature heading for manual Feishu upload; after upload, register the A-01 attachment identity. Never create a separate Feishu document.
 - `策划已确认`: parse each per-item reply code block from the current PCTR-B planner confirmation document. Accept either one listed option code or an empty `选择：` with a non-empty custom `补充：`; reject unknown codes and unresolved must-answer items. Update the decomposition and sidecar, and unlock detailed SDD generation only when all must-answer planner ambiguities are resolved. Unanswered optional items remain out of scope and are not implicit approval of the recommended choice.
-- `生成详细 SDD 工件`: after planner confirmation, pass the confirmed `A-02-feature-decomposition.md` to Orange Unity Forge. Do not restrict OUF's own `docs/forge-artifacts/` outputs. Register the resulting OUF artifacts in the PCTR sidecar; if a PCTR-bound `B-01-runtime-sdd.md` is produced, keep it Draft until programmer review.
+- `生成详细 SDD 工件`: after planner confirmation, pass the confirmed `A-02-feature-decomposition.md` to Orange Unity Forge. Do not restrict OUF's own `docs/forge-artifacts/` outputs. Register the resulting OUF artifacts in the PCTR sidecar; if a PCTR-bound `B-01-runtime-sdd.md` is produced, keep it Draft until programmer review. The same task may also generate a linked `Draft / pending-approval` implementation plan for joint review; this does not authorize implementation.
 - `OUF → PCTR-B 功能编码查询`: internal read-only lookup used only when both suites are active; return one exact Feature ID and target receipt without changing state.
 - `同步PCTR-B SDD <FEATURE-ID>`: locate and validate the uniquely matched local `B-01-runtime-sdd.md` when present, then return the exact target feature heading and local path for manual Feishu upload. Do not automatically upload or create a separate Feishu SDD document unless the user explicitly requests an API-based insertion and exact-position verification is available.
 - `登记PCTR-B Markdown附件 <FEATURE-ID>`: after manual insertion, record the attachment token/URL/name and the containing development-document revision, then leave confirmation pending.
 - `登记PCTR-B OUF产物 <FEATURE-ID>`: record OUF artifact paths/hashes/types from `docs/forge-artifacts/` in the sidecar so PCTR and ACSDM can find them without copying OUF documents.
-- `<FEATURE-ID> SDD已确认` or `<FEATURE-ID> 程序已确认`: require the current local Markdown identity, confirmed decomposition, and no blocking SDD decision; when an attachment is used, require its matching attachment reference, select `已确认`, clear `存在歧义需要修改`, synchronize the containing document revision, and unlock plan generation or explicit implementation according to risk.
-- `<FEATURE-ID> SDD存在歧义需要修改`: select the ambiguity checkbox, clear `已确认`, record the issue, and keep planning locked.
+- `<FEATURE-ID> SDD已确认` or `<FEATURE-ID> 程序已确认`: require the current local Markdown identity, confirmed decomposition, and no blocking SDD decision; approve the SDD. When an attachment is used, also require its matching attachment reference, select `已确认`, clear `存在歧义需要修改`, and synchronize the containing document revision. A separately pending plan still requires plan approval before implementation.
+- `<FEATURE-ID> 程序已确认，开始实施`: require current matching SDD and plan identities, a confirmed decomposition, no blocking SDD/plan decision, and explicit current-turn implementation authority; atomically set `sdd_status=Approved`, `sdd_confirmation_status=confirmed`, and `technical_plan_status=approved`, then begin implementation. If any identity is stale or any blocking item remains, stop before state or code changes.
+- `<FEATURE-ID> SDD存在歧义需要修改`: select the ambiguity checkbox, clear `已确认`, record the issue, and keep plan approval/implementation locked; an existing review plan may be revised but remains pending.
 - `同步策划确认 <FEATURE-ID>` or `<FEATURE-ID> 策划已确认`: validate blocking items, synchronize decisions, recalculate route, and unlock planning.
-- `开始 <FEATURE-ID> 功能开发`: if planner confirmation is missing or pending, enter the PCTR-B confirmation gate instead of planning or implementation: generate/update A-01 and A-02, attach A-01 in the matching feature section, keep SDD/plan/implementation locked, and report the pending planner replies. Only after the required confirmation gates pass does this command generate the detailed technical plan.
+- `开始 <FEATURE-ID> 功能开发`: if planner confirmation is missing or pending, enter the PCTR-B confirmation gate instead of planning or implementation: generate/update A-01 and A-02, attach A-01 in the matching feature section, keep SDD/plan/implementation locked, and report the pending planner replies. After planner confirmation, generate or refresh the Draft SDD plus `Draft / pending-approval` implementation plan as a joint review package; do not modify code until program/user approval.
 - `批准 <FEATURE-ID> 技术方案`: approve the validated route-specific plan and unlock implementation; do not modify code.
 - `开始实施 <FEATURE-ID>`: execute an approved plan.
 - `提交 <FEATURE-ID> 策划验收`: enter planner acceptance and populate the current round.
@@ -192,7 +197,7 @@ For the preferred coexisting Orange handoff, resolve the feature through `refere
 ## Common Failures
 
 - Do not treat document editing as explicit planner confirmation.
-- Do not generate a final ABC/SDD plan for an unconfirmed feature.
+- Do not generate a final or executable ABC/SDD plan for an unconfirmed feature. A PCTR-B review plan may be generated only after planner confirmation and must remain `Draft / pending-approval` while its SDD is Draft.
 - Do not let acceptance failure overwrite earlier acceptance rounds.
 - Do not mark code-complete as planning-accepted.
 - Do not mark planning-accepted as feature-complete without the explicit completion command.

@@ -106,7 +106,7 @@ When a request uses a PCTR feature ID or lifecycle command:
 1. Read `.codex/skill-gates.json`, require `pctr=true`, and branch on `pctr_mode`.
 2. Read the PCTR requirement feature section and verify the stable feature ID.
 3. PCTR-A plan generation requires `planning_confirmation_status=confirmed` and the synchronized planner summary.
-4. PCTR-B plan generation requires `sdd_confirmation_status=confirmed`, the current local SDD Markdown path, its attachment identity, the containing Feishu development-document revision, and the matching feature section.
+4. PCTR-B plan generation requires `sdd_confirmation_status=confirmed`, the current local SDD Markdown path, and the matching feature section. A Feishu SDD attachment is optional for local approval; when registered, its attachment identity and containing development-document revision must also match.
 5. Read the ACSDM root index, then `00Rule` for rule-first triggers, matching module indexes, directly relevant documents, and referenced code.
 6. `开始 <FEATURE-ID> 功能开发` means generate a route-appropriate detailed plan only; do not edit code. In PCTR-B, do not generate a second SDD; generate the implementation plan referenced by the confirmed SDD.
 7. `开始实施 <FEATURE-ID>` requires an approved plan and explicit implementation authorization.

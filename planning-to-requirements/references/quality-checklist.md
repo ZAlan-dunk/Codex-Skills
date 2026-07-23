@@ -37,7 +37,7 @@
 - [ ] Every A-01 reply-bearing item has two to six meaningful consecutive lettered options, a `推荐选择` code that exists in that list, and a separate non-empty `推荐原因`.
 - [ ] A listed code is accepted; an empty selection plus non-empty supplement is accepted as a custom planner rule; an unknown code is rejected; both fields empty blocks only must-answer items and never implies acceptance of the recommendation.
 - [ ] Every detailed SDD remains the feature-local `B-01-runtime-sdd.md`; no per-feature Feishu SDD Docx was created.
-- [ ] Every confirmed SDD has a current attachment reference and containing development-document revision.
+- [ ] Every confirmed SDD has a current local B-01 identity and explicit programmer/user approval. If a Feishu SDD attachment is registered, its name, token/URL, and containing development-document revision are complete and current.
 - [ ] The Feishu feature section matches the required structural pattern: path quote, optional concise requirement section, three highlighted SDD blocks, path code block, Markdown attachment, implementation-plan code block, Bug table, optimization section, and divider.
 - [ ] Implementation plans remain local paths unless explicit upload is requested.
 - [ ] Bug record paths are append-only.
@@ -66,11 +66,11 @@
 ## Planning and Implementation Gates
 
 - [ ] PCTR-A unconfirmed features cannot generate final ABC/SDD.
-- [ ] PCTR-B features cannot generate a detailed OUF SDD until lightweight planner confirmation is confirmed.
-- [ ] PCTR-B features cannot generate an implementation plan or implementation checklist until the detailed local SDD is confirmed by program review.
-- [ ] `开始功能开发` generates a plan only and ends at `technical_plan_status=pending-approval`.
+- [ ] PCTR-B features cannot generate a detailed OUF SDD or its joint-review plan until lightweight planner confirmation is confirmed.
+- [ ] A plan generated from a Draft SDD is explicitly marked `Draft / pending-approval`, cites the exact SDD identity, and carries unresolved technical review items forward.
+- [ ] `开始功能开发` generates or refreshes the Draft SDD plus review plan only and ends at `technical_plan_status=pending-approval`.
 - [ ] `批准 FEATURE-ID 技术方案` is required to reach `technical_plan_status=approved`.
-- [ ] Code edits require both an approved plan and `开始实施` or equivalent implementation authorization.
+- [ ] Code edits require a current Approved SDD, an approved plan, no blocking review decision, and `开始实施` or equivalent atomic implementation authorization.
 - [ ] SDD still retrieves ACSDM first.
 
 ## Acceptance and Bugs
