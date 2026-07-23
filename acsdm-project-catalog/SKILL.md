@@ -15,9 +15,9 @@ The exact standalone command `调用ACSDM的接口，阅读相关文档` is the 
 
 Use ACSDM to manage a project-local directory-style Markdown knowledge catalog. The catalog root is always `<project root>/.ACSDM`.
 
-Core principle: the project-local `.ACSDM` folder is the source of truth. Read indexes first, read only task-relevant documents, and do not modify project files or catalog documents until the user's intent is clear and authorized.
+Core principle: the project-local `.ACSDM` folder is the source of truth for ACSDM-owned records. Read indexes first, read only task-relevant documents, and do not modify project files or catalog documents until the user's intent is clear and authorized. When OUF is the owner of development logs, ACSDM should link to OUF artifacts instead of copying their bodies.
 
-`.ACSDM/` is ACSDM's only persistent artifact root. Never create new ACSDM indexes, records, plans, reports, or migration outputs under `<project root>/docs/`; that tree is reserved for Orange Unity Forge. Historical ACSDM records may retain old external `docs/...` references as evidence, but mark them legacy/stale when encountered and never use them as the destination for new records. PCTR links must point to `.PCTR/A/...` or `.PCTR/B/...`.
+`.ACSDM/` is ACSDM's only persistent artifact root. Never create new ACSDM indexes, records, plans, reports, or migration outputs under `<project root>/docs/`; that tree is reserved for Orange Unity Forge. ACSDM may maintain `.ACSDM/08OUFDevelopmentLogs/0800Index.md` as a link index pointing to OUF files under `docs/forge-artifacts/`, but it must not duplicate OUF document bodies. Historical ACSDM records may retain old external `docs/...` references as evidence, but mark them legacy/stale when encountered and never use them as the destination for new records. PCTR links must point to `.PCTR/A/...`, `.PCTR/<planning-version>/...`, or registered OUF artifact paths.
 
 ## Quick Workflow
 
@@ -25,13 +25,28 @@ Core principle: the project-local `.ACSDM` folder is the source of truth. Read i
 2. If `.ACSDM` is missing, report it. Initialize only when the user explicitly requests initialization or authorizes catalog edits; never initialize it silently during an unrelated task.
 3. If `.ACSDM` exists, read `.ACSDM/0000ACSDMRootIndex.md` first. If the root index is missing, inspect folder and Markdown filenames only, report the repair need, and create it only after explicit authorization.
 4. After reading the root index, verify the standard folders and module indexes. Repair only authorized missing structure.
-5. Match the request to modules using `references/retrieval-policy.md`.
-6. Read the selected module index, then only the Markdown files directly relevant to the task.
+5. Match the request to modules using `references/retrieval-policy.md`. If the request mentions OUF/Orange development logs, forge artifacts, SDD/Plan/Report/Evidence, or a PCTR Feature ID with previous development history, include `08OUFDevelopmentLogs/0800Index.md` when present.
+6. Read the selected module index, then only the Markdown files directly relevant to the task. For OUF-linked rows, open the original OUF file only after the Feature ID/topic/type narrows the scope.
 7. If the request mentions rules, conventions, framework behavior, Lua/C# interaction, UI framework, popups, Excel import/export, or “按照规范”, read `00Rule` before implementation work.
 8. For larger or ambiguous requests, present A/B/C review sections and wait for explicit authorization before editing files.
 9. After authorized implementation, update ACSDM only when the user also requests recording. Prefer an existing relevant document; create a new one only when the user says “开始实施并记录” or otherwise confirms creation.
 
 Do not use an external folder as the live catalog root. External document folders can be scanned or migrated only when the user explicitly asks and approval allows access.
+
+## OUF Development Log Connector
+
+ACSDM supports two retrieval sources:
+
+1. **Native ACSDM catalog**: `.ACSDM/00Rule` through project-specific modules, used for rules, code evidence, reviews, and ACSDM-owned records.
+2. **OUF connector index**: `.ACSDM/08OUFDevelopmentLogs/0800Index.md`, generated from `docs/forge-artifacts/`, used to find OUF Context Brief / SDD / Plan / Report / Evidence / Log files without copying them.
+
+Update the connector index with:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File acsdm-project-catalog/scripts/acsdm-link-ouf.ps1 -ProjectRoot <project-root>
+```
+
+Retrieval rule: filter by PCTR Feature ID or base Feature ID first, then by artifact type, then by topic/title. Open only selected original OUF artifacts. Do not create an ACSDM duplicate of an OUF development log; if ACSDM recording is requested, record the decision/result and keep the OUF path/hash as evidence.
 
 ## Planning Gate
 
@@ -82,6 +97,7 @@ Use these scripts when deterministic filesystem operations are helpful:
 - `scripts/acsdm-init.ps1`: initialize or repair project-local `.ACSDM`, create standard folders/indexes, and exclude `.ACSDM/` locally from git when possible.
 - `scripts/acsdm-scan.ps1`: scan folder and Markdown filenames without reading document bodies.
 - `scripts/acsdm-update-index.ps1`: regenerate root and module indexes from filenames and timestamps.
+- `scripts/acsdm-link-ouf.ps1`: scan OUF `docs/forge-artifacts/` and refresh `.ACSDM/08OUFDevelopmentLogs/0800Index.md` without copying OUF bodies.
 
 ## PCTR Feature Lifecycle Integration
 

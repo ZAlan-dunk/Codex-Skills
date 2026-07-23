@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Allow Orange Unity Forge to hand off one newly generated feature-local `B-01-runtime-sdd.md` role-based SDD Markdown file to an existing PCTR-B feature section. In the normal active path, this interface consumes the receipt from `pctr-b-feature-lookup-interface.md`. Use the narrow fallback only when PCTR is disabled and the SDD already contains an exact Feature ID obtained earlier. Never create a separate Feishu SDD document.
+Allow Orange Unity Forge or PCTR to hand off a feature-local `B-01-runtime-sdd.md` role-based SDD Markdown file to an existing PCTR-B feature section when a PCTR-bound SDD snapshot is produced. OUF native artifacts under `docs/forge-artifacts/` are registered separately and are not constrained by this interface. Never create a separate Feishu SDD document.
 
 ## Gate
 
@@ -31,8 +31,8 @@ For one Feature ID only:
 1. Read the generated SDD and require its path/name to equal the receipt's `.PCTR/<planning-version>/<FEATURE-ID>/B-01-runtime-sdd.md`.
 2. Read the matching feature section and sidecar entry identified by the receipt.
 3. Validate SDD identity, required role sections, status, local path, source metadata, and lookup receipt freshness.
-4. Insert the local `.md` file itself as an attachment directly inside the matching feature section only when exact-position insertion and the resulting block can be verified.
-5. Write only:
+4. Do not automatically upload by default. Return the local `.md` path and exact matching feature heading for manual upload. If the user explicitly requests API insertion and exact-position verification is available, insertion may be attempted as a bounded external write.
+5. After upload/verified insertion, write only:
    - local SDD path, which must be the feature-local `B-01-runtime-sdd.md`;
    - attachment name/token/URL;
    - containing development-document revision and SDD status/version;
@@ -40,7 +40,7 @@ For one Feature ID only:
 6. Leave both confirmation checkboxes unchecked and keep `sdd_confirmation_status=pending`.
 7. Return the attachment reference and updated PCTR-B document path.
 
-If automatic exact-position insertion or callout preservation is unreliable, stop before external write and return the local Markdown path plus the exact target feature heading for user manual upload. After manual insertion, `登记PCTR-B Markdown附件 <FEATURE-ID>` performs the state-only registration.
+Default behavior is manual upload: return the local Markdown path plus the exact target feature heading. After manual insertion, `登记PCTR-B Markdown附件 <FEATURE-ID>` performs the state-only registration.
 
 ## Forbidden Operation
 
@@ -55,7 +55,8 @@ Do not:
 - enter acceptance or bug lifecycle states;
 - invoke ACSDM;
 - create a separate Feishu SDD document;
-- append the attachment to a guessed or unrelated Feishu position.
+- append the attachment to a guessed or unrelated Feishu position;
+- treat OUF native `docs/forge-artifacts/` files as PCTR-owned files.
 
 ## Failure Rules
 
@@ -69,4 +70,4 @@ Stop before external write when:
 - the SDD validator fails;
 - the target feature already records a newer attachment snapshot.
 
-After a successful automatic or manual attachment, use `sync_pctr_b_sdd.py` with `--confirmation pending`, attachment metadata, and containing-document revision to update local artifacts deterministically.
+After manual upload registration or a verified user-requested API insertion, use `sync_pctr_b_sdd.py` with `--confirmation pending`, attachment metadata, and containing-document revision to update local artifacts deterministically.

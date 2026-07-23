@@ -40,7 +40,7 @@ The attachment workflow may:
 
 1. read the matched feature-local `B-01-runtime-sdd.md`;
 2. validate it;
-3. insert the local `.md` file itself as an attachment directly inside the matching feature section when exact-position insertion can be verified;
+3. return the local `.md` path and exact matching feature section for manual upload;
 4. update the PCTR-B development document with the local path, attachment reference, status/version, and confirmation blocks;
 5. update the sidecar attachment identity, containing-document revision, and synchronization metadata.
 

@@ -18,6 +18,8 @@ Use the active task's feature, module, Bug, or review topic as the retrieval que
 
 ## Allowed Retrieval
 
+If `.ACSDM/08OUFDevelopmentLogs/0800Index.md` exists and the query mentions an OUF/Orange artifact, Feature ID, SDD, plan, report, implementation log, or previous development process, read that connector index after the root index. It is allowed to open the matched original `docs/forge-artifacts/...` file only when the index narrows the result to task-relevant artifacts. Do not copy OUF bodies into ACSDM.
+
 1. Read `.ACSDM/0000ACSDMRootIndex.md`.
 2. Match the active topic to one or more modules using `retrieval-policy.md`.
 3. Read `00Rule/0000Index.md` first when the topic involves project rules, framework behavior, Lua/C#, UI, popups, Excel, architecture, testing, or verification.

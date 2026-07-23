@@ -1,4 +1,4 @@
-param(
+﻿param(
     [Parameter(Mandatory = $true)]
     [string]$ProjectRoot,
 
@@ -16,7 +16,8 @@ function Get-AcsdmModules {
         [pscustomobject]@{ Name='04PlayerInput'; Index='0400Index.md'; Purpose='用户输入系统、拖拽填充、交互流程、输入相关修复记录。'; Keywords='输入,拖拽,DragFill,交互,填充,手势' },
         [pscustomobject]@{ Name='05PropSystem'; Index='0500Index.md'; Purpose='道具系统、道具解锁、消除错误道具、回退道具、道具弹窗。'; Keywords='道具,回退,消除错误,道具解锁,道具弹窗' },
         [pscustomobject]@{ Name='06Review'; Index='0600Index.md'; Purpose='项目开发功能审查、实现审查、审查清单、风险对照。'; Keywords='审查,review,检查清单,风险,验收' },
-        [pscustomobject]@{ Name='07ADMD'; Index='0700Index.md'; Purpose='广告接入、埋点接入、数据统计、广告/埋点相关规则和实现记录。'; Keywords='广告,埋点,AD,打点,Analytics,统计' }
+        [pscustomobject]@{ Name='07ADMD'; Index='0700Index.md'; Purpose='广告接入、埋点接入、数据统计、广告/埋点相关规则和实现记录。'; Keywords='广告,埋点,AD,打点,Analytics,统计' },
+        [pscustomobject]@{ Name='08OUFDevelopmentLogs'; Index='0800Index.md'; Purpose='连接 Orange Unity Forge 保存在 docs/forge-artifacts 下的功能开发日志、Context Brief、SDD、Plan、Report、Evidence，只保存索引不复制正文。'; Keywords='OUF,Orange,Forge,开发日志,SDD,Context Brief,Plan,Report,Evidence,功能历史' }
     )
 }
 
@@ -72,7 +73,7 @@ function New-RootIndexContent($catalogRoot, $modules) {
             $docCount = @(Get-ChildItem -LiteralPath $moduleDir -File -Filter '*.md' -Force).Count
             $updated = (Get-Item -LiteralPath $moduleDir).LastWriteTime.ToString('s')
         }
-        $lines += "| `$($module.Name)` | $($module.Purpose) | `$($module.Index)` | $($module.Keywords) | $docCount | $updated |"
+        $lines += "| ``$($module.Name)`` | $($module.Purpose) | ``$($module.Index)`` | $($module.Keywords) | $docCount | $updated |"
     }
     $lines += ''
     $lines += '## 模块映射兼容表'

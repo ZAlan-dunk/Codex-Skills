@@ -103,3 +103,13 @@ related_scripts:
 - Use concrete line ranges when known.
 - Avoid giant pasted code blocks unless the document is specifically a code reference.
 - Keep historical notes, but mark old or superseded behavior clearly.
+
+
+
+## OUF 产物连接
+
+> 仅在本文档需要引用 OUF 开发日志时填写。ACSDM 只记录索引和必要事实，不复制 `docs/forge-artifacts/` 正文。
+
+| PCTR Feature ID | OUF 产物类型 | OUF 路径 | Hash | 说明 |
+|---|---|---|---|---|
+|  |  |  |  |  |

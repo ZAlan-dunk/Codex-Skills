@@ -14,7 +14,7 @@ This is ACSDM's exclusive persistent root. New ACSDM content must not be written
 
 ## Standard Modules
 
-ACSDM creates eight generic modules by default. Project-specific modules can be added later, but these eight are the baseline.
+ACSDM creates nine generic modules by default. Project-specific modules can be added later, but these nine are the baseline.
 
 | Folder | Purpose | Index |
 |---|---|---|
@@ -26,6 +26,7 @@ ACSDM creates eight generic modules by default. Project-specific modules can be 
 | `05PropSystem` | Props/items, unlock rules, rollback props, error-removal props, and prop popups. | `0500Index.md` |
 | `06Review` | Feature review, checklists, acceptance notes, risks, and implementation audits. | `0600Index.md` |
 | `07ADMD` | Advertising, analytics, event tracking, ad SDK integration, and data reporting. | `0700Index.md` |
+| `08OUFDevelopmentLogs` | Link index for Orange Unity Forge artifacts under `docs/forge-artifacts/`; stores paths, hashes, summaries, and feature IDs without copying OUF bodies. | `0800Index.md` |
 
 ## Naming Rules
 
@@ -58,9 +59,31 @@ A project is considered initialized when these exist:
   05PropSystem/0500Index.md
   06Review/0600Index.md
   07ADMD/0700Index.md
+  08OUFDevelopmentLogs/0800Index.md
 ```
 
 No `acsdm-state.json` is required.
+
+## 08 OUF Link Index
+
+`08OUFDevelopmentLogs/0800Index.md` is a connector index, not a duplicated knowledge base. It stores compact metadata for OUF artifacts and points to the original files under `docs/forge-artifacts/`.
+
+Required table columns:
+
+| Field | Meaning |
+|---|---|
+| `PCTR Feature ID` | Full PCTR-B Feature ID when present, for example `1.2.1-XK5A-SAVE-F004`. |
+| `Base Feature ID` | Base feature ID when present, for example `XK5A-SAVE-F004`. |
+| `策案版本` | Planning/version folder or source marker when detectable. |
+| `功能名称` | Artifact title or first heading. |
+| `OUF 产物类型` | One of `context-brief`, `sdd`, `plan`, `report`, `evidence`, `log`, `bug-report`, `verification`, `other`. |
+| `OUF 路径` | Relative path to the original OUF artifact. |
+| `摘要` | One compact sentence extracted or authored from the artifact. |
+| `更新时间` | File last-write time. |
+| `Hash` | SHA-256 of the original artifact. |
+| `推荐读取场景` | When ACSDM should open the original OUF file. |
+
+When retrieving, first use this index to select relevant artifacts. Open original OUF files only after a Feature ID, base ID, title, or task topic narrows the scope.
 
 ## Root Index
 

@@ -1,4 +1,4 @@
-param(
+﻿param(
     [Parameter(Mandatory = $true)]
     [string]$ProjectRoot
 )
@@ -15,6 +15,7 @@ function Get-ModulePurpose($name) {
         '^05PropSystem$' { '道具系统、道具解锁、消除错误道具、回退道具、道具弹窗。'; break }
         '^06Review$' { '项目开发功能审查、实现审查、审查清单、风险对照。'; break }
         '^07ADMD$' { '广告接入、埋点接入、数据统计、广告/埋点相关规则和实现记录。'; break }
+        '^08OUFDevelopmentLogs$' { '连接 Orange Unity Forge 保存在 docs/forge-artifacts 下的功能开发日志、Context Brief、SDD、Plan、Report、Evidence，只保存索引不复制正文。'; break }
         default { '项目扩展模块。' }
     }
 }
@@ -55,7 +56,7 @@ foreach ($dir in Get-ChildItem -LiteralPath $CatalogRoot -Directory -Force | Sor
     $indexName = Get-ModuleIndexName $dir.Name
     $purpose = Get-ModulePurpose $dir.Name
     $mdFiles = @(Get-ChildItem -LiteralPath $dir.FullName -File -Filter '*.md' -Force | Sort-Object Name)
-    $rootLines += "| `$($dir.Name)` | $purpose | `$indexName` |  | $($mdFiles.Count) | $($dir.LastWriteTime.ToString('s')) |"
+    $rootLines += "| ``$($dir.Name)`` | $purpose | ``$indexName`` |  | $($mdFiles.Count) | $($dir.LastWriteTime.ToString('s')) |"
 
     $indexPath = Join-Path $dir.FullName $indexName
     $moduleLines = @()

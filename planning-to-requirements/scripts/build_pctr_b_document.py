@@ -340,6 +340,8 @@ def build_state(features: list[dict], args: argparse.Namespace, existing: dict) 
                 legacy_external_confirmation_urls.append(legacy_value)
         sdd_generation_prior = prior.get("sdd_generation", {}) if isinstance(prior.get("sdd_generation"), dict) else {}
         program_prior = prior.get("program_confirmation", {}) if isinstance(prior.get("program_confirmation"), dict) else {}
+        feishu_blocks_prior = prior.get("feishu_blocks", {}) if isinstance(prior.get("feishu_blocks"), dict) else {}
+        ouf_artifacts_prior = prior.get("ouf_artifacts", {}) if isinstance(prior.get("ouf_artifacts"), dict) else {}
         decomposition_path = paths["decomposition"]
         planner_confirmation_path = paths["planner_confirmation_snapshot"]
         runtime_sdd_path = paths["runtime_sdd"]
@@ -362,6 +364,14 @@ def build_state(features: list[dict], args: argparse.Namespace, existing: dict) 
             "requirement_detail_fingerprint": detail_fingerprint,
             "source_snapshot_path": decomposition_path,
             "source_snapshot_hash": prior.get("source_snapshot_hash", ""),
+            "feishu_blocks": {
+                "planning_heading_block_id": feishu_blocks_prior.get("planning_heading_block_id", ""),
+                "planning_content_block_ids": feishu_blocks_prior.get("planning_content_block_ids", []),
+                "development_feature_heading_block_id": feishu_blocks_prior.get("development_feature_heading_block_id", ""),
+                "development_sdd_heading_block_id": feishu_blocks_prior.get("development_sdd_heading_block_id", ""),
+                "last_planning_revision_checked": feishu_blocks_prior.get("last_planning_revision_checked", -1),
+                "last_development_revision_checked": feishu_blocks_prior.get("last_development_revision_checked", -1),
+            },
             "planner_confirmation": {
                 "status": planner_prior.get("status", "missing"),
                 "local_path": planner_confirmation_path,
@@ -379,6 +389,18 @@ def build_state(features: list[dict], args: argparse.Namespace, existing: dict) 
             },
             "decomposition_path": decomposition_path,
             "decomposition_hash": prior.get("decomposition_hash", ""),
+            "ouf_artifacts": {
+                "artifact_root": ouf_artifacts_prior.get("artifact_root", "docs/forge-artifacts"),
+                "context_briefs": ouf_artifacts_prior.get("context_briefs", []),
+                "sdds": ouf_artifacts_prior.get("sdds", []),
+                "plans": ouf_artifacts_prior.get("plans", []),
+                "reports": ouf_artifacts_prior.get("reports", []),
+                "evidence": ouf_artifacts_prior.get("evidence", []),
+                "logs": ouf_artifacts_prior.get("logs", []),
+                "other": ouf_artifacts_prior.get("other", []),
+                "last_linked_at": ouf_artifacts_prior.get("last_linked_at", ""),
+                "linked_by": ouf_artifacts_prior.get("linked_by", "ACSDM OUF Link Index"),
+            },
             "sdd_generation": {
                 "status": sdd_generation_prior.get("status", "locked"),
                 "input_decomposition_path": decomposition_path,

@@ -12,7 +12,7 @@ planning feature
   -> PCTR-B opens .PCTR/<planning-version>/<FEATURE-ID>/
   -> PCTR-B writes the single A-02 decomposition file
   -> PCTR-B writes the A-01 lightweight planner confirmation snapshot
-  -> PCTR-B attaches the native A-01 Markdown below the matching `2. SDD确认文档` heading
+  -> PCTR-B returns the native A-01 Markdown path and exact manual-upload target
   -> planner answers per-item code blocks
   -> PCTR-B updates decomposition
   -> OUF generates detailed SDD from the confirmed decomposition
@@ -23,7 +23,7 @@ planning feature
 
 ### `阅读这个功能生成策划确认文档`
 
-Read the current or explicitly named PCTR-B feature and create a lightweight planner confirmation Markdown file. PCTR-B has only one Feishu human document, so attach the native A-01 `.md` file inside the matched feature section; never create or import a separate planner-confirmation Docx/Wiki.
+Read the current or explicitly named PCTR-B feature and create a lightweight planner confirmation Markdown file. PCTR-B has only one Feishu human document, so return the native A-01 `.md` path and exact matched feature section for manual upload; never create or import a separate planner-confirmation Docx/Wiki.
 
 Required actions:
 
@@ -33,10 +33,10 @@ Required actions:
 4. Ask ACSDM, when available, for related project rules, historical development records, and code-evidence indexes. Store only compact index facts and paths; do not paste full ACSDM document bodies.
 5. Save or update exactly one local decomposition file: `.PCTR/<planning-version>/<FEATURE-ID>/A-02-feature-decomposition.md`. Put the source snapshot/fingerprint inside this file instead of creating another Markdown snapshot file.
 6. Render `assets/pctr-b-planner-confirmation-template.md` to `.PCTR/<planning-version>/<FEATURE-ID>/A-01-planner-confirmation-snapshot.md`, or another user-supplied target only if it still keeps the A-01 name under the same feature folder.
-7. Upload A-01 as a native file attachment to the registered Feishu development document, move it immediately below the exact matched `2. SDD确认文档` heading, and verify the resulting file block.
-8. Update sidecar `planner_confirmation.status=pending`, `feature_artifact_dir`, A-01/A-02/B-01 artifact paths, source revision, source snapshot hash, must-answer ambiguity IDs, confirmation item IDs, attachment name/token/block/URL, containing development-document revision, and sync time.
+7. Do not automatically upload A-01. Return the local A-01 path and exact matched `2. SDD确认文档` heading; the user/program manually uploads it and then registers the attachment identity.
+8. Update sidecar `planner_confirmation.status=pending`, `feature_artifact_dir`, A-01/A-02/B-01 artifact paths, `feishu_blocks`, source revision, source snapshot hash, must-answer ambiguity IDs, confirmation item IDs, and sync time. Attachment name/token/block/URL and containing-document revision are filled after manual upload registration.
 
-If exact-position insertion cannot be verified, stop and provide the local A-01 path plus exact Feature ID/heading for manual upload. Never fall back to creating a Feishu document.
+Always provide the local A-01 path plus exact Feature ID/heading for manual upload. Never fall back to creating a Feishu document.
 
 ### `策划已确认`
 
@@ -69,7 +69,7 @@ The OUF SDD request must include:
 - ACSDM/history index summary;
 - expected output path `.PCTR/<planning-version>/<FEATURE-ID>/B-01-runtime-sdd.md`;
 - instruction not to invent new planner-facing ambiguities when PCTR-B already resolved them;
-- instruction to produce only one PCTR-owned SDD Markdown file for this feature, named `B-01-runtime-sdd.md`.
+- instruction to produce OUF-owned artifacts normally and produce `B-01-runtime-sdd.md` only when the PCTR workflow requests a PCTR-bound SDD snapshot.
 
 ### `程序已确认，开始实施`
 
@@ -171,5 +171,5 @@ Default files:
 
 `A-01` is the human planner surface. `A-02` is the only living PCTR-B decomposition and includes the source snapshot/fingerprint. `B-01` is generated only after planner confirmation and is the detailed SDD that OUF/program can read for direct execution. Do not create additional `A-*.md` files or multiple decomposition versions inside the feature folder.
 
-`A-01` and `B-01` are attachments in the same matching feature section of the one Feishu development document. They are different lifecycle artifacts and may coexist under `2. SDD确认文档`; neither may be converted into or replaced by a per-feature Docx/Wiki.
+`A-01` and `B-01` are uploaded manually as attachments in the same matching feature section of the one Feishu development document and then registered in the sidecar. They are different lifecycle artifacts and may coexist under `2. SDD确认文档`; neither may be converted into or replaced by a per-feature Docx/Wiki.
 

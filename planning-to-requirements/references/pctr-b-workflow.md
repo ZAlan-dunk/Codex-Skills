@@ -2,17 +2,18 @@
 
 ## 1. Resolve Inputs
 
-Collect the complete planning source, source revision, project root, planning version (for example `M032v1.2`), document code/base code, Feishu development-document URL, implementation-plan root, bug-record root, and sidecar path.
+Collect the planning source identity, source revision, project root, planning version (for example `M032v1.2`), document code/base code, Feishu development-document URL, implementation-plan root, bug-record root, and sidecar path. For ongoing feature work, prefer the feature-level Feishu heading/block locator from the sidecar over rereading the whole planning document.
 
 Default artifact roots when the user does not specify them:
 
 - PCTR root: `<project root>/.PCTR/` (create it on first enabled PCTR action if missing)
 - PCTR-B planning-version root: `<project root>/.PCTR/<planning-version>/`, for example `<project root>/.PCTR/M032v1.2/`
 - feature artifacts: `<project root>/.PCTR/<planning-version>/<FEATURE-ID>/`
+- OUF artifacts: `<project root>/docs/forge-artifacts/` remains OUF-owned and is linked, not copied
 - implementation plans: `<project root>/.PCTR/<planning-version>/_plans/`
 - bug records: `<project root>/.PCTR/<planning-version>/_bugs/`
 
-The local development document, sidecar, feature folders, plan, and bug records are persistent PCTR artifacts. Never place them under `docs/`, `CodexTemp/PCTR/`, or `CodexTemp/OrangeUnityForge/`. PCTR-B detailed SDD output is the feature-local `B-01-runtime-sdd.md`.
+The local development document, sidecar, feature folders, plan, and bug records are persistent PCTR artifacts. Never place them under `docs/`, `CodexTemp/PCTR/`, or `CodexTemp/OrangeUnityForge/`. OUF-owned artifacts stay under `docs/forge-artifacts/` and are recorded by path/hash in the PCTR sidecar. A PCTR-bound detailed SDD, when produced, is the feature-local `B-01-runtime-sdd.md`.
 
 ## 2. Preserve the Planning Heading Framework
 
@@ -44,7 +45,7 @@ Create:
 
 The table requirement cell is a concise planning-grounded summary with markup and media removed. The matching `1. 功能需求说明` body is empty for an undeveloped feature. When a feature becomes the current design/development target, author a short functional description plus main functional points from the complete source section. Never paste source paragraphs, tables, images, media URLs, citations, or Feishu XML/HTML markup into the body.
 
-Then use the `lark-doc` Markdown creation/import workflow to create the single Feishu “SDD 工件开发文档” under the configured parent. After creation, run `scripts/register_pctr_b_feishu_document.py` to write its URL/token and revision into the local document and sidecar. No per-feature Feishu SDD parent/target is required.
+Then give the local Markdown path to the user/program for manual Feishu creation or upload as the single “SDD 工件开发文档”. After the Feishu document exists, run `scripts/register_pctr_b_feishu_document.py` to write its URL/token and revision into the local document and sidecar. No per-feature Feishu SDD parent/target is required.
 
 ```powershell
 python scripts/register_pctr_b_feishu_document.py <document.md> <state.json> `
@@ -77,13 +78,13 @@ On `阅读这个功能生成策划确认文档`, PCTR-B creates the planner-faci
 Required sequence:
 
 1. Resolve exactly one feature from the sidecar/development document. If the feature is ambiguous, stop.
-2. Read the matched source planning section and record the source URL/revision.
+2. Use sidecar `feishu_blocks` when available to read only the matched source planning section; otherwise read the smallest exported/source Markdown section that contains the exact heading path. Record source URL/revision and a feature-level hash.
 3. Resolve the feature folder `.PCTR/<planning-version>/<FEATURE-ID>/`; create it if missing.
-4. Ask ACSDM for related project rules, historical development docs, and code-evidence indexes when ACSDM is available. Keep only compact paths/headings/facts; do not paste full ACSDM bodies.
+4. Ask ACSDM for related project rules, historical development docs, OUF link-index rows, and code-evidence indexes when ACSDM is available. Keep only compact paths/headings/facts; do not paste full ACSDM or OUF bodies.
 5. Write or update exactly one decomposition file: `.PCTR/<planning-version>/<FEATURE-ID>/A-02-feature-decomposition.md`. Put the source snapshot/fingerprint, full functional understanding, functional breakdown, evidence index, real ambiguities, planner-facing confirmation/improvement items, and current status in this same file. Do not create another decomposition or source-snapshot Markdown file.
 6. Render the planner-facing confirmation snapshot to `.PCTR/<planning-version>/<FEATURE-ID>/A-01-planner-confirmation-snapshot.md` from `assets/pctr-b-planner-confirmation-template.md`. Every ambiguity and confirmation/improvement item must contain two to six meaningful lettered preselection options, a separate recommended option code, a separate recommendation reason, and its own two-line reply block.
-7. Upload the native A-01 `.md` file to the registered single Feishu development document and move its file block immediately below the matched feature's `2. SDD确认文档` heading. Verify the exact feature section, attachment token/block, and resulting position. Never create/import a separate Docx/Wiki document. If exact-position insertion cannot be verified, stop before external write and return the exact manual attachment target.
-8. Update sidecar `planner_confirmation.status=pending`, feature artifact folder, A-01/A-02/B-01 paths, source revision, source snapshot hash, must-answer ambiguity IDs, confirmation item IDs, attachment name/token/block/URL, containing development-document revision, and sync time. Active `planner_confirmation.feishu_url` or any equivalent separate-document URL is forbidden.
+7. Do not automatically upload A-01. Return the local A-01 path and the exact target heading in the registered single Feishu development document. The user/program manually uploads the native `.md` file immediately below the matched feature's `2. SDD确认文档` heading, then runs the registration command with attachment token/URL/block and containing-document revision. Never create/import a separate Docx/Wiki document.
+8. Update sidecar `planner_confirmation.status=pending`, feature artifact folder, A-01/A-02/B-01 paths, `feishu_blocks`, source revision, source snapshot hash, must-answer ambiguity IDs, confirmation item IDs, and sync time. Attachment name/token/block/URL and containing development-document revision are filled only after manual upload registration. Active `planner_confirmation.feishu_url` or any equivalent separate-document URL is forbidden.
 
 The confirmation document must place the ambiguity list and confirmation/improvement list near the top, followed only by one short feature-demand description. Full functional understanding, functional breakdown, and later verification details stay in the local decomposition file. It must not contain a document-level reply section. Every ambiguity and every planner-facing confirmation/improvement item must contain its own lettered preselection list and reply code block immediately below the item detail. Use consecutive uppercase codes beginning with `A`; do not invent filler options. Write `推荐选择：<代码>` and `推荐原因：<原因>` as separate fields. Do not use a generic “其他” option as the only custom path: the planner may leave `选择：` empty and put an original rule in `补充：`.
 
@@ -98,7 +99,7 @@ On `策划已确认`, parse each per-item reply code block and apply these rules
 
 Update the decomposition with selected options and supplements, and set `planner_confirmation.status=confirmed` only when every must-answer ambiguity is validly answered. If any must-answer item is empty or invalid, set `needs_revision` and stop before SDD generation.
 
-When the user issues `开始 <FEATURE-ID> 功能开发` while `planner_confirmation.status` is `missing`, `pending`, or `needs_revision`, enter this section instead of generating a plan or modifying code. Generate/update A-01 and A-02, attach A-01 in the exact feature section, and keep SDD generation, planning, and implementation locked until planner replies are synchronized.
+When the user issues `开始 <FEATURE-ID> 功能开发` while `planner_confirmation.status` is `missing`, `pending`, or `needs_revision`, enter this section instead of generating a plan or modifying code. Generate/update A-01 and A-02, provide the exact manual-upload target for A-01, and keep SDD generation, planning, and implementation locked until planner replies are synchronized.
 
 ## 6. Generate the Role-Based SDD in a Separate Orange Phase
 
@@ -109,11 +110,11 @@ Preferred same-session sequence when both are enabled:
 1. Run `生成 PCTR-B 功能需求开发文档`; create the local development document and sidecar, upload/create the single Feishu development document, and register its URL/revision.
 2. Run `阅读这个功能生成策划确认文档` for the target feature.
 3. After planner replies, run `策划已确认`; PCTR-B updates the decomposition and unlocks SDD only if must-answer planner ambiguities are resolved.
-4. In a later Orange task, pass the source planning URL/revision, exact heading path, confirmed `A-02-feature-decomposition.md`, and expected `B-01-runtime-sdd.md` output path to `pctr-b-feature-lookup-interface.md`.
+4. In a later Orange task, pass the source planning URL/revision, exact heading path, and confirmed `A-02-feature-decomposition.md` to `pctr-b-feature-lookup-interface.md`. Provide the expected `B-01-runtime-sdd.md` path only when a PCTR-bound SDD snapshot is requested.
 5. PCTR-B returns one lookup receipt containing the exact full/base Feature IDs, planning sequence, title, source identity, development-document link, sidecar path, feature artifact folder, confirmed decomposition identity, and B-01 output identity. The lookup is read-only.
-6. Orange generates exactly one detailed role-based Draft SDD at `.PCTR/<planning-version>/<FEATURE-ID>/B-01-runtime-sdd.md`. Its metadata copies the exact lookup receipt fields and uses the confirmed `A-02-feature-decomposition.md` as its product-rule source.
-7. After static SDD validation, Orange calls the PCTR-B Markdown-attachment handoff interface.
-8. The interface attaches the feature-local `B-01-runtime-sdd.md` file directly inside the matching feature section only when exact-position insertion can be verified. Otherwise it returns a manual-upload handoff and does not create another Feishu document. Confirmation remains pending.
+6. Orange may generate its normal OUF artifacts under `docs/forge-artifacts/` and, when requested by the active workflow, also generate or export a PCTR-bound Draft SDD at `.PCTR/<planning-version>/<FEATURE-ID>/B-01-runtime-sdd.md`. Its metadata copies the exact lookup receipt fields and uses the confirmed `A-02-feature-decomposition.md` as its product-rule source.
+7. After static validation, register the OUF artifact paths/hashes in the PCTR sidecar using `register_pctr_b_ouf_artifact.py`.
+8. If a PCTR-bound `B-01-runtime-sdd.md` exists, PCTR returns the local path and exact target feature heading for manual Feishu upload. After upload, `登记PCTR-B Markdown附件 <FEATURE-ID>` records attachment identity. Confirmation remains pending.
 
 If the PCTR-B development document, sidecar, Feishu document link, confirmed decomposition, planner confirmation, or source match is missing/ambiguous, stop before SDD generation. Never generate an unbound SDD and later guess its feature by title.
 
@@ -124,7 +125,7 @@ Fallback cross-task sequence when they are not enabled together:
 3. Generate one role-based Draft SDD at the expected `B-01-runtime-sdd.md` path. Its metadata must include the exact PCTR feature ID and confirmed decomposition identity.
 4. Review and revise the SDD.
 5. Re-enable PCTR-B.
-6. Run `同步PCTR-B SDD <FEATURE-ID>` to attempt exact-position attachment, or upload the `.md` manually and run `登记PCTR-B Markdown附件 <FEATURE-ID>`.
+6. Register OUF artifact paths in PCTR, then upload any required `.md` manually and run `登记PCTR-B Markdown附件 <FEATURE-ID>`.
 
 See `pctr-b-feature-lookup-interface.md` and `orange-sdd-handoff.md`.
 
@@ -135,8 +136,8 @@ On the exact command `同步PCTR-B SDD <FEATURE-ID>`:
 1. Read the feature and sidecar.
 2. Find exactly one local SDD whose metadata feature ID matches.
 3. Validate required role-based SDD headings, Draft/Approved status, source link, and feature ID.
-4. Never create a Feishu Docx for the SDD. If the available Feishu workflow can insert the file attachment under the exact matching feature block and verify the resulting block, attach the local `.md` there.
-5. If exact-position insertion or callout preservation is unreliable, stop before external write, keep the local path/code block, and return concise manual-upload instructions. After the user uploads it, use `登记PCTR-B Markdown附件 <FEATURE-ID>`.
+4. Never create a Feishu Docx for the SDD. Do not automatically upload by default; return the exact matching feature block and local `.md` path for manual upload.
+5. After the user/program uploads it, use `登记PCTR-B Markdown附件 <FEATURE-ID>`.
 6. Write the local path, attachment name/token/URL, containing development-document revision, SDD status/version, and sync time into the feature section and sidecar.
 7. Leave both confirmation checkboxes unchecked unless the user separately issues a confirmation command or the current Feishu revision already contains a valid manually selected state and synchronization is explicitly requested.
 
@@ -171,7 +172,19 @@ Plan approval and implementation commands retain their existing meanings. PCTR-B
 - append bug paths under `4. 功能 Bug 修复记录文件路径` without deleting earlier records;
 - keep detailed state and acceptance rounds in the sidecar and bug artifacts, not as feature-table columns.
 
-## 11. Update Mode
+## 11. Feature-Level Feishu Read and OUF Link Update
+
+Use this whenever the task is about one current feature:
+
+1. Resolve the feature in the sidecar by full Feature ID, base Feature ID, or exact heading path.
+2. If `feishu_blocks.planning_heading_block_id` and `planning_content_block_ids` are known, read only those blocks/that heading section from Feishu or from a current Markdown export.
+3. Compute a feature-level content hash. If revision/hash did not change, reuse current A-01/A-02 and avoid regenerating confirmation content.
+4. If the feature section changed, update only this feature folder and sidecar entry. Do not reread or regenerate unrelated features.
+5. Run or refresh ACSDM's OUF link index when OUF artifacts changed, then register the matched OUF artifact paths in this feature's sidecar.
+
+Sidecar fields used here: `feishu_blocks`, `source_fingerprint`, `source_snapshot_hash`, `ouf_artifacts`, and `last_sync_at`.
+
+## 12. Update Mode
 
 When the planning source changes:
 
@@ -183,7 +196,7 @@ When the planning source changes:
 6. preserve SDD attachment references, confirmation decisions, plan paths, bug paths, work-hour cells, and human edits;
 7. stop on concurrent conflicting edits.
 
-## 12. Validate
+## 13. Validate
 
 Run:
 

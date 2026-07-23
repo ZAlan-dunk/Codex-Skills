@@ -20,10 +20,10 @@ SDD 输出路径：{{sdd_output_path}}
 - SDD 元数据必须写入 PCTR Feature ID、策案标题路径、来源 Revision、PCTR-B 飞书开发文档、确认后的功能拆解路径和 SDD 输出路径；
 - 严格读取 `{{decomposition_path}}`，使用其中已确认的策划结论、歧义处理和功能拆解；
 - 包含策划规则、程序设计、QA 验收、风险、回滚和待确认项；
-- 只生成一份 PCTR-owned Draft SDD Markdown，不生成实施计划、不实施代码；
-- SDD 必须保存为 `{{sdd_output_path}}`，也就是功能目录下的 `B-01-runtime-sdd.md`；不得另存为日期前缀文件；
-- 如果 OUF 需要内部 Context Brief，只能作为临时内部过程或 Orange-owned 缓存，不能在 PCTR 功能目录里新增文件；
-- SDD 静态验证通过后调用 PCTR-B Markdown 附件接口，把 `B-01-runtime-sdd.md` 直接放到上述飞书开发文档的对应功能章节内；若 IDE/CLI 无法可靠定位并验证附件位置，则停止自动写入，由用户手动上传；不得新建独立飞书 SDD 文档；确认状态保持 pending。
+- OUF 可以保留自己的 Context Brief / SDD / Plan / Report / Evidence 产物；如当前 PCTR 流程需要，再额外导出一份 PCTR-bound Draft SDD Markdown；不实施代码；
+- PCTR-bound SDD 如生成，必须保存为 `{{sdd_output_path}}`，也就是功能目录下的 `B-01-runtime-sdd.md`；OUF 自有产物仍保存到 OUF 默认目录；
+- OUF 自有 Context Brief / SDD / Plan / Report / Evidence 不写入 PCTR 功能目录，只在完成后把路径交给 PCTR 登记；
+- SDD 静态验证通过后，返回 `B-01-runtime-sdd.md` 路径和上述飞书开发文档的对应功能章节，用户/程序手动上传；随后 PCTR 登记附件与 OUF 产物路径；不得新建独立飞书 SDD 文档；确认状态保持 pending。
 
 功能需求说明：
 {{requirement_description}}

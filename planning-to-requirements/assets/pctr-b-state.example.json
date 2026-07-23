@@ -75,7 +75,27 @@
       "sdd_confirmation_status": "pending",
       "implementation_plan_path": "",
       "bug_record_paths": [],
-      "last_sync_at": ""
+      "last_sync_at": "",
+      "feishu_blocks": {
+        "planning_heading_block_id": "",
+        "planning_content_block_ids": [],
+        "development_feature_heading_block_id": "",
+        "development_sdd_heading_block_id": "",
+        "last_planning_revision_checked": -1,
+        "last_development_revision_checked": -1
+      },
+      "ouf_artifacts": {
+        "artifact_root": "docs/forge-artifacts",
+        "context_briefs": [],
+        "sdds": [],
+        "plans": [],
+        "reports": [],
+        "evidence": [],
+        "logs": [],
+        "other": [],
+        "last_linked_at": "",
+        "linked_by": "ACSDM OUF Link Index"
+      }
     }
   ]
 }

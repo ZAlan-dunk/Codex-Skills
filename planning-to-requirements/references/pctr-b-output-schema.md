@@ -9,7 +9,7 @@ PCTR-B creates exactly one Feishu-facing development document containing:
 3. `功能总表`;
 4. feature sections in exact source order.
 
-Do not create one Feishu planner-confirmation or SDD document per feature. Each A-01 planner confirmation and B-01 role-based SDD remains a local Markdown file and is attached inside the matching feature section of this one document.
+Do not create one Feishu planner-confirmation or SDD document per feature. Each A-01 planner confirmation and any PCTR-bound B-01 role-based SDD remains a local Markdown file. Upload to Feishu is manual by default; PCTR records the attachment identity after upload.
 
 ### Document Location
 
@@ -83,7 +83,7 @@ Under SDD confirmation, match the Feishu `XK5A-SAVE-F001 关卡存档` block pat
 <local-markdown-path>
 ```
 
-<在此处直接插入本地 Markdown 文件附件；自动插入不可靠时由用户手动上传>
+<用户/程序在此处手动上传本地 Markdown 文件附件；PCTR随后登记附件身份>
 
 > 🏕️ SDD 状态 / Revision：
 
@@ -101,11 +101,11 @@ When planner confirmation exists, insert this block immediately after the `2. SD
 <attach `.PCTR/<planning-version>/<FEATURE-ID>/A-01-planner-confirmation-snapshot.md` here as a native file block>
 ````
 
-The A-01 file block must be inside the exact matched feature section. A separate Docx/Wiki URL is invalid.
+The A-01 file block must be inside the exact matched feature section. Upload is manual by default. A separate Docx/Wiki URL is invalid.
 
 The two checkboxes are mutually exclusive.
 
-`3. 实施计划工件的路径` uses a plain-text code block. `4. 功能 Bug 修复记录文件路径` uses a four-column Bug table with at least two initially empty numbered rows. The Feishu version uses orange callouts for the three highlighted SDD blocks. If exact styling or exact-position attachment cannot be verified through the current IDE/CLI path, stop before the write and let the user upload/format manually.
+`3. 实施计划工件的路径` uses a plain-text code block. `4. 功能 Bug 修复记录文件路径` uses a four-column Bug table with at least two initially empty numbered rows. The Feishu version uses orange callouts for the three highlighted SDD blocks. PCTR should output the local path and exact target heading; the user/program uploads or formats the Feishu attachment manually, then PCTR registers the result.
 
 ## Planner Confirmation and Decomposition
 
@@ -119,6 +119,8 @@ Default paths:
 .PCTR/<planning-version>/<FEATURE-ID>/A-02-feature-decomposition.md
 .PCTR/<planning-version>/<FEATURE-ID>/B-01-runtime-sdd.md
 ```
+
+OUF-owned artifacts are not stored in this feature folder unless the active workflow explicitly exports a PCTR-bound B-01 snapshot. OUF native Context Brief / SDD / Plan / Report / Evidence files stay under `docs/forge-artifacts/` and are linked in the sidecar.
 
 The `A-` prefix is reserved for planner-facing confirmation and the single living decomposition file. A feature folder must contain exactly two `A-*.md` artifacts. Do not create `snapshots/`, `decompositions/`, or `confirmations/` subfolders for PCTR-B feature artifacts. Put source snapshot/fingerprint content inside `A-02-feature-decomposition.md` instead of creating another Markdown file.
 
@@ -200,6 +202,14 @@ The sidecar is machine state, not a second human document. Store:
       "requirement_detail_fingerprint": "",
       "source_snapshot_path": "C:/Project/.PCTR/M032v1.2/1.2.1-XK5A-SAVE-F004/A-02-feature-decomposition.md",
       "source_snapshot_hash": "",
+      "feishu_blocks": {
+        "planning_heading_block_id": "",
+        "planning_content_block_ids": [],
+        "development_feature_heading_block_id": "",
+        "development_sdd_heading_block_id": "",
+        "last_planning_revision_checked": -1,
+        "last_development_revision_checked": -1
+      },
       "planner_confirmation": {
         "status": "missing",
         "local_path": "C:/Project/.PCTR/M032v1.2/1.2.1-XK5A-SAVE-F004/A-01-planner-confirmation-snapshot.md",
@@ -216,6 +226,18 @@ The sidecar is machine state, not a second human document. Store:
       },
       "decomposition_path": "C:/Project/.PCTR/M032v1.2/1.2.1-XK5A-SAVE-F004/A-02-feature-decomposition.md",
       "decomposition_hash": "",
+      "ouf_artifacts": {
+        "artifact_root": "docs/forge-artifacts",
+        "context_briefs": [],
+        "sdds": [],
+        "plans": [],
+        "reports": [],
+        "evidence": [],
+        "logs": [],
+        "other": [],
+        "last_linked_at": "",
+        "linked_by": "ACSDM OUF Link Index"
+      },
       "sdd_generation": {
         "status": "locked",
         "input_decomposition_path": "C:/Project/.PCTR/M032v1.2/1.2.1-XK5A-SAVE-F004/A-02-feature-decomposition.md",
@@ -247,7 +269,7 @@ The sidecar is machine state, not a second human document. Store:
 
 Allowed `planner_confirmation.status`: `missing`, `pending`, `confirmed`, `needs_revision`. Allowed `sdd_generation.status`: `locked`, `ready`, `draft`, `approved`. Allowed `program_confirmation.status`: `pending`, `confirmed`, `needs_revision`.
 
-For any planner-confirmation status other than `missing`, `attachment_name` must equal `A-01-planner-confirmation-snapshot.md`, `attachment_token` and `attachment_block_id` must identify the native Markdown file block, `attachment_feature_id` must equal the containing feature, `attachment_heading_block_id` must identify that feature's exact `2. SDD确认文档` heading, and `attachment_document_revision` must be non-negative. `feishu_url`, `document_url`, or any equivalent per-feature planner-confirmation document field is forbidden.
+For any planner-confirmation status other than `missing`, `attachment_name` may remain empty until manual upload registration. After registration, it must equal `A-01-planner-confirmation-snapshot.md`; `attachment_token`/`attachment_block_id`/`attachment_url` identify the native Markdown file block; `attachment_feature_id` must equal the containing feature; `attachment_heading_block_id` must identify that feature's exact `2. SDD确认文档` heading; and `attachment_document_revision` must be non-negative. `feishu_url`, `document_url`, or any equivalent per-feature planner-confirmation document field is forbidden.
 
 Allowed `sdd_confirmation_status`: `pending`, `confirmed`, `ambiguous`.
 
@@ -257,6 +279,8 @@ Allowed `sdd_confirmation_status`: `pending`, `confirmed`, `ambiguous`.
 
 - Planning source: feature title/order and planning facts.
 - Single development document: concise table summaries, optional active-feature description/main points, confirmation surface, attachment placement, and artifact navigation.
-- Local `B-01-runtime-sdd.md`: detailed role-based SDD content for one feature; it is generated from the confirmed `A-02-feature-decomposition.md`.
-- Sidecar: machine synchronization, aliases, attachment identity, and gate state.
-- ACSDM: project rules, code evidence, and optional implementation/bug/completion records.
+- Local `A-02-feature-decomposition.md`: the unique product-rule context package for one feature.
+- Local `B-01-runtime-sdd.md`: optional PCTR-bound detailed role-based SDD snapshot for one feature; it is generated from the confirmed `A-02-feature-decomposition.md` when the workflow needs that file.
+- OUF `docs/forge-artifacts/`: OUF-owned Context Brief / SDD / Plan / Report / Evidence files; PCTR links them by path/hash and does not copy or restrict them.
+- Sidecar: machine synchronization, aliases, Feishu block locators, OUF artifact links, attachment identity, and gate state.
+- ACSDM: project rules, code evidence, OUF link index, and optional implementation/bug/completion records.

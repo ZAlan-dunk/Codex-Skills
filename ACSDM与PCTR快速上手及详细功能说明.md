@@ -6,14 +6,14 @@
 >
 > 文档依据：`acsdm-project-catalog` 与 `planning-to-requirements` 当前仓库版本。
 >
-> 更新日期：2026-07-22。
+> 更新日期：2026-07-23。
 
 ## 1. 先用一句话理解两个 Skill
 
 | Skill | 解决的问题 | 最主要的产物 |
 |---|---|---|
-| ACSDM（`acsdm-project-catalog`） | 让 Agent 按索引快速找到项目规则、历史方案、代码位置和实现记录，避免每次重新扫描整个项目。 | `<项目根目录>/.ACSDM/` 项目知识目录 |
-| PCTR（`planning-to-requirements`） | 把策案转换为可追踪、可确认、可规划、可开发、可验收的功能需求，并管理完整功能生命周期。 | `<项目根目录>/.PCTR/A/` 或 `.PCTR/B/` 需求与状态工件 |
+| ACSDM（`acsdm-project-catalog`） | 让 Agent 按索引快速找到项目规则、历史方案、代码位置；现在还可以连接 OUF 开发日志，不再重复保存一份正文。 | `<项目根目录>/.ACSDM/` 项目知识目录 + `08OUFDevelopmentLogs` 连接索引 |
+| PCTR（`planning-to-requirements`） | 把策案按功能顺序生成本地工件；只读当前功能的策案内容；Feishu MD 上传改为手动，PCTR只登记链接和状态。 | `<项目根目录>/.PCTR/A/` 或 `.PCTR/<策案版本>/` 需求与状态工件 |
 
 可以把二者理解为：
 
@@ -21,6 +21,7 @@
 - ACSDM 负责回答“项目里应该怎么做、已有代码在哪里、历史上做过什么”。
 - PCTR 在生成技术方案、分析 Bug、准备实施时，会调用 ACSDM 获取项目证据。
 - ACSDM 不替代策案，也不会自行决定策划规则。
+- OUF 继续保留自己的完整开发文档；ACSDM/PCTR只登记路径、Hash、摘要和对应功能，减少重复读取。
 
 ```mermaid
 flowchart LR
@@ -137,9 +138,9 @@ ACSDM 还提供一个不启用完整 ACSDM 的一次性只读接口：
 |---|---|---|
 | `<项目根目录>/.ACSDM/` | ACSDM | 项目规则、模块索引、历史方案、实现与审查记录 |
 | `<项目根目录>/.PCTR/A/<文档编码>/` | PCTR-A | 需求文档、策划确认验收文档、映射、计划与 Bug 记录 |
-| `<项目根目录>/.PCTR/B/<文档编码>/` | PCTR-B | 单一开发文档、本地 Sidecar、计划与 Bug 记录 |
-| `<项目根目录>/CodexTemp/OrangeUnityForge/` | Orange Unity Forge | Context Brief、角色分区 SDD、计划、报告等工作工件 |
-| `<项目根目录>/docs/` | Orange Unity Forge 保留 | ACSDM 与 PCTR 不得创建新的活动产物 |
+| `<项目根目录>/.PCTR/<策案版本>/` | PCTR-B | 单一开发文档、Sidecar、每功能 A-01/A-02/B-01、计划与 Bug 记录 |
+| `<项目根目录>/docs/forge-artifacts/` | Orange Unity Forge | Context Brief、SDD、Plan、Report、Evidence 等完整 OUF 产物 |
+| `<项目根目录>/docs/` | Orange Unity Forge 保留 | ACSDM 与 PCTR 不得创建新的活动产物，只能登记或链接 |
 
 旧的 `docs/pctr/`、`CodexTemp/PCTR/` 只能作为迁移来源。迁移时应复制到 `.PCTR/`，验证新路径后保留旧文件，除非用户明确要求删除。
 
@@ -1103,3 +1104,51 @@ PCTR 必须拒绝。合法顺序是：
 - 生成、同步和校验：`scripts/`
 
 修改 Skill 后，应使用 Codex Skill 静态校验器检查两个完整目录，并在新任务中用本文档的快速上手示例进行人工流程核对。
+
+
+## 18. 本次优化后的省时链路
+
+这次优化不是减少必要文档，而是减少重复读取和重复保存。
+
+### 18.1 ACSDM 连接 OUF，不复制 OUF
+
+- OUF 仍然把完整开发日志、SDD、Plan、Report、Evidence 放在 `docs/forge-artifacts/`。
+- ACSDM 新增 `.ACSDM/08OUFDevelopmentLogs/0800Index.md`，只保存 Feature ID、标题、类型、路径、摘要、更新时间和 Hash。
+- Agent 需要了解历史开发链路时，先读这个索引，再打开对应 OUF 原文件。
+- 好处：不用 OUF 保存一份、ACSDM 再保存一份，也不用每次全量扫描。
+
+刷新索引：
+
+```powershell
+powershell -ExecutionPolicy Bypass -File acsdm-project-catalog/scripts/acsdm-link-ouf.ps1 -ProjectRoot <项目根目录>
+```
+
+### 18.2 PCTR 只处理当前功能的飞书内容
+
+PCTR-B sidecar 每个功能新增 `feishu_blocks`：
+
+```json
+{
+  "planning_heading_block_id": "",
+  "planning_content_block_ids": [],
+  "development_feature_heading_block_id": "",
+  "development_sdd_heading_block_id": "",
+  "last_planning_revision_checked": -1,
+  "last_development_revision_checked": -1
+}
+```
+
+有这些定位后，生成或更新某个功能时只读该功能章节，不反复读取整份策案。
+
+### 18.3 Feishu MD 上传改为手动，PCTR 只登记
+
+- PCTR 生成本地 `A-01`、`A-02`，需要时生成或接收 `B-01`。
+- PCTR 告诉用户应该上传到哪个功能、哪个 `2. SDD确认文档` 标题下。
+- 用户/程序手动拖动上传 MD。
+- 上传后用登记命令写入附件 token/URL/revision。
+
+这样避免 Agent 为了移动/覆盖飞书附件消耗大量时间和 token。
+
+### 18.4 A-02 是唯一上下文包
+
+`A-02-feature-decomposition.md` 保留为当前功能唯一的策案上下文包，里面放：来源快照、功能拆解、策划确认结果、ACSDM/OUF 证据索引。OUF 读它来生成开发工件；程序也读它来确认实现边界。
