@@ -73,9 +73,9 @@ function Run-And-Log {
     )
 
     Append-Log $logBox "=== $Title ===" ([System.Drawing.Color]::DodgerBlue)
-    Append-Log $logBox "Script: $ScriptPath" ([System.Drawing.Color]::Gray)
+    Append-Log $logBox "脚本：$ScriptPath" ([System.Drawing.Color]::Gray)
     if ($Arguments.Count -gt 0) {
-        Append-Log $logBox ('Args: ' + ($Arguments -join ' ')) ([System.Drawing.Color]::Gray)
+        Append-Log $logBox ('参数：' + ($Arguments -join ' ')) ([System.Drawing.Color]::Gray)
     }
     Set-Busy $true
     try {
@@ -85,11 +85,11 @@ function Run-And-Log {
             Append-Log $logBox $result.Output
         }
         if ($result.ExitCode -ne 0) {
-            Append-Log $logBox "ExitCode: $($result.ExitCode)" ([System.Drawing.Color]::Red)
-            [System.Windows.Forms.MessageBox]::Show($form, "$Title failed. See log for details.", 'Error', 'OK', 'Error') | Out-Null
+            Append-Log $logBox "退出码：$($result.ExitCode)" ([System.Drawing.Color]::Red)
+            [System.Windows.Forms.MessageBox]::Show($form, "$Title 执行失败，请查看日志。", '错误', 'OK', 'Error') | Out-Null
             return $false
         }
-        Append-Log $logBox "OK" ([System.Drawing.Color]::LimeGreen)
+        Append-Log $logBox "完成" ([System.Drawing.Color]::LimeGreen)
         return $true
     }
     finally {
@@ -104,11 +104,11 @@ function Sync-ProjectLike {
     $workRoot = $txtWorkRoot.Text.Trim()
     $branch = $txtBranch.Text.Trim()
     if ([string]::IsNullOrWhiteSpace($projectRoot)) {
-        [System.Windows.Forms.MessageBox]::Show($form, 'Please enter ProjectRoot.', 'Missing input', 'OK', 'Warning') | Out-Null
+        [System.Windows.Forms.MessageBox]::Show($form, '请先输入项目根目录。', '缺少输入', 'OK', 'Warning') | Out-Null
         return
     }
     if ([string]::IsNullOrWhiteSpace($workRoot)) {
-        [System.Windows.Forms.MessageBox]::Show($form, 'Please enter WorkRoot.', 'Missing input', 'OK', 'Warning') | Out-Null
+        [System.Windows.Forms.MessageBox]::Show($form, '请先输入工作产物目录。', '缺少输入', 'OK', 'Warning') | Out-Null
         return
     }
 
@@ -117,51 +117,51 @@ function Sync-ProjectLike {
     if ($chkSkipPull.Checked) { $baseArgs += '-SkipPull' }
 
     $scriptPath = Join-Path $scriptRoot 'Sync-ProjectCodexSkills.ps1'
-    $preflight = Run-And-Log -Title "$Mode / CheckOnly" -ScriptPath $scriptPath -Arguments ($baseArgs + '-CheckOnly')
+    $preflight = Run-And-Log -Title "$Mode / 只检查差异" -ScriptPath $scriptPath -Arguments ($baseArgs + '-CheckOnly')
     if (-not $preflight) { return }
 
     $combinedOutput = $script:LastRunOutput
     if ($combinedOutput -match 'no diff|already identical') {
-        [System.Windows.Forms.MessageBox]::Show($form, 'No differences found. Nothing to sync.', 'Info', 'OK', 'Information') | Out-Null
+        [System.Windows.Forms.MessageBox]::Show($form, '未发现差异，无需同步。', '提示', 'OK', 'Information') | Out-Null
         return
     }
 
     $shouldOverwrite = $chkAutoYes.Checked
     if (-not $shouldOverwrite) {
-        $dialog = [System.Windows.Forms.MessageBox]::Show($form, "Differences were found. Overwrite project-installed skills with the current external repository version?", 'Confirm overwrite', 'YesNo', 'Question')
+        $dialog = [System.Windows.Forms.MessageBox]::Show($form, "发现差异。是否使用当前外部仓库版本覆盖项目内已安装的技能？", '确认覆盖', 'YesNo', 'Question')
         $shouldOverwrite = ($dialog -eq [System.Windows.Forms.DialogResult]::Yes)
     }
 
     if (-not $shouldOverwrite) {
-        Append-Log $logBox 'User chose no; sync skipped.' ([System.Drawing.Color]::Orange)
+        Append-Log $logBox '用户选择否，已跳过同步。' ([System.Drawing.Color]::Orange)
         return
     }
 
     $syncArgs = @('-ProjectRoot', $projectRoot, '-WorkRoot', $workRoot, '-Yes')
     if (-not [string]::IsNullOrWhiteSpace($branch)) { $syncArgs += @('-Branch', $branch) }
     if ($chkSkipPull.Checked) { $syncArgs += '-SkipPull' }
-    Run-And-Log -Title "$Mode / Sync" -ScriptPath $scriptPath -Arguments $syncArgs | Out-Null
+    Run-And-Log -Title "$Mode / 执行同步" -ScriptPath $scriptPath -Arguments $syncArgs | Out-Null
 }
 
 function Open-Path {
     param([string]$Path)
     if ([string]::IsNullOrWhiteSpace($Path)) { return }
     if (-not (Test-Path -LiteralPath $Path)) {
-        [System.Windows.Forms.MessageBox]::Show($form, "Path not found: $Path", 'Missing path', 'OK', 'Warning') | Out-Null
+        [System.Windows.Forms.MessageBox]::Show($form, "路径不存在：$Path", '路径不存在', 'OK', 'Warning') | Out-Null
         return
     }
     Start-Process explorer.exe -ArgumentList @($Path)
 }
 
 $form = New-Object System.Windows.Forms.Form
-$form.Text = 'Codex Skill Sync Launcher'
+$form.Text = 'Codex 技能同步工具'
 $form.Size = New-Object System.Drawing.Size(1120, 760)
 $form.StartPosition = 'CenterScreen'
 $form.Font = New-Object System.Drawing.Font('Microsoft YaHei UI', 9)
 $form.TopMost = $false
 
 $lblProject = New-Object System.Windows.Forms.Label
-$lblProject.Text = 'ProjectRoot'
+$lblProject.Text = '项目根目录'
 $lblProject.Location = New-Object System.Drawing.Point(16, 18)
 $lblProject.AutoSize = $true
 $form.Controls.Add($lblProject)
@@ -173,19 +173,19 @@ $txtProjectRoot.Text = $defaultProjectRoot
 $form.Controls.Add($txtProjectRoot)
 
 $btnProjectBrowse = New-Object System.Windows.Forms.Button
-$btnProjectBrowse.Text = 'Browse'
+$btnProjectBrowse.Text = '浏览'
 $btnProjectBrowse.Location = New-Object System.Drawing.Point(905, 12)
 $btnProjectBrowse.Size = New-Object System.Drawing.Size(80, 28)
 $form.Controls.Add($btnProjectBrowse)
 
 $btnOpenProject = New-Object System.Windows.Forms.Button
-$btnOpenProject.Text = 'Open'
+$btnOpenProject.Text = '打开'
 $btnOpenProject.Location = New-Object System.Drawing.Point(990, 12)
 $btnOpenProject.Size = New-Object System.Drawing.Size(80, 28)
 $form.Controls.Add($btnOpenProject)
 
 $lblWork = New-Object System.Windows.Forms.Label
-$lblWork.Text = 'WorkRoot'
+$lblWork.Text = '工作产物目录'
 $lblWork.Location = New-Object System.Drawing.Point(16, 52)
 $lblWork.AutoSize = $true
 $form.Controls.Add($lblWork)
@@ -197,19 +197,19 @@ $txtWorkRoot.Text = $defaultWorkRoot
 $form.Controls.Add($txtWorkRoot)
 
 $btnWorkBrowse = New-Object System.Windows.Forms.Button
-$btnWorkBrowse.Text = 'Browse'
+$btnWorkBrowse.Text = '浏览'
 $btnWorkBrowse.Location = New-Object System.Drawing.Point(905, 46)
 $btnWorkBrowse.Size = New-Object System.Drawing.Size(80, 28)
 $form.Controls.Add($btnWorkBrowse)
 
 $btnOpenWork = New-Object System.Windows.Forms.Button
-$btnOpenWork.Text = 'Open'
+$btnOpenWork.Text = '打开'
 $btnOpenWork.Location = New-Object System.Drawing.Point(990, 46)
 $btnOpenWork.Size = New-Object System.Drawing.Size(80, 28)
 $form.Controls.Add($btnOpenWork)
 
 $lblBranch = New-Object System.Windows.Forms.Label
-$lblBranch.Text = 'Branch'
+$lblBranch.Text = '仓库分支'
 $lblBranch.Location = New-Object System.Drawing.Point(16, 86)
 $lblBranch.AutoSize = $true
 $form.Controls.Add($lblBranch)
@@ -221,62 +221,62 @@ $txtBranch.Text = 'main'
 $form.Controls.Add($txtBranch)
 
 $chkSkipPull = New-Object System.Windows.Forms.CheckBox
-$chkSkipPull.Text = 'SkipPull (offline only)'
+$chkSkipPull.Text = '跳过拉取（离线）'
 $chkSkipPull.Location = New-Object System.Drawing.Point(310, 82)
 $chkSkipPull.AutoSize = $true
 $form.Controls.Add($chkSkipPull)
 
 $chkAutoYes = New-Object System.Windows.Forms.CheckBox
-$chkAutoYes.Text = 'Auto yes on diff'
+$chkAutoYes.Text = '发现差异时自动覆盖'
 $chkAutoYes.Location = New-Object System.Drawing.Point(480, 82)
 $chkAutoYes.AutoSize = $true
 $form.Controls.Add($chkAutoYes)
 
 $lblSource = New-Object System.Windows.Forms.Label
-$lblSource.Text = "Source repo: $scriptRoot"
+$lblSource.Text = "外部技能仓库：$scriptRoot"
 $lblSource.Location = New-Object System.Drawing.Point(16, 116)
 $lblSource.AutoSize = $true
 $lblSource.ForeColor = [System.Drawing.Color]::DimGray
 $form.Controls.Add($lblSource)
 
 $btnUpdateUser = New-Object System.Windows.Forms.Button
-$btnUpdateUser.Text = 'Update User Skills'
+$btnUpdateUser.Text = '更新用户级技能'
 $btnUpdateUser.Location = New-Object System.Drawing.Point(16, 148)
 $btnUpdateUser.Size = New-Object System.Drawing.Size(150, 32)
 $form.Controls.Add($btnUpdateUser)
 
 $btnUpdateProject = New-Object System.Windows.Forms.Button
-$btnUpdateProject.Text = 'Update Project Skills'
+$btnUpdateProject.Text = '更新项目级技能'
 $btnUpdateProject.Location = New-Object System.Drawing.Point(176, 148)
 $btnUpdateProject.Size = New-Object System.Drawing.Size(160, 32)
 $form.Controls.Add($btnUpdateProject)
 
 $btnUpdateAgent = New-Object System.Windows.Forms.Button
-$btnUpdateAgent.Text = 'Update AgentNote Skills'
+$btnUpdateAgent.Text = '更新 AgentNote 技能'
 $btnUpdateAgent.Location = New-Object System.Drawing.Point(346, 148)
 $btnUpdateAgent.Size = New-Object System.Drawing.Size(180, 32)
 $form.Controls.Add($btnUpdateAgent)
 
 $btnSyncProject = New-Object System.Windows.Forms.Button
-$btnSyncProject.Text = 'Sync Project Skills'
+$btnSyncProject.Text = '同步项目技能'
 $btnSyncProject.Location = New-Object System.Drawing.Point(536, 148)
 $btnSyncProject.Size = New-Object System.Drawing.Size(150, 32)
 $form.Controls.Add($btnSyncProject)
 
 $btnSyncPJ032 = New-Object System.Windows.Forms.Button
-$btnSyncPJ032.Text = 'Sync PJ032 Skills'
+$btnSyncPJ032.Text = '同步 PJ032 技能'
 $btnSyncPJ032.Location = New-Object System.Drawing.Point(696, 148)
 $btnSyncPJ032.Size = New-Object System.Drawing.Size(150, 32)
 $form.Controls.Add($btnSyncPJ032)
 
 $btnCheckOnly = New-Object System.Windows.Forms.Button
-$btnCheckOnly.Text = 'Check Only'
+$btnCheckOnly.Text = '只检查差异'
 $btnCheckOnly.Location = New-Object System.Drawing.Point(856, 148)
 $btnCheckOnly.Size = New-Object System.Drawing.Size(110, 32)
 $form.Controls.Add($btnCheckOnly)
 
 $btnClear = New-Object System.Windows.Forms.Button
-$btnClear.Text = 'Clear Log'
+$btnClear.Text = '清空日志'
 $btnClear.Location = New-Object System.Drawing.Point(976, 148)
 $btnClear.Size = New-Object System.Drawing.Size(94, 32)
 $form.Controls.Add($btnClear)
@@ -292,7 +292,7 @@ $form.Controls.Add($logBox)
 
 $btnProjectBrowse.Add_Click({
     $dlg = New-Object System.Windows.Forms.FolderBrowserDialog
-    $dlg.Description = 'Select project root'
+    $dlg.Description = '选择项目根目录'
     $dlg.SelectedPath = $txtProjectRoot.Text
     if ($dlg.ShowDialog() -eq [System.Windows.Forms.DialogResult]::OK) {
         $txtProjectRoot.Text = $dlg.SelectedPath
@@ -300,7 +300,7 @@ $btnProjectBrowse.Add_Click({
 })
 $btnWorkBrowse.Add_Click({
     $dlg = New-Object System.Windows.Forms.FolderBrowserDialog
-    $dlg.Description = 'Select WorkRoot'
+    $dlg.Description = '选择工作产物目录'
     $dlg.SelectedPath = $txtWorkRoot.Text
     if ($dlg.ShowDialog() -eq [System.Windows.Forms.DialogResult]::OK) {
         $txtWorkRoot.Text = $dlg.SelectedPath
@@ -312,37 +312,37 @@ $btnClear.Add_Click({ $logBox.Clear() })
 
 $btnUpdateUser.Add_Click({
     $scriptPath = Join-Path $scriptRoot 'Update-UserCodexSkills.ps1'
-    Run-And-Log -Title 'Update User Skills' -ScriptPath $scriptPath -Arguments @() | Out-Null
+    Run-And-Log -Title '更新用户级技能' -ScriptPath $scriptPath -Arguments @() | Out-Null
 })
 $btnUpdateProject.Add_Click({
     $scriptPath = Join-Path $scriptRoot 'Update-ProjectCodexSkills.ps1'
-    Run-And-Log -Title 'Update Project Skills' -ScriptPath $scriptPath -Arguments @() | Out-Null
+    Run-And-Log -Title '更新项目级技能' -ScriptPath $scriptPath -Arguments @() | Out-Null
 })
 $btnUpdateAgent.Add_Click({
     $scriptPath = Join-Path $scriptRoot 'Update-AgentNoteSkills.ps1'
     $args = @()
     if ($chkSkipPull.Checked) { $args += '-SkipFetch' }
-    Run-And-Log -Title 'Update AgentNote Skills' -ScriptPath $scriptPath -Arguments $args | Out-Null
+    Run-And-Log -Title '更新 AgentNote 技能' -ScriptPath $scriptPath -Arguments $args | Out-Null
 })
-$btnSyncProject.Add_Click({ Sync-ProjectLike -Mode 'Sync Project Skills' })
+$btnSyncProject.Add_Click({ Sync-ProjectLike -Mode '同步项目技能' })
 $btnSyncPJ032.Add_Click({
     if ([string]::IsNullOrWhiteSpace($txtProjectRoot.Text.Trim())) {
         $txtProjectRoot.Text = $defaultProjectRoot
     }
-    Sync-ProjectLike -Mode 'Sync PJ032 Skills'
+    Sync-ProjectLike -Mode '同步 PJ032 技能'
 })
 $btnCheckOnly.Add_Click({
     $txt = $txtProjectRoot.Text.Trim()
     if ([string]::IsNullOrWhiteSpace($txt)) {
-        [System.Windows.Forms.MessageBox]::Show($form, 'Please enter ProjectRoot.', 'Missing input', 'OK', 'Warning') | Out-Null
+        [System.Windows.Forms.MessageBox]::Show($form, '请先输入项目根目录。', '缺少输入', 'OK', 'Warning') | Out-Null
         return
     }
     $scriptPath = Join-Path $scriptRoot 'Sync-ProjectCodexSkills.ps1'
     $args = @('-ProjectRoot', $txt, '-WorkRoot', $txtWorkRoot.Text.Trim(), '-CheckOnly')
     if (-not [string]::IsNullOrWhiteSpace($txtBranch.Text.Trim())) { $args += @('-Branch', $txtBranch.Text.Trim()) }
     if ($chkSkipPull.Checked) { $args += '-SkipPull' }
-    Run-And-Log -Title 'Check Only' -ScriptPath $scriptPath -Arguments $args | Out-Null
+    Run-And-Log -Title '只检查差异' -ScriptPath $scriptPath -Arguments $args | Out-Null
 })
 
-Append-Log $logBox 'Ready. Fill ProjectRoot / WorkRoot and click a button.' ([System.Drawing.Color]::LimeGreen)
+Append-Log $logBox '准备就绪。请填写项目根目录 / 工作产物目录，然后点击按钮执行。' ([System.Drawing.Color]::LimeGreen)
 [void]$form.ShowDialog()
