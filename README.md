@@ -87,6 +87,8 @@ Command-line fallback:
 powershell -ExecutionPolicy Bypass -File .\SkillSyncLauncher.ps1
 ```
 
+If double-clicking appears to do nothing, use `Start-SkillSyncLauncher.cmd` once. It keeps the console open on failure and prints the log path. The VBS entry writes startup errors to `%LOCALAPPDATA%\DawnsdewMorningStar\SkillSyncLauncher\logs\launcher-last.log`. You can override that log folder with the `DAWNSDEW_SKILL_SYNC_LOG_ROOT` environment variable.
+
 The launcher lets you enter ProjectRoot, WorkRoot, and Branch, then click buttons for:
 
 - update user-level skills
