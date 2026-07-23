@@ -11,6 +11,15 @@ from pathlib import Path
 FEATURE_RE = re.compile(r"^##\s+(\d+(?:\.\d+)*-[A-Z][A-Z0-9-]*-F\d{3})\s+(.+)$", re.M)
 BASE_RE = re.compile(r"^[A-Z][A-Z0-9-]*-F\d{3}$")
 ALLOWED = {"pending", "confirmed", "ambiguous"}
+PLANNER_ALLOWED = {"missing", "pending", "confirmed", "needs_revision"}
+PLANNER_ITEM_RE = re.compile(r"^###\s+([A-Z0-9][A-Z0-9_.-]*-(?:A|C)\d+)\b.*$", re.M)
+PLANNER_OPTION_RE = re.compile(r"^-\s+([A-Z])[:：]\s*(\S.*)$", re.M)
+PLANNER_RECOMMENDATION_RE = re.compile(r"^推荐选择[:：]\s*([A-Z])(?:\s|[:：（(]|$)", re.M)
+PLANNER_REASON_RE = re.compile(r"^推荐原因[:：]\s*(\S.*)$", re.M)
+PLANNER_REPLY_RE = re.compile(
+    r"```text\s*\r?\n选择[:：]([^\r\n]*)\r?\n补充[:：]([^\r\n]*)\r?\n```",
+    re.M,
+)
 
 
 def checked(body: str, label: str) -> bool:
@@ -25,6 +34,54 @@ def requirement_description(body: str) -> str:
         re.M,
     )
     return match.group(1).strip() if match else ""
+
+
+def validate_planner_confirmation(
+    path: Path,
+    planner: dict,
+    feature_id: str,
+    errors: list[str],
+) -> None:
+    text = path.read_text(encoding="utf-8-sig")
+    matches = list(PLANNER_ITEM_RE.finditer(text))
+    actual_ids = [match.group(1) for match in matches]
+    expected_ids = list(planner.get("must_answer_ambiguities", [])) + list(
+        planner.get("confirmation_items", [])
+    )
+    if actual_ids != expected_ids:
+        errors.append(f"{feature_id}: planner confirmation item order/IDs differ from sidecar")
+
+    must_answer = set(planner.get("must_answer_ambiguities", []))
+    planner_status = planner.get("status", "missing")
+    for index, match in enumerate(matches):
+        item_id = match.group(1)
+        end = matches[index + 1].start() if index + 1 < len(matches) else len(text)
+        body = text[match.end():end]
+        options = PLANNER_OPTION_RE.findall(body)
+        option_codes = [code for code, _ in options]
+        if not 2 <= len(options) <= 6:
+            errors.append(f"{feature_id}/{item_id}: planner item must have 2-6 options")
+        expected_codes = [chr(ord("A") + offset) for offset in range(len(option_codes))]
+        if option_codes != expected_codes:
+            errors.append(f"{feature_id}/{item_id}: option codes must be consecutive from A")
+
+        recommendation = PLANNER_RECOMMENDATION_RE.search(body)
+        if not recommendation or recommendation.group(1) not in option_codes:
+            errors.append(f"{feature_id}/{item_id}: recommended choice must name a listed option")
+        if not PLANNER_REASON_RE.search(body):
+            errors.append(f"{feature_id}/{item_id}: recommendation reason is missing")
+
+        reply = PLANNER_REPLY_RE.search(body)
+        if not reply:
+            errors.append(f"{feature_id}/{item_id}: exact two-line reply block is missing")
+            continue
+        choice = reply.group(1).strip().upper()
+        supplement = reply.group(2).strip()
+        if choice and choice not in option_codes:
+            errors.append(f"{feature_id}/{item_id}: reply selection is not one listed option code")
+        unanswered = not choice and not supplement
+        if planner_status == "confirmed" and item_id in must_answer and unanswered:
+            errors.append(f"{feature_id}/{item_id}: confirmed planner state has unanswered must-answer item")
 
 
 def main() -> int:
@@ -87,6 +144,32 @@ def main() -> int:
                     errors.append(f"{feature_id}: artifact_paths.{key} must be {expected_path}")
             if Path(str((item.get("planner_confirmation") or {}).get("local_path", ""))) != expected_files["planner_confirmation_snapshot"]:
                 errors.append(f"{feature_id}: planner confirmation path must be A-01")
+            planner = item.get("planner_confirmation") or {}
+            if planner.get("feishu_url") or planner.get("document_url"):
+                errors.append(f"{feature_id}: separate Feishu planner-confirmation document is forbidden")
+            planner_status = planner.get("status", "missing")
+            if planner_status not in PLANNER_ALLOWED:
+                errors.append(f"{feature_id}: invalid planner confirmation status {planner_status}")
+            if planner_status != "missing":
+                if planner.get("attachment_name") != "A-01-planner-confirmation-snapshot.md":
+                    errors.append(f"{feature_id}: planner confirmation attachment must be A-01-planner-confirmation-snapshot.md")
+                if not planner.get("attachment_token") or not planner.get("attachment_block_id"):
+                    errors.append(f"{feature_id}: planner confirmation attachment token/block identity missing")
+                if planner.get("attachment_feature_id") != feature_id:
+                    errors.append(f"{feature_id}: planner confirmation attachment feature identity differs")
+                if not planner.get("attachment_heading_block_id"):
+                    errors.append(f"{feature_id}: planner confirmation target SDD heading block is missing")
+                if int(planner.get("attachment_document_revision", -1)) < 0:
+                    errors.append(f"{feature_id}: planner confirmation containing-document revision missing")
+                if not expected_files["planner_confirmation_snapshot"].is_file():
+                    errors.append(f"{feature_id}: local A-01 planner confirmation file is missing")
+                else:
+                    validate_planner_confirmation(
+                        expected_files["planner_confirmation_snapshot"],
+                        planner,
+                        feature_id,
+                        errors,
+                    )
             if Path(str(item.get("decomposition_path", ""))) != expected_files["decomposition"]:
                 errors.append(f"{feature_id}: decomposition_path must be A-02")
             if Path(str((item.get("sdd_generation") or {}).get("output_sdd_path", ""))) != expected_files["runtime_sdd"]:

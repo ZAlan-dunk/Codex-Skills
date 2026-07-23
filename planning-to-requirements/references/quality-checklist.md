@@ -32,6 +32,10 @@
 - [ ] Orange-generated SDD identity and output path came from one fresh PCTR-B lookup receipt, not title-only matching.
 - [ ] The SDD metadata source heading path/revision and Feishu development-document identity match the registered sidecar.
 - [ ] Every PCTR-B feature folder has only two `A-*.md` artifacts: `A-01-planner-confirmation-snapshot.md` and `A-02-feature-decomposition.md`; no duplicate decomposition file exists.
+- [ ] Every non-missing A-01 planner confirmation is uploaded as the native `.md` file immediately below the matching feature's `2. SDD确认文档` heading in the single Feishu development document.
+- [ ] No per-feature planner-confirmation Docx/Wiki was created, and sidecar planner-confirmation state contains no active separate-document URL.
+- [ ] Every A-01 reply-bearing item has two to six meaningful consecutive lettered options, a `推荐选择` code that exists in that list, and a separate non-empty `推荐原因`.
+- [ ] A listed code is accepted; an empty selection plus non-empty supplement is accepted as a custom planner rule; an unknown code is rejected; both fields empty blocks only must-answer items and never implies acceptance of the recommendation.
 - [ ] Every detailed SDD remains the feature-local `B-01-runtime-sdd.md`; no per-feature Feishu SDD Docx was created.
 - [ ] Every confirmed SDD has a current attachment reference and containing development-document revision.
 - [ ] The Feishu feature section matches the required structural pattern: path quote, optional concise requirement section, three highlighted SDD blocks, path code block, Markdown attachment, implementation-plan code block, Bug table, optimization section, and divider.

@@ -9,7 +9,7 @@ PCTR owns requirement translation, mode-specific confirmation, route orchestrati
 - Neither suite creates active artifacts under `<project root>/docs/`, which is reserved for Orange Unity Forge.
 
 - PCTR-A confirmation authority: paired planning confirmation/acceptance document.
-- PCTR-B confirmation authority: the local role-based SDD Markdown attached inside the matching section of the single development document plus its synchronized confirmation state; no separate Feishu SDD document is created.
+- PCTR-B planning authority: the feature-local A-01 planner-confirmation Markdown attached immediately below the matching `2. SDD确认文档` heading plus the synchronized A-02 decomposition. PCTR-B technical confirmation authority: the later B-01 role-based SDD Markdown attached in that same feature section plus its synchronized confirmation state. Neither artifact may create a separate Feishu document.
 
 ## Retrieval Order
 

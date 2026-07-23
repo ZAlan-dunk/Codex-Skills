@@ -39,8 +39,13 @@
       "planner_confirmation": {
         "status": "missing",
         "local_path": "C:/Project/.PCTR/M032v1.2/1.2.1-XK5A-SAVE-F004/A-01-planner-confirmation-snapshot.md",
-        "feishu_url": "",
-        "document_revision": -1,
+        "attachment_name": "",
+        "attachment_token": "",
+        "attachment_block_id": "",
+        "attachment_feature_id": "",
+        "attachment_heading_block_id": "",
+        "attachment_url": "",
+        "attachment_document_revision": -1,
         "must_answer_ambiguities": [],
         "confirmation_items": [],
         "resolved_decisions": []

@@ -81,14 +81,24 @@ Required sequence:
 3. Resolve the feature folder `.PCTR/<planning-version>/<FEATURE-ID>/`; create it if missing.
 4. Ask ACSDM for related project rules, historical development docs, and code-evidence indexes when ACSDM is available. Keep only compact paths/headings/facts; do not paste full ACSDM bodies.
 5. Write or update exactly one decomposition file: `.PCTR/<planning-version>/<FEATURE-ID>/A-02-feature-decomposition.md`. Put the source snapshot/fingerprint, full functional understanding, functional breakdown, evidence index, real ambiguities, planner-facing confirmation/improvement items, and current status in this same file. Do not create another decomposition or source-snapshot Markdown file.
-6. Render the planner-facing confirmation snapshot to `.PCTR/<planning-version>/<FEATURE-ID>/A-01-planner-confirmation-snapshot.md` from `assets/pctr-b-planner-confirmation-template.md`. Upload to Feishu only when the user explicitly asks.
-7. Update sidecar `planner_confirmation.status=pending`, feature artifact folder, A-01/A-02/B-01 paths, source revision, source snapshot hash, must-answer ambiguity IDs, and confirmation item IDs.
+6. Render the planner-facing confirmation snapshot to `.PCTR/<planning-version>/<FEATURE-ID>/A-01-planner-confirmation-snapshot.md` from `assets/pctr-b-planner-confirmation-template.md`. Every ambiguity and confirmation/improvement item must contain two to six meaningful lettered preselection options, a separate recommended option code, a separate recommendation reason, and its own two-line reply block.
+7. Upload the native A-01 `.md` file to the registered single Feishu development document and move its file block immediately below the matched feature's `2. SDD确认文档` heading. Verify the exact feature section, attachment token/block, and resulting position. Never create/import a separate Docx/Wiki document. If exact-position insertion cannot be verified, stop before external write and return the exact manual attachment target.
+8. Update sidecar `planner_confirmation.status=pending`, feature artifact folder, A-01/A-02/B-01 paths, source revision, source snapshot hash, must-answer ambiguity IDs, confirmation item IDs, attachment name/token/block/URL, containing development-document revision, and sync time. Active `planner_confirmation.feishu_url` or any equivalent separate-document URL is forbidden.
 
-The confirmation document must place the ambiguity list and confirmation/improvement list near the top, followed only by one short feature-demand description. Full functional understanding, functional breakdown, and later verification details stay in the local decomposition file. It must not contain a document-level reply section. Every ambiguity and every planner-facing confirmation/improvement item must contain its own reply code block immediately below the item detail.
+The confirmation document must place the ambiguity list and confirmation/improvement list near the top, followed only by one short feature-demand description. Full functional understanding, functional breakdown, and later verification details stay in the local decomposition file. It must not contain a document-level reply section. Every ambiguity and every planner-facing confirmation/improvement item must contain its own lettered preselection list and reply code block immediately below the item detail. Use consecutive uppercase codes beginning with `A`; do not invent filler options. Write `推荐选择：<代码>` and `推荐原因：<原因>` as separate fields. Do not use a generic “其他” option as the only custom path: the planner may leave `选择：` empty and put an original rule in `补充：`.
 
 Do not fabricate ambiguities. If no must-answer ambiguity exists, write `本轮未发现需要策划确认的歧义点。` and keep only useful non-must-answer confirmation/improvement items.
 
-On `策划已确认`, parse each per-item reply code block, update the decomposition with selected options and supplements, and set `planner_confirmation.status=confirmed` only when every must-answer ambiguity is answered. If any must-answer item is empty or invalid, set `needs_revision` and stop before SDD generation.
+On `策划已确认`, parse each per-item reply code block and apply these rules:
+
+1. `选择：` contains exactly one listed option code: valid; use `补充：` as an optional qualification.
+2. `选择：` is empty and `补充：` is non-empty: valid custom planner solution; record it as `custom` and treat the supplement as the authoritative rule.
+3. Both fields are empty: unanswered. A must-answer item blocks confirmation; an optional item remains unresolved/out of scope and must not be interpreted as accepting the recommendation.
+4. `选择：` contains an unknown or multiple code where the item is not explicitly multi-select: invalid and requires revision, even when a supplement exists.
+
+Update the decomposition with selected options and supplements, and set `planner_confirmation.status=confirmed` only when every must-answer ambiguity is validly answered. If any must-answer item is empty or invalid, set `needs_revision` and stop before SDD generation.
+
+When the user issues `开始 <FEATURE-ID> 功能开发` while `planner_confirmation.status` is `missing`, `pending`, or `needs_revision`, enter this section instead of generating a plan or modifying code. Generate/update A-01 and A-02, attach A-01 in the exact feature section, and keep SDD generation, planning, and implementation locked until planner replies are synchronized.
 
 ## 6. Generate the Role-Based SDD in a Separate Orange Phase
 

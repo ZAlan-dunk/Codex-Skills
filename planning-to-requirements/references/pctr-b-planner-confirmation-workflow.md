@@ -12,6 +12,7 @@ planning feature
   -> PCTR-B opens .PCTR/<planning-version>/<FEATURE-ID>/
   -> PCTR-B writes the single A-02 decomposition file
   -> PCTR-B writes the A-01 lightweight planner confirmation snapshot
+  -> PCTR-B attaches the native A-01 Markdown below the matching `2. SDD确认文档` heading
   -> planner answers per-item code blocks
   -> PCTR-B updates decomposition
   -> OUF generates detailed SDD from the confirmed decomposition
@@ -22,7 +23,7 @@ planning feature
 
 ### `阅读这个功能生成策划确认文档`
 
-Read the current or explicitly named PCTR-B feature and create a lightweight planner confirmation Markdown document. Do not upload to Feishu unless the user explicitly asks for upload.
+Read the current or explicitly named PCTR-B feature and create a lightweight planner confirmation Markdown file. PCTR-B has only one Feishu human document, so attach the native A-01 `.md` file inside the matched feature section; never create or import a separate planner-confirmation Docx/Wiki.
 
 Required actions:
 
@@ -32,7 +33,10 @@ Required actions:
 4. Ask ACSDM, when available, for related project rules, historical development records, and code-evidence indexes. Store only compact index facts and paths; do not paste full ACSDM document bodies.
 5. Save or update exactly one local decomposition file: `.PCTR/<planning-version>/<FEATURE-ID>/A-02-feature-decomposition.md`. Put the source snapshot/fingerprint inside this file instead of creating another Markdown snapshot file.
 6. Render `assets/pctr-b-planner-confirmation-template.md` to `.PCTR/<planning-version>/<FEATURE-ID>/A-01-planner-confirmation-snapshot.md`, or another user-supplied target only if it still keeps the A-01 name under the same feature folder.
-7. Update sidecar `planner_confirmation.status=pending`, `feature_artifact_dir`, A-01/A-02/B-01 artifact paths, source revision, source snapshot hash, must-answer ambiguity IDs, and confirmation item IDs.
+7. Upload A-01 as a native file attachment to the registered Feishu development document, move it immediately below the exact matched `2. SDD确认文档` heading, and verify the resulting file block.
+8. Update sidecar `planner_confirmation.status=pending`, `feature_artifact_dir`, A-01/A-02/B-01 artifact paths, source revision, source snapshot hash, must-answer ambiguity IDs, confirmation item IDs, attachment name/token/block/URL, containing development-document revision, and sync time.
+
+If exact-position insertion cannot be verified, stop and provide the local A-01 path plus exact Feature ID/heading for manual upload. Never fall back to creating a Feishu document.
 
 ### `策划已确认`
 
@@ -42,10 +46,15 @@ Required actions:
 
 1. Locate exactly one current planner confirmation document from sidecar or Feature ID.
 2. Parse the reply code block below each ambiguity / confirmation item. Use the item heading number as the identity; do not require or parse an item ID inside the code block. Do not rely on a document-level reply section.
-3. If any must-answer ambiguity has an empty or invalid reply, set `planner_confirmation.status=needs_revision` and stop.
-4. Write the selected option, planner supplement, resolved rule, and unresolved items back into the decomposition file.
-5. If all must-answer ambiguities are resolved, set `planner_confirmation.status=confirmed` and `sdd_generation.status=ready`.
-6. Do not generate SDD, upload Feishu, or implement code unless the user separately issues the next command.
+3. Validate each reply against the item's listed preselection codes:
+   - one listed code is valid, with `补充：` preserved as an optional qualification;
+   - empty `选择：` plus non-empty `补充：` is a valid custom planner solution and must be stored as `custom` with the supplement as the authoritative rule;
+   - both fields empty means unanswered;
+   - an unknown or multiple code is invalid unless that item explicitly declares multi-select.
+4. If any must-answer ambiguity has an empty or invalid reply, set `planner_confirmation.status=needs_revision` and stop. An unanswered optional item does not block, but it remains unresolved/out of scope and must not be interpreted as accepting the recommendation.
+5. Write the selected option, planner supplement, resolved rule, and unresolved items back into the decomposition file.
+6. If all must-answer ambiguities are resolved, set `planner_confirmation.status=confirmed` and `sdd_generation.status=ready`.
+7. Do not generate SDD, upload Feishu, or implement code unless the user separately issues the next command.
 
 ### `生成详细 SDD 工件`
 
@@ -80,7 +89,16 @@ If no must-answer ambiguity exists, write: `本轮未发现需要策划确认的
 
 ## Per-Item Reply Blocks
 
-There is no document-level reply section. Every ambiguity and every planner-facing confirmation / improvement item must include its own reply code block immediately under the item. The code block contains only two fields: `选择：` and `补充：`; the item number comes from the heading above it.
+There is no document-level reply section. Every ambiguity and every planner-facing confirmation / improvement item must include its own preselection list and reply code block immediately under the item. The code block contains only two fields: `选择：` and `补充：`; the item number comes from the heading above it.
+
+Option rules:
+
+- provide two to six meaningful alternatives using consecutive uppercase codes from `A`;
+- make the options concrete enough to determine implementation and QA behavior;
+- do not use vague `同意/不同意` choices when real behavior alternatives can be stated;
+- do not add a generic “其他” option merely to force a selection;
+- write the recommended option code and recommendation reason as separate fields;
+- allow the planner to ignore all preselected options by leaving `选择：` empty and writing a custom rule in `补充：`.
 
 Required ambiguity item format:
 
@@ -89,13 +107,16 @@ Required ambiguity item format:
 
 为什么需要确认：<one short paragraph>
 
-选项：
+预选项：
 
 - A：<option>
 - B：<option>
-- C：<option, optional>
+- C：<option, when meaningful>
+- D：<option, when meaningful>
 
-推荐：<option and reason>
+推荐选择：<one listed code>
+
+推荐原因：<one short reason>
 
 影响：<short implementation / QA / player impact>
 
@@ -112,7 +133,15 @@ Required confirmation / improvement item format:
 
 建议确认或补充：<content>
 
-推荐处理：<recommendation>
+预选项：
+
+- A：<option>
+- B：<option>
+- C：<option, when meaningful>
+
+推荐选择：<one listed code>
+
+推荐原因：<one short reason>
 
 ```text
 选择：
@@ -141,4 +170,6 @@ Default files:
 ```
 
 `A-01` is the human planner surface. `A-02` is the only living PCTR-B decomposition and includes the source snapshot/fingerprint. `B-01` is generated only after planner confirmation and is the detailed SDD that OUF/program can read for direct execution. Do not create additional `A-*.md` files or multiple decomposition versions inside the feature folder.
+
+`A-01` and `B-01` are attachments in the same matching feature section of the one Feishu development document. They are different lifecycle artifacts and may coexist under `2. SDD确认文档`; neither may be converted into or replaced by a per-feature Docx/Wiki.
 

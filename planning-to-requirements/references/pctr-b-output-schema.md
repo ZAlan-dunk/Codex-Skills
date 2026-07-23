@@ -9,7 +9,7 @@ PCTR-B creates exactly one Feishu-facing development document containing:
 3. `功能总表`;
 4. feature sections in exact source order.
 
-Do not create one Feishu SDD document per feature. Each role-based SDD remains a local Markdown file and is attached inside the matching feature section of this one document.
+Do not create one Feishu planner-confirmation or SDD document per feature. Each A-01 planner confirmation and B-01 role-based SDD remains a local Markdown file and is attached inside the matching feature section of this one document.
 
 ### Document Location
 
@@ -93,6 +93,16 @@ Under SDD confirmation, match the Feishu `XK5A-SAVE-F001 关卡存档` block pat
 > - [ ] 存在歧义需要修改
 ````
 
+When planner confirmation exists, insert this block immediately after the `2. SDD确认文档` heading and before the detailed SDD block:
+
+````markdown
+**策划确认 Markdown 附件（A-01，待策划逐项回复）：**
+
+<attach `.PCTR/<planning-version>/<FEATURE-ID>/A-01-planner-confirmation-snapshot.md` here as a native file block>
+````
+
+The A-01 file block must be inside the exact matched feature section. A separate Docx/Wiki URL is invalid.
+
 The two checkboxes are mutually exclusive.
 
 `3. 实施计划工件的路径` uses a plain-text code block. `4. 功能 Bug 修复记录文件路径` uses a four-column Bug table with at least two initially empty numbered rows. The Feishu version uses orange callouts for the three highlighted SDD blocks. If exact styling or exact-position attachment cannot be verified through the current IDE/CLI path, stop before the write and let the user upload/format manually.
@@ -118,14 +128,27 @@ The planner confirmation document must contain:
 2. a top planner-facing confirmation/improvement list;
 3. one short feature-demand description;
 4. detail sections for every ambiguity and confirmation/improvement item;
-5. one reply code block immediately under each item detail, using exactly two fields: `选择：` and `补充：`;
-6. compact evidence index marked as planner-optional.
+5. two to six meaningful lettered preselection options under every reply-bearing item, using consecutive uppercase codes beginning with `A`;
+6. a separate `推荐选择：<代码>` and `推荐原因：<原因>` under every reply-bearing item;
+7. one reply code block immediately under each item detail, using exactly two fields: `选择：` and `补充：`;
+8. compact evidence index marked as planner-optional.
+
+Reply validity:
+
+- one listed option code in `选择：`: valid;
+- empty `选择：` plus non-empty `补充：`: valid custom planner solution, stored as `custom`, with the supplement as the authoritative rule;
+- both fields empty: unanswered; it blocks only a `must_answer` item, and never means the recommendation was accepted;
+- unknown or multiple option codes for a single-select item: invalid and requires revision;
+- a valid listed code plus `补充：`: the supplement narrows or qualifies the selected option and must be preserved verbatim.
 
 Full functional understanding and functional breakdown must stay in the local decomposition file, not in the planner confirmation document.
 
 Forbidden in the planner confirmation document:
 
 - a document-level reply section;
+- a reply-bearing item with no concrete lettered preselection list;
+- a combined recommendation sentence that does not identify both the recommended code and a separate reason;
+- a generic “其他” option used as a substitute for the supported empty-selection/non-empty-supplement custom reply;
 - fabricated ambiguity points;
 - long ACSDM body copies;
 - source planning prose copied paragraph by paragraph;
@@ -180,8 +203,13 @@ The sidecar is machine state, not a second human document. Store:
       "planner_confirmation": {
         "status": "missing",
         "local_path": "C:/Project/.PCTR/M032v1.2/1.2.1-XK5A-SAVE-F004/A-01-planner-confirmation-snapshot.md",
-        "feishu_url": "",
-        "document_revision": -1,
+        "attachment_name": "",
+        "attachment_token": "",
+        "attachment_block_id": "",
+        "attachment_feature_id": "",
+        "attachment_heading_block_id": "",
+        "attachment_url": "",
+        "attachment_document_revision": -1,
         "must_answer_ambiguities": [],
         "confirmation_items": [],
         "resolved_decisions": []
@@ -218,6 +246,8 @@ The sidecar is machine state, not a second human document. Store:
 ```
 
 Allowed `planner_confirmation.status`: `missing`, `pending`, `confirmed`, `needs_revision`. Allowed `sdd_generation.status`: `locked`, `ready`, `draft`, `approved`. Allowed `program_confirmation.status`: `pending`, `confirmed`, `needs_revision`.
+
+For any planner-confirmation status other than `missing`, `attachment_name` must equal `A-01-planner-confirmation-snapshot.md`, `attachment_token` and `attachment_block_id` must identify the native Markdown file block, `attachment_feature_id` must equal the containing feature, `attachment_heading_block_id` must identify that feature's exact `2. SDD确认文档` heading, and `attachment_document_revision` must be non-negative. `feishu_url`, `document_url`, or any equivalent per-feature planner-confirmation document field is forbidden.
 
 Allowed `sdd_confirmation_status`: `pending`, `confirmed`, `ambiguous`.
 

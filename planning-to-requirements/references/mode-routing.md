@@ -46,7 +46,7 @@ Use the single-development-document workflow:
 ```text
 planning source
   -> one concise development document
-  -> .PCTR/<planning-version>/<FEATURE-ID>/A-01 planner confirmation snapshot
+  -> .PCTR/<planning-version>/<FEATURE-ID>/A-01 planner confirmation snapshot attached under the matching `2. SDD确认文档`
   -> .PCTR/<planning-version>/<FEATURE-ID>/A-02 single decomposition file
   -> .PCTR/<planning-version>/<FEATURE-ID>/B-01 detailed SDD attachment inside each matching feature section
   -> local implementation-plan artifact path
@@ -54,7 +54,7 @@ planning source
   -> local bug-fix record paths
 ```
 
-The human-facing Feishu document stays compact but contains planning-grounded requirement descriptions. It is the only Feishu document PCTR-B creates. A local sidecar manifest carries machine lifecycle state, planning-version roots, feature artifact folders, planning-sequence IDs, attachment references, and stable source mapping.
+The human-facing Feishu development document stays compact but contains planning-grounded requirement descriptions. It is the only Feishu document PCTR-B creates. Both A-01 planner confirmation Markdown and B-01 detailed SDD Markdown are native file attachments inside their matching feature section; neither may become a separate Docx/Wiki document. A local sidecar manifest carries machine lifecycle state, planning-version roots, feature artifact folders, planning-sequence IDs, attachment references, and stable source mapping.
 
 ## No Mixed Documents
 

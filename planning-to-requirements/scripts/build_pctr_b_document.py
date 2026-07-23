@@ -267,6 +267,22 @@ def build_document(features: list[dict], args: argparse.Namespace, existing: dic
         prior = prior_by_path.get(feature["path"], {})
         requirement_description = str(prior.get("requirement_description", "")).strip()
         paths = feature_artifact_paths(args, feature)
+        planner_confirmation = prior.get("planner_confirmation", {}) if isinstance(prior.get("planner_confirmation"), dict) else {}
+        planner_attachment_name = planner_confirmation.get("attachment_name", "")
+        planner_attachment_token = planner_confirmation.get("attachment_token", "")
+        planner_attachment_block_id = planner_confirmation.get("attachment_block_id", "")
+        planner_attachment_url = planner_confirmation.get("attachment_url", "")
+        planner_attachment_lines = []
+        if planner_confirmation.get("status", "missing") != "missing":
+            planner_attachment_lines = ["**策划确认 Markdown 附件（A-01，待策划逐项回复）：**", ""]
+            if planner_attachment_name and (planner_attachment_token or planner_attachment_block_id):
+                if planner_attachment_url:
+                    planner_attachment_lines.append(f"[Markdown 附件：{planner_attachment_name}]({planner_attachment_url})")
+                else:
+                    planner_attachment_lines.append(f"Markdown 附件：{planner_attachment_name}（已登记）")
+            else:
+                planner_attachment_lines.append("Markdown 附件：待在本功能的 `2. SDD确认文档` 标题正下方上传 A-01 原生 `.md` 文件")
+            planner_attachment_lines.append("")
         local_sdd = prior.get("sdd_local_path", "") or paths["runtime_sdd"]
         attachment_name = prior.get("sdd_attachment_name", "")
         attachment_url = prior.get("sdd_attachment_url", "")
@@ -291,7 +307,7 @@ def build_document(features: list[dict], args: argparse.Namespace, existing: dic
             "", "---", "", f"## {feature['feature_id']} {feature['title']}", "",
             f"> 策案标题路径：{feature['path']}", "",
             "### 1. 功能需求说明", "", requirement_description, "",
-            "### 2. SDD确认文档", "",
+            "### 2. SDD确认文档", "", *planner_attachment_lines,
             "> 🍞 本地 SDD 工件：", "", "`路径：`", "", "```text", local_sdd, "```", "",
             attachment_line, "", f"> 🏕️ SDD 状态 / Revision：{status_revision}", "",
             "> ✍️ 确认状态：", ">", f"> - [{confirmed_mark}] 已确认", f"> - [{ambiguous_mark}] 存在歧义需要修改", "",
@@ -317,6 +333,11 @@ def build_state(features: list[dict], args: argparse.Namespace, existing: dict) 
             legacy_external.append(prior["sdd_feishu_url"])
         paths = feature_artifact_paths(args, feature)
         planner_prior = prior.get("planner_confirmation", {}) if isinstance(prior.get("planner_confirmation"), dict) else {}
+        legacy_external_confirmation_urls = list(planner_prior.get("legacy_external_confirmation_urls", []))
+        for legacy_key in ("feishu_url", "document_url"):
+            legacy_value = planner_prior.get(legacy_key, "")
+            if legacy_value and legacy_value not in legacy_external_confirmation_urls:
+                legacy_external_confirmation_urls.append(legacy_value)
         sdd_generation_prior = prior.get("sdd_generation", {}) if isinstance(prior.get("sdd_generation"), dict) else {}
         program_prior = prior.get("program_confirmation", {}) if isinstance(prior.get("program_confirmation"), dict) else {}
         decomposition_path = paths["decomposition"]
@@ -344,8 +365,14 @@ def build_state(features: list[dict], args: argparse.Namespace, existing: dict) 
             "planner_confirmation": {
                 "status": planner_prior.get("status", "missing"),
                 "local_path": planner_confirmation_path,
-                "feishu_url": planner_prior.get("feishu_url", ""),
-                "document_revision": planner_prior.get("document_revision", -1),
+                "attachment_name": planner_prior.get("attachment_name", ""),
+                "attachment_token": planner_prior.get("attachment_token", ""),
+                "attachment_block_id": planner_prior.get("attachment_block_id", ""),
+                "attachment_feature_id": planner_prior.get("attachment_feature_id", ""),
+                "attachment_heading_block_id": planner_prior.get("attachment_heading_block_id", ""),
+                "attachment_url": planner_prior.get("attachment_url", ""),
+                "attachment_document_revision": planner_prior.get("attachment_document_revision", -1),
+                "legacy_external_confirmation_urls": legacy_external_confirmation_urls,
                 "must_answer_ambiguities": planner_prior.get("must_answer_ambiguities", []),
                 "confirmation_items": planner_prior.get("confirmation_items", []),
                 "resolved_decisions": planner_prior.get("resolved_decisions", []),

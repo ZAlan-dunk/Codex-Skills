@@ -13,8 +13,9 @@ PCTR-B tracks:
 1. planning source;
 2. single requirement development document;
 3. local sidecar manifest;
-4. per-feature local SDD identity, attachment token/URL/name, and containing development-document revision;
-5. referenced implementation-plan and bug-record artifacts.
+4. per-feature A-01 planner-confirmation attachment identity and containing development-document revision;
+5. per-feature local B-01 SDD identity, attachment token/URL/name, and containing development-document revision;
+6. referenced implementation-plan and bug-record artifacts.
 
 Record document IDs, revisions, heading fingerprints, feature mappings, last synchronization time, processed change IDs, and human-maintained fields.
 
@@ -28,7 +29,7 @@ Compare heading hierarchy, normalized content, tables/lists, deletion marks, med
 
 - Planning source: original requirement authority.
 - Planning confirmation document: PCTR-A planner decision and acceptance authority.
-- `A-01` planner confirmation snapshot and `A-02` decomposition: PCTR-B planner decision authority; `B-01-runtime-sdd.md` and its mutually exclusive checkbox state: program/SDD decision authority.
+- The A-01 planner confirmation snapshot attached in the matching feature section and the synchronized `A-02` decomposition: PCTR-B planner decision authority; `B-01-runtime-sdd.md` and its mutually exclusive checkbox state: program/SDD decision authority. Separate per-feature Feishu documents are never authoritative in PCTR-B.
 - Requirement document: technical specification, route, development, and completion authority.
 
 ## Synchronization
