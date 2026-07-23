@@ -150,6 +150,32 @@ powershell -ExecutionPolicy Bypass -File .\Sync-ProjectCodexSkills.ps1 `
 
 如果项目内已安装 Skill 与当前仓库版本存在差异，工具会列出差异项并询问 `yes/no`。输入 `yes` 使用当前仓库最新版本覆盖；输入 `no` 暂不同步。旧版本备份和差异报告会保存到 `F:\AAAASMWORK\AgentProject\SkillSync`。
 
+
+### 2.7 可视化启动器
+
+如果你不想敲命令，可以直接打开窗口：
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\SkillSyncLauncher.ps1
+```
+
+窗口里可以输入：
+
+- ProjectRoot
+- WorkRoot
+- Branch
+
+然后点按钮执行：
+
+- 更新用户级 Skill
+- 更新项目级 Skill
+- 更新 AgentNote tracking 版 Skill
+- 同步项目 Skill
+- PJ032 快捷同步
+- 只检查差异
+
+同步类按钮会先做一次 CheckOnly，再显示差异并询问是否覆盖。
+
 ## 3. 产物目录与所有权
 
 不同 Skill 必须使用各自目录，避免相互覆盖。

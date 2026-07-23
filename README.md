@@ -72,6 +72,25 @@ git config --local https.proxy http://127.0.0.1:7897
 
 Use `-SkipPull` only for an offline reinstall from the commit already present in that tracking clone.
 
+## Visual launcher
+
+If you prefer a window instead of typing commands, run:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\SkillSyncLauncher.ps1
+```
+
+The launcher lets you enter ProjectRoot, WorkRoot, and Branch, then click buttons for:
+
+- update user-level skills
+- update project-level skills
+- update the AgentNote tracking set
+- sync project skills
+- quick sync for PJ032
+- check only
+
+For synchronization buttons, the launcher first runs a check-only pass, shows the diff in the log window, and then asks whether to overwrite when differences exist.
+
 ## One-command project sync
 
 If you keep this repository outside your Unity project and want to refresh the project-installed skills, run from this repository root:
@@ -89,7 +108,7 @@ Default behavior:
 3. compares them with `<ProjectRoot>\.codex\skills\...`;
 4. lists added/modified/extra target files when differences exist;
 5. prompts `yes/no`;
-6. on `yes`, backs up the old project-installed skills under `F:\AAAASMWORK\AgentProject\SkillSync\backups\...` and overwrites them with the latest external repository version.
+6. on `yes`, backs up the old project-installed skills under `<WorkRoot>\backups\...` and overwrites them with the latest external repository version.
 
 Useful options:
 
