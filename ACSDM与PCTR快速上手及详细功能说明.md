@@ -153,7 +153,14 @@ powershell -ExecutionPolicy Bypass -File .\Sync-ProjectCodexSkills.ps1 `
 
 ### 2.7 可视化启动器
 
-如果你不想敲命令，可以直接打开窗口：
+如果你不想敲命令，可以在仓库根目录直接双击：
+
+```text
+Start-SkillSyncLauncher.vbs   # 推荐：直接弹出窗口，不显示控制台
+Start-SkillSyncLauncher.cmd   # 备用：通过控制台启动窗口
+```
+
+如果双击入口被系统拦截，再使用命令行兜底：
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\SkillSyncLauncher.ps1

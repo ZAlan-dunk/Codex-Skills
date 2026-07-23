@@ -74,7 +74,14 @@ Use `-SkipPull` only for an offline reinstall from the commit already present in
 
 ## Visual launcher
 
-If you prefer a window instead of typing commands, run:
+If you prefer a window instead of typing commands, double-click one of these files in the repository root:
+
+```text
+Start-SkillSyncLauncher.vbs   # recommended: opens the GUI without a console window
+Start-SkillSyncLauncher.cmd   # fallback: opens through a console window
+```
+
+Command-line fallback:
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\SkillSyncLauncher.ps1
