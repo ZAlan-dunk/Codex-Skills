@@ -29,7 +29,7 @@ function Append-Log {
     param(
         [Parameter(Mandatory = $true)][System.Windows.Forms.RichTextBox]$Box,
         [Parameter(Mandatory = $true)][string]$Text,
-        [System.Drawing.Color]$Color = [System.Drawing.Color]::Gainsboro
+        [System.Drawing.Color]$Color = ([System.Drawing.Color]::Gainsboro)
     )
     if ([string]::IsNullOrWhiteSpace($Text)) { return }
     $Box.SelectionStart = $Box.TextLength
@@ -72,10 +72,10 @@ function Run-And-Log {
         [string]$WorkingDirectory = $scriptRoot
     )
 
-    Append-Log $logBox "=== $Title ===" [System.Drawing.Color]::DodgerBlue
-    Append-Log $logBox "Script: $ScriptPath" [System.Drawing.Color]::Gray
+    Append-Log $logBox "=== $Title ===" ([System.Drawing.Color]::DodgerBlue)
+    Append-Log $logBox "Script: $ScriptPath" ([System.Drawing.Color]::Gray)
     if ($Arguments.Count -gt 0) {
-        Append-Log $logBox ('Args: ' + ($Arguments -join ' ')) [System.Drawing.Color]::Gray
+        Append-Log $logBox ('Args: ' + ($Arguments -join ' ')) ([System.Drawing.Color]::Gray)
     }
     Set-Busy $true
     try {
@@ -85,11 +85,11 @@ function Run-And-Log {
             Append-Log $logBox $result.Output
         }
         if ($result.ExitCode -ne 0) {
-            Append-Log $logBox "ExitCode: $($result.ExitCode)" [System.Drawing.Color]::Red
+            Append-Log $logBox "ExitCode: $($result.ExitCode)" ([System.Drawing.Color]::Red)
             [System.Windows.Forms.MessageBox]::Show($form, "$Title failed. See log for details.", 'Error', 'OK', 'Error') | Out-Null
             return $false
         }
-        Append-Log $logBox "OK" [System.Drawing.Color]::LimeGreen
+        Append-Log $logBox "OK" ([System.Drawing.Color]::LimeGreen)
         return $true
     }
     finally {
@@ -133,7 +133,7 @@ function Sync-ProjectLike {
     }
 
     if (-not $shouldOverwrite) {
-        Append-Log $logBox 'User chose no; sync skipped.' [System.Drawing.Color]::Orange
+        Append-Log $logBox 'User chose no; sync skipped.' ([System.Drawing.Color]::Orange)
         return
     }
 
@@ -286,8 +286,8 @@ $logBox.Location = New-Object System.Drawing.Point(16, 194)
 $logBox.Size = New-Object System.Drawing.Size(1054, 500)
 $logBox.ReadOnly = $true
 $logBox.Font = New-Object System.Drawing.Font('Consolas', 9)
-$logBox.BackColor = [System.Drawing.Color]::Black
-$logBox.ForeColor = [System.Drawing.Color]::Gainsboro
+$logBox.BackColor = ([System.Drawing.Color]::Black)
+$logBox.ForeColor = ([System.Drawing.Color]::Gainsboro)
 $form.Controls.Add($logBox)
 
 $btnProjectBrowse.Add_Click({
@@ -344,5 +344,5 @@ $btnCheckOnly.Add_Click({
     Run-And-Log -Title 'Check Only' -ScriptPath $scriptPath -Arguments $args | Out-Null
 })
 
-Append-Log $logBox 'Ready. Fill ProjectRoot / WorkRoot and click a button.' [System.Drawing.Color]::LimeGreen
+Append-Log $logBox 'Ready. Fill ProjectRoot / WorkRoot and click a button.' ([System.Drawing.Color]::LimeGreen)
 [void]$form.ShowDialog()
