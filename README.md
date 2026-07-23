@@ -109,6 +109,17 @@ powershell -ExecutionPolicy Bypass -File .\Sync-ProjectCodexSkills.ps1 `
 
 `-SkipPull` exists only for offline/local testing. Normal project updates should let the script pull first; if the pull fails, synchronization stops before touching the project-installed skills. The work root is an external input too, so you can keep it on any machine-specific path without editing the script.
 
+### PJ032 shortcut
+
+For PJ032 specifically, you can use the wrapper and skip `-WorkRoot`:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\Sync-PJ032Skills.ps1 `
+  -ProjectRoot "F:\AASMWORK\UnityProject\PJ032"
+```
+
+The wrapper simply forwards to `Sync-ProjectCodexSkills.ps1` and keeps the same sync logic.
+
 ## Validation
 
 Run the bundled Codex skill validator against each directory:
