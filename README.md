@@ -89,14 +89,14 @@ powershell -ExecutionPolicy Bypass -File .\SkillSyncLauncher.ps1
 
 If double-clicking appears to do nothing, use `Start-SkillSyncLauncher.cmd` once. It keeps the console open on failure and prints the log path. The VBS entry writes startup errors to `%LOCALAPPDATA%\DawnsdewMorningStar\SkillSyncLauncher\logs\launcher-last.log`. You can override that log folder with the `DAWNSDEW_SKILL_SYNC_LOG_ROOT` environment variable.
 
-The launcher lets you enter ProjectRoot, WorkRoot, and Branch, then click buttons for:
+The launcher UI is in Chinese. It lets you enter ProjectRoot, WorkRoot, and Branch, then click buttons for:
 
-- update user-level skills
-- update project-level skills
-- update the AgentNote tracking set
-- sync project skills
-- quick sync for PJ032
-- check only
+- 更新用户级技能
+- 更新项目级技能
+- 更新 AgentNote 技能
+- 同步项目技能
+- 同步 PJ032 技能
+- 只检查差异
 
 For synchronization buttons, the launcher first runs a check-only pass, shows the diff in the log window, and then asks whether to overwrite when differences exist.
 
