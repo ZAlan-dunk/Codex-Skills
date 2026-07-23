@@ -15,12 +15,12 @@
 
 ## PCTR-B Single Document
 
-- [ ] The local development document and sidecar are under `.PCTR/B/<document-code>/`; plan and bug roots are beneath the same directory.
-- [ ] No active PCTR path points to `docs/` or `CodexTemp/PCTR/`.
+- [ ] The local development document and sidecar are under `.PCTR/<planning-version>/`; plan and bug roots are beneath the same directory.
+- [ ] No active PCTR path points to `docs/`, `CodexTemp/PCTR/`, or PCTR-B SDD output under `CodexTemp/OrangeUnityForge/`.
 - [ ] Source heading text and order are preserved exactly.
 - [ ] Leaf/small headings are features; a large heading is a feature only when it has no child heading.
 - [ ] One-click generation covers every non-empty feature heading in the complete planning outline.
-- [ ] Every feature ID begins with its hierarchical planning sequence, for example `1.1-XK5A-SAVE-F003`; the sidecar preserves the base code and legacy aliases.
+- [ ] Every feature ID begins with its hierarchical planning sequence, for example `1.2.1-XK5A-SAVE-F004`; the sidecar preserves the base code and legacy aliases.
 - [ ] The feature table uses exactly `功能编码 / 策案标题 / 策案标题路径 / 功能需求说明 / 工时`.
 - [ ] Every table requirement description is a short planning-grounded summary with no source image, media URL, HTML/XML tag, Markdown table, or copied long-form source body.
 - [ ] Every undeveloped feature leaves `1. 功能需求说明` empty.
@@ -28,10 +28,11 @@
 - [ ] No `1. 功能需求说明` contains source images, tables, media links, citations, Feishu XML/HTML markup, deletion markup, or pasted source paragraphs.
 - [ ] The feature table contains no planning-progress, confirmation, development-status, or acceptance-status columns.
 - [ ] Every feature contains exactly the five required numbered sections.
-- [ ] Every SDD has one matching PCTR feature ID and at most one selected confirmation checkbox.
-- [ ] Orange-generated SDD identity came from one fresh PCTR-B lookup receipt, not title-only matching.
+- [ ] Every feature has one exact folder `.PCTR/<planning-version>/<FEATURE-ID>/`, created in source order, and every SDD has one matching PCTR feature ID and at most one selected confirmation checkbox.
+- [ ] Orange-generated SDD identity and output path came from one fresh PCTR-B lookup receipt, not title-only matching.
 - [ ] The SDD metadata source heading path/revision and Feishu development-document identity match the registered sidecar.
-- [ ] Every SDD remains a local Markdown file; no per-feature Feishu SDD Docx was created.
+- [ ] Every PCTR-B feature folder has only two `A-*.md` artifacts: `A-01-planner-confirmation-snapshot.md` and `A-02-feature-decomposition.md`; no duplicate decomposition file exists.
+- [ ] Every detailed SDD remains the feature-local `B-01-runtime-sdd.md`; no per-feature Feishu SDD Docx was created.
 - [ ] Every confirmed SDD has a current attachment reference and containing development-document revision.
 - [ ] The Feishu feature section matches the required structural pattern: path quote, optional concise requirement section, three highlighted SDD blocks, path code block, Markdown attachment, implementation-plan code block, Bug table, optimization section, and divider.
 - [ ] Implementation plans remain local paths unless explicit upload is requested.

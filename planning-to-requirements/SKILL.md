@@ -24,14 +24,16 @@ Manage the full lifecycle from planning source to confirmed requirements, techni
 
 ## Artifact Ownership
 
-PCTR's exclusive persistent artifact root is `<project root>/.PCTR/`:
+PCTR's exclusive persistent artifact root is `<project root>/.PCTR/`. On the first enabled PCTR action, create this folder if it does not exist.
 
-- PCTR-A: `<project root>/.PCTR/A/<document-code>/`
-- PCTR-B: `<project root>/.PCTR/B/<document-code>/`
+- PCTR-A keeps the backward-compatible root `<project root>/.PCTR/A/<document-code>/`.
+- PCTR-B uses the planning-version root `<project root>/.PCTR/<planning-version>/`, for example `<project root>/.PCTR/M032v1.2/`.
+- Inside a PCTR-B planning-version root, create one direct child folder per feature in exact planning order. The folder name must be the full Feature ID, for example `1.2.1-XK5A-SAVE-F004`.
+- A PCTR-B feature folder contains feature-local Markdown artifacts only: `A-01-planner-confirmation-snapshot.md`, `A-02-feature-decomposition.md`, and later `B-01-runtime-sdd.md`. Do not create multiple decomposition Markdown files.
 
-Requirement documents, confirmation/acceptance documents, sidecars, implementation plans, and bug records must stay under the active mode's directory unless the user explicitly supplies another non-`docs/` target. Never create, regenerate, or migrate active PCTR artifacts into `<project root>/docs/`; that tree is reserved for Orange Unity Forge. Orange-owned working SDD/brief artifacts may remain under `<project root>/CodexTemp/OrangeUnityForge/` and are linked or attached through the documented handoff rather than becoming PCTR-owned files.
+Requirement documents, confirmation/acceptance documents, sidecars, implementation plans, and bug records must stay under the active PCTR directory unless the user explicitly supplies another non-`docs/` target. Never create, regenerate, or migrate active PCTR artifacts into `<project root>/docs/`; that tree is reserved for Orange Unity Forge.
 
-Treat legacy `docs/pctr/` files as migration sources only. Copy them into `.PCTR/A/` or `.PCTR/B/`, update internal local-path references, verify the copy, and preserve the legacy source until the user explicitly authorizes deletion.
+Treat legacy `docs/pctr/`, `.PCTR/B/<document-code>/`, and `CodexTemp/PCTR/` files as migration sources only. Copy them into the active `.PCTR/` layout, update internal local-path references, verify the copy, and preserve the legacy source until the user explicitly authorizes deletion.
 
 ## Mode Selection
 
@@ -83,9 +85,10 @@ Use stable feature IDs across both documents. Record document IDs, revisions, li
 PCTR-B creates and maintains one human-facing development document, lightweight per-feature planner confirmation files, local decomposition files, and one local machine-state manifest:
 
 1. **Single SDD artifact development document**: one-click generation enumerates every non-empty feature from the complete planning outline in exact source order. Its feature table uses exactly `功能编码 / 策案标题 / 策案标题路径 / 功能需求说明 / 工时`. Every table description is concise and strips source markup/media. The matching `1. 功能需求说明` starts empty unless that feature is currently being designed or developed; an active feature contains only a short authored description and main functional points, not copied planning prose or media.
-2. **Planner confirmation document**: one lightweight Markdown document per active feature before SDD generation. It lists only real planner-facing ambiguities and useful confirmation/improvement items. It does not include a document-level reply section; every ambiguity or confirmation item carries its own reply code block. Full functional understanding and breakdown stay in the local decomposition file.
-3. **Local decomposition file**: the living PCTR-B input to OUF after planner decisions are synchronized.
-4. **Sidecar state manifest**: preserves the planning sequence, base/legacy IDs, source fingerprints, planner-confirmation state, decomposition path, local SDD path, embedded attachment reference, confirmation state, plan path, bug paths, revisions, and sync times. It is not uploaded and is not a second human document.
+2. **Planner confirmation snapshot**: `A-01-planner-confirmation-snapshot.md` in the feature folder. It lists only real planner-facing ambiguities and useful confirmation/improvement items. It does not include a document-level reply section; every ambiguity or confirmation item carries its own reply code block. Full functional understanding and breakdown stay in `A-02-feature-decomposition.md`.
+3. **Local decomposition file**: `A-02-feature-decomposition.md`, the only living PCTR-B decomposition file for that feature and the direct input to OUF after planner decisions are synchronized.
+4. **Detailed SDD artifact**: `B-01-runtime-sdd.md`, generated after confirmation from `A-02-feature-decomposition.md` and handed to OUF/program review for direct execution.
+5. **Sidecar state manifest**: preserves the planning version, planning sequence, base/legacy IDs, feature artifact folder, source fingerprints, planner-confirmation state, decomposition path, local SDD path, embedded attachment reference, confirmation state, plan path, bug paths, revisions, and sync times. It is not uploaded and is not a second human document.
 
 ## Core Workflow
 

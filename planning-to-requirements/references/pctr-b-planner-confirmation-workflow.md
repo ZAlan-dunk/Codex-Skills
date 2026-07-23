@@ -9,9 +9,9 @@ The flow is:
 ```text
 planning feature
   -> ACSDM reads related rules/history indexes
-  -> PCTR-B saves source snapshot
-  -> PCTR-B writes local decomposition
-  -> PCTR-B writes one lightweight planner confirmation document
+  -> PCTR-B opens .PCTR/<planning-version>/<FEATURE-ID>/
+  -> PCTR-B writes the single A-02 decomposition file
+  -> PCTR-B writes the A-01 lightweight planner confirmation snapshot
   -> planner answers per-item code blocks
   -> PCTR-B updates decomposition
   -> OUF generates detailed SDD from the confirmed decomposition
@@ -28,11 +28,11 @@ Required actions:
 
 1. Resolve exactly one PCTR-B feature by Feature ID or current feature context.
 2. Read the matched planning source section and current source revision.
-3. Save a source snapshot under `.PCTR/B/<document-code>/snapshots/<FEATURE-ID>-source-snapshot.md`.
+3. Resolve or create the feature folder `.PCTR/<planning-version>/<FEATURE-ID>/`.
 4. Ask ACSDM, when available, for related project rules, historical development records, and code-evidence indexes. Store only compact index facts and paths; do not paste full ACSDM document bodies.
-5. Save a local decomposition under `.PCTR/B/<document-code>/decompositions/<FEATURE-ID>-planning-decomposition.md`.
-6. Render `assets/pctr-b-planner-confirmation-template.md` to `.PCTR/B/<document-code>/confirmations/<FEATURE-ID>-planner-confirmation.md`, or another user-supplied target.
-7. Update sidecar `planner_confirmation.status=pending`, local paths, source revision, source snapshot hash, must-answer ambiguity IDs, and confirmation item IDs.
+5. Save or update exactly one local decomposition file: `.PCTR/<planning-version>/<FEATURE-ID>/A-02-feature-decomposition.md`. Put the source snapshot/fingerprint inside this file instead of creating another Markdown snapshot file.
+6. Render `assets/pctr-b-planner-confirmation-template.md` to `.PCTR/<planning-version>/<FEATURE-ID>/A-01-planner-confirmation-snapshot.md`, or another user-supplied target only if it still keeps the A-01 name under the same feature folder.
+7. Update sidecar `planner_confirmation.status=pending`, `feature_artifact_dir`, A-01/A-02/B-01 artifact paths, source revision, source snapshot hash, must-answer ambiguity IDs, and confirmation item IDs.
 
 ### `策划已确认`
 
@@ -49,16 +49,18 @@ Required actions:
 
 ### `生成详细 SDD 工件`
 
-Requires `planner_confirmation.status=confirmed` and a current decomposition file. PCTR-B hands the confirmed decomposition to OUF. OUF generates the role-based SDD for programmers, QA, and Tech Lead.
+Requires `planner_confirmation.status=confirmed` and the current `A-02-feature-decomposition.md`. PCTR-B hands this confirmed decomposition and the expected `B-01-runtime-sdd.md` output path to OUF. OUF generates the role-based SDD for programmers, QA, and Tech Lead.
 
 The OUF SDD request must include:
 
 - exact Feature ID and source heading path;
 - source URL and revision;
-- confirmed decomposition path and hash;
+- confirmed `A-02-feature-decomposition.md` path and hash;
 - resolved ambiguity decisions;
 - ACSDM/history index summary;
-- instruction not to invent new planner-facing ambiguities when PCTR-B already resolved them.
+- expected output path `.PCTR/<planning-version>/<FEATURE-ID>/B-01-runtime-sdd.md`;
+- instruction not to invent new planner-facing ambiguities when PCTR-B already resolved them;
+- instruction to produce only one PCTR-owned SDD Markdown file for this feature, named `B-01-runtime-sdd.md`.
 
 ### `程序已确认，开始实施`
 
@@ -133,11 +135,10 @@ The planner confirmation document should be short and readable:
 Default files:
 
 ```text
-.PCTR/B/<document-code>/snapshots/<FEATURE-ID>-source-snapshot.md
-.PCTR/B/<document-code>/decompositions/<FEATURE-ID>-planning-decomposition.md
-.PCTR/B/<document-code>/confirmations/<FEATURE-ID>-planner-confirmation.md
-.PCTR/B/<document-code>/sdd/<FEATURE-ID>-sdd.md
+.PCTR/<planning-version>/<FEATURE-ID>/A-01-planner-confirmation-snapshot.md
+.PCTR/<planning-version>/<FEATURE-ID>/A-02-feature-decomposition.md
+.PCTR/<planning-version>/<FEATURE-ID>/B-01-runtime-sdd.md
 ```
 
-The snapshot is immutable source evidence. The decomposition is the living PCTR-B input to OUF. The confirmation document is the human planner surface. The SDD is generated only after planner confirmation.
+`A-01` is the human planner surface. `A-02` is the only living PCTR-B decomposition and includes the source snapshot/fingerprint. `B-01` is generated only after planner confirmation and is the detailed SDD that OUF/program can read for direct execution. Do not create additional `A-*.md` files or multiple decomposition versions inside the feature folder.
 

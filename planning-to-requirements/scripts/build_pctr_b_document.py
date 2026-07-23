@@ -167,6 +167,28 @@ def load_existing(path: str | None) -> dict:
     return json.loads(Path(path).read_text(encoding="utf-8-sig"))
 
 
+def normalize_planning_version(value: str) -> str:
+    normalized = re.sub(r"\s+", "-", value.strip())
+    normalized = re.sub(r"[^A-Za-z0-9._-]+", "-", normalized).strip("-._")
+    if not normalized:
+        raise SystemExit("planning version is empty after normalization")
+    return normalized
+
+
+def feature_artifact_dir(args: argparse.Namespace, feature: dict) -> Path:
+    return Path(args.artifact_root) / feature["feature_id"]
+
+
+def feature_artifact_paths(args: argparse.Namespace, feature: dict) -> dict[str, str]:
+    root = feature_artifact_dir(args, feature)
+    return {
+        "feature_artifact_dir": str(root),
+        "planner_confirmation_snapshot": str(root / "A-01-planner-confirmation-snapshot.md"),
+        "decomposition": str(root / "A-02-feature-decomposition.md"),
+        "runtime_sdd": str(root / "B-01-runtime-sdd.md"),
+    }
+
+
 def assign_ids(features: list[dict], document_code: str, existing: dict) -> None:
     old = {item.get("source_heading_path"): item for item in existing.get("features", [])}
     used = set()
@@ -219,13 +241,15 @@ def build_document(features: list[dict], args: argparse.Namespace, existing: dic
         f"| 本开发文档 | {development_url} |",
         f"| 本文档 Revision | {development_revision} |",
         f"| 项目根目录 | `{args.project_root}` |",
+        f"| 策案版本 | `{args.planning_version}` |",
+        f"| PCTR 版本目录 | `{args.artifact_root}` |",
         f"| 文档编码 | `{args.document_code}` |",
         f"| 本地状态清单 | `{args.state_out}` |",
         f"| SDD 工件根目录 | `{args.sdd_root}` |",
         f"| 实施计划根目录 | `{args.plan_root}` |",
         f"| Bug 记录根目录 | `{args.bug_root}` |",
         f"| 最后同步时间 | {last_sync_at} |", "",
-        "> 本文档严格保持来源策案的功能标题、层级序号和顺序。功能编码格式为“策案层级序号-原功能编码”；总表仅写简要需求，未开发功能的章节需求说明留空，当前功能只写功能描述和主要功能点，不复制策案原文或媒体。", "",
+        "> 本文档严格保持来源策案的功能标题、层级序号和顺序。功能编码格式为“策案层级序号-原功能编码”；本地文件统一放在 `.PCTR/<策案版本>/<功能编码>/`，A- 文件为策划确认快照与唯一功能拆解，B- 文件为详细 SDD 工件。", "",
         "## 功能总表", "",
         "| 功能编码 | 策案标题 | 策案标题路径 | 功能需求说明 | 工时 |",
         "|---|---|---|---|---|",
@@ -242,7 +266,8 @@ def build_document(features: list[dict], args: argparse.Namespace, existing: dic
     for feature in features:
         prior = prior_by_path.get(feature["path"], {})
         requirement_description = str(prior.get("requirement_description", "")).strip()
-        local_sdd = prior.get("sdd_local_path", "")
+        paths = feature_artifact_paths(args, feature)
+        local_sdd = prior.get("sdd_local_path", "") or paths["runtime_sdd"]
         attachment_name = prior.get("sdd_attachment_name", "")
         attachment_url = prior.get("sdd_attachment_url", "")
         if attachment_name and attachment_url:
@@ -290,6 +315,13 @@ def build_state(features: list[dict], args: argparse.Namespace, existing: dict) 
         legacy_external = list(prior.get("legacy_external_sdd_urls", []))
         if prior.get("sdd_feishu_url") and prior["sdd_feishu_url"] not in legacy_external:
             legacy_external.append(prior["sdd_feishu_url"])
+        paths = feature_artifact_paths(args, feature)
+        planner_prior = prior.get("planner_confirmation", {}) if isinstance(prior.get("planner_confirmation"), dict) else {}
+        sdd_generation_prior = prior.get("sdd_generation", {}) if isinstance(prior.get("sdd_generation"), dict) else {}
+        program_prior = prior.get("program_confirmation", {}) if isinstance(prior.get("program_confirmation"), dict) else {}
+        decomposition_path = paths["decomposition"]
+        planner_confirmation_path = paths["planner_confirmation_snapshot"]
+        runtime_sdd_path = paths["runtime_sdd"]
         items.append({
             "feature_id": feature["feature_id"],
             "base_feature_id": feature["base_feature_id"],
@@ -298,9 +330,41 @@ def build_state(features: list[dict], args: argparse.Namespace, existing: dict) 
             "source_heading": feature["title"],
             "source_heading_path": feature["path"],
             "source_fingerprint": fingerprint,
+            "feature_artifact_dir": paths["feature_artifact_dir"],
+            "artifact_paths": {
+                "planner_confirmation_snapshot": planner_confirmation_path,
+                "decomposition": decomposition_path,
+                "runtime_sdd": runtime_sdd_path,
+            },
             "requirement_summary": effective_requirement_summary(feature, prior),
             "requirement_description": requirement_description,
             "requirement_detail_fingerprint": detail_fingerprint,
+            "source_snapshot_path": decomposition_path,
+            "source_snapshot_hash": prior.get("source_snapshot_hash", ""),
+            "planner_confirmation": {
+                "status": planner_prior.get("status", "missing"),
+                "local_path": planner_confirmation_path,
+                "feishu_url": planner_prior.get("feishu_url", ""),
+                "document_revision": planner_prior.get("document_revision", -1),
+                "must_answer_ambiguities": planner_prior.get("must_answer_ambiguities", []),
+                "confirmation_items": planner_prior.get("confirmation_items", []),
+                "resolved_decisions": planner_prior.get("resolved_decisions", []),
+            },
+            "decomposition_path": decomposition_path,
+            "decomposition_hash": prior.get("decomposition_hash", ""),
+            "sdd_generation": {
+                "status": sdd_generation_prior.get("status", "locked"),
+                "input_decomposition_path": decomposition_path,
+                "output_sdd_path": runtime_sdd_path,
+                "generated_by": sdd_generation_prior.get("generated_by", ""),
+                "generated_at": sdd_generation_prior.get("generated_at", ""),
+            },
+            "program_confirmation": {
+                "status": program_prior.get("status", "pending"),
+                "reviewer": program_prior.get("reviewer", ""),
+                "confirmed_at": program_prior.get("confirmed_at", ""),
+                "open_items": program_prior.get("open_items", []),
+            },
             "work_hours": prior.get("work_hours", ""),
             "sdd_local_path": prior.get("sdd_local_path", ""),
             "sdd_attachment_name": prior.get("sdd_attachment_name", ""),
@@ -317,9 +381,11 @@ def build_state(features: list[dict], args: argparse.Namespace, existing: dict) 
         })
     prior_document = existing.get("development_document", {})
     return {
-        "schema_version": 2,
+        "schema_version": 3,
         "mode": "B",
+        "planning_version": args.planning_version,
         "document_code": args.document_code,
+        "artifact_root": args.artifact_root,
         "source": {"url": args.source_url, "revision": args.source_revision},
         "development_document": {
             "url": prior_document.get("url", ""),
@@ -337,12 +403,13 @@ def main() -> int:
     parser.add_argument("--out")
     parser.add_argument("--state-out")
     parser.add_argument("--document-code", required=True)
+    parser.add_argument("--planning-version", help="PCTR version folder name, for example M032v1.2")
     parser.add_argument("--title", default="SDD 工件开发文档")
     parser.add_argument("--source-url", default="")
     parser.add_argument("--source-revision", type=int, default=-1)
     parser.add_argument("--project-root", default="")
     parser.add_argument("--feishu-parent-url", default="", help=argparse.SUPPRESS)
-    parser.add_argument("--sdd-root", default="CodexTemp/OrangeUnityForge/specs/")
+    parser.add_argument("--sdd-root")
     parser.add_argument("--plan-root")
     parser.add_argument("--bug-root")
     parser.add_argument("--existing-state")
@@ -351,15 +418,21 @@ def main() -> int:
     if not args.document_code:
         raise SystemExit("document code is empty after normalization")
     project_root = Path(args.project_root).resolve() if args.project_root else Path.cwd().resolve()
-    artifact_root = project_root / ".PCTR" / "B" / args.document_code.lower()
-    args.out = args.out or str(artifact_root / f"{args.document_code}功能需求开发文档.md")
-    args.state_out = args.state_out or str(artifact_root / f"{args.document_code}功能状态.json")
-    args.plan_root = args.plan_root or str(artifact_root / "plans")
-    args.bug_root = args.bug_root or str(artifact_root / "bugs")
+    args.project_root = str(project_root)
+    args.planning_version = normalize_planning_version(args.planning_version or args.document_code)
+    artifact_root = project_root / ".PCTR" / args.planning_version
+    args.artifact_root = str(artifact_root)
+    args.out = args.out or str(artifact_root / f"{args.planning_version}-PCTR-B-development-document.md")
+    args.state_out = args.state_out or str(artifact_root / f"{args.planning_version}-PCTR-B-state.json")
+    args.sdd_root = args.sdd_root or str(artifact_root)
+    args.plan_root = args.plan_root or str(artifact_root / "_plans")
+    args.bug_root = args.bug_root or str(artifact_root / "_bugs")
     docs_root = (project_root / "docs").resolve()
     for label, value in (
+        ("artifact root", args.artifact_root),
         ("document", args.out),
         ("state", args.state_out),
+        ("SDD root", args.sdd_root),
         ("plan root", args.plan_root),
         ("bug root", args.bug_root),
     ):
@@ -373,10 +446,13 @@ def main() -> int:
         raise SystemExit("no leaf/source feature headings found")
     existing = load_existing(args.existing_state)
     assign_ids(features, args.document_code, existing)
+    Path(args.artifact_root).mkdir(parents=True, exist_ok=True)
     Path(args.out).parent.mkdir(parents=True, exist_ok=True)
     Path(args.state_out).parent.mkdir(parents=True, exist_ok=True)
     Path(args.plan_root).mkdir(parents=True, exist_ok=True)
     Path(args.bug_root).mkdir(parents=True, exist_ok=True)
+    for feature in features:
+        feature_artifact_dir(args, feature).mkdir(parents=True, exist_ok=True)
     Path(args.out).write_text(build_document(features, args, existing), encoding="utf-8")
     Path(args.state_out).write_text(json.dumps(build_state(features, args, existing), ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(f"created {args.out}; state={args.state_out}; features={len(features)}")

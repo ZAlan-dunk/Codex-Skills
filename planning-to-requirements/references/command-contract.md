@@ -5,10 +5,10 @@ State-changing actions require explicit commands. Do not infer them from discuss
 | Command | Effect | Code changes? |
 |---|---|---:|
 | `生成策划确认文档` | Create paired planner document | No |
-| `生成 PCTR-B 功能需求开发文档` | Create the local Mode-B development document and sidecar with planning-sequence IDs and requirement descriptions, import/create the one Feishu development document, and register its URL/revision | Feishu document only |
-| `阅读这个功能生成策划确认文档` | For one PCTR-B feature, save source snapshot, collect ACSDM rule/history indexes, write local decomposition, and render a lightweight planner confirmation Markdown with per-item reply blocks | No by default; Feishu only if explicitly requested |
+| `生成 PCTR-B 功能需求开发文档` | Create `.PCTR/<planning-version>/`, every ordered `<FEATURE-ID>/` folder, the local Mode-B development document and sidecar with planning-sequence IDs and requirement descriptions, import/create the one Feishu development document, and register its URL/revision | Feishu document only |
+| `阅读这个功能生成策划确认文档` | For one PCTR-B feature, collect ACSDM rule/history indexes, write/update `A-02-feature-decomposition.md`, and render `A-01-planner-confirmation-snapshot.md` with per-item reply blocks | No by default; Feishu only if explicitly requested |
 | `策划已确认` | Parse every per-item reply code block from the current PCTR-B planner confirmation document, update decomposition/sidecar, and unlock detailed SDD generation only if all must-answer ambiguities are resolved | No |
-| `生成详细 SDD 工件` | After PCTR-B planner confirmation, hand the confirmed decomposition to OUF and generate one role-based local SDD Markdown | No |
+| `生成详细 SDD 工件` | After PCTR-B planner confirmation, hand the confirmed `A-02-feature-decomposition.md` to OUF and generate one role-based local `B-01-runtime-sdd.md` | No |
 | `<FEATURE-ID> 程序已确认` | Confirm programmer review of the current detailed SDD and unlock implementation according to risk | No |
 | `程序已确认，开始实施` | Confirm programmer review and, when explicitly authorized, proceed to implementation; high-risk or cross-module work still needs a local plan/checklist gate | Yes only after risk gate |
 | `同步PCTR-B SDD <FEATURE-ID>` | Validate the matched local Markdown and attach it inside the matching feature section only when exact-position insertion is reliable; otherwise prepare manual upload | Feishu document only when automatic attachment is safe |
@@ -39,7 +39,7 @@ Reject or stop when:
 - detailed SDD generation is requested before PCTR-B planner confirmation;
 - formal plan or implementation is requested before required SDD/program confirmation;
 - a planner confirmation document has a document-level reply section instead of per-item reply code blocks;
-- PCTR-B SDD synchronization has zero or multiple matching local artifacts;
+- PCTR-B SDD synchronization has zero or multiple matching local artifacts, or the SDD is not the feature-local `B-01-runtime-sdd.md`;
 - PCTR-B confirmation is requested without a current local Markdown identity, attachment reference, or containing development-document revision;
 - both PCTR-B confirmation checkboxes are selected;
 - plan approval is requested before a complete route-specific plan exists or when its confirmed requirement revision is stale;

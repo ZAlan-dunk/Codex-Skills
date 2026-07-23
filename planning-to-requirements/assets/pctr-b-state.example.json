@@ -1,7 +1,9 @@
 {
-  "schema_version": 2,
+  "schema_version": 3,
   "mode": "B",
-  "document_code": "EXAMPLE",
+  "planning_version": "M032v1.2",
+  "document_code": "XK5A-SAVE",
+  "artifact_root": "C:/Project/.PCTR/M032v1.2",
   "source": {
     "url": "",
     "revision": -1
@@ -9,38 +11,46 @@
   "development_document": {
     "url": "",
     "revision": -1,
-    "local_path": ""
+    "local_path": "C:/Project/.PCTR/M032v1.2/M032v1.2-PCTR-B-development-document.md",
+    "last_sync_at": ""
   },
   "features": [
     {
-      "feature_id": "1.1-EXAMPLE-F001",
-      "base_feature_id": "EXAMPLE-F001",
+      "feature_id": "1.2.1-XK5A-SAVE-F004",
+      "base_feature_id": "XK5A-SAVE-F004",
       "legacy_feature_ids": [
-        "EXAMPLE-F001"
+        "XK5A-SAVE-F004"
       ],
-      "planning_sequence": "1.1",
+      "planning_sequence": "1.2.1",
       "source_heading": "Feature title",
       "source_heading_path": "Parent / Feature title",
       "source_fingerprint": "",
+      "feature_artifact_dir": "C:/Project/.PCTR/M032v1.2/1.2.1-XK5A-SAVE-F004",
+      "artifact_paths": {
+        "planner_confirmation_snapshot": "C:/Project/.PCTR/M032v1.2/1.2.1-XK5A-SAVE-F004/A-01-planner-confirmation-snapshot.md",
+        "decomposition": "C:/Project/.PCTR/M032v1.2/1.2.1-XK5A-SAVE-F004/A-02-feature-decomposition.md",
+        "runtime_sdd": "C:/Project/.PCTR/M032v1.2/1.2.1-XK5A-SAVE-F004/B-01-runtime-sdd.md"
+      },
       "requirement_summary": "",
       "requirement_description": "",
       "requirement_detail_fingerprint": "",
-      "source_snapshot_path": "",
+      "source_snapshot_path": "C:/Project/.PCTR/M032v1.2/1.2.1-XK5A-SAVE-F004/A-02-feature-decomposition.md",
       "source_snapshot_hash": "",
       "planner_confirmation": {
         "status": "missing",
-        "local_path": "",
+        "local_path": "C:/Project/.PCTR/M032v1.2/1.2.1-XK5A-SAVE-F004/A-01-planner-confirmation-snapshot.md",
         "feishu_url": "",
         "document_revision": -1,
+        "must_answer_ambiguities": [],
         "confirmation_items": [],
-        "resolved_decisions": [],
-        "must_answer_ambiguities": []
+        "resolved_decisions": []
       },
-      "decomposition_path": "",
+      "decomposition_path": "C:/Project/.PCTR/M032v1.2/1.2.1-XK5A-SAVE-F004/A-02-feature-decomposition.md",
       "decomposition_hash": "",
       "sdd_generation": {
         "status": "locked",
-        "input_decomposition_path": "",
+        "input_decomposition_path": "C:/Project/.PCTR/M032v1.2/1.2.1-XK5A-SAVE-F004/A-02-feature-decomposition.md",
+        "output_sdd_path": "C:/Project/.PCTR/M032v1.2/1.2.1-XK5A-SAVE-F004/B-01-runtime-sdd.md",
         "generated_by": "",
         "generated_at": ""
       },

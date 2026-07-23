@@ -59,10 +59,16 @@ def main() -> int:
         raise SystemExit("containing development-document revision must be non-negative")
     text = Path(args.document).read_text(encoding="utf-8-sig")
     state = json.loads(Path(args.state).read_text(encoding="utf-8-sig"))
-    if state.get("schema_version") != 2 or state.get("mode") != "B":
-        raise SystemExit("state schema/mode is not PCTR-B v2")
+    if state.get("schema_version") not in (2, 3) or state.get("mode") != "B":
+        raise SystemExit("state schema/mode is not PCTR-B v2/v3")
     item = resolve_feature(state, args.feature)
     current_feature_id = item["feature_id"]
+    if state.get("schema_version") == 3:
+        expected_sdd = (item.get("artifact_paths") or {}).get("runtime_sdd") or (item.get("sdd_generation") or {}).get("output_sdd_path")
+        if sdd_path.name != "B-01-runtime-sdd.md":
+            raise SystemExit("PCTR-B v3 SDD file name must be B-01-runtime-sdd.md")
+        if expected_sdd and sdd_path.resolve() != Path(expected_sdd).resolve():
+            raise SystemExit(f"PCTR-B v3 SDD must be stored at the feature B- path: {expected_sdd}")
     if not sdd_path.is_file():
         raise SystemExit(f"local SDD Markdown not found: {args.sdd_local}")
     sdd_text = sdd_path.read_text(encoding="utf-8-sig")

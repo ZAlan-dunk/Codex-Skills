@@ -6,9 +6,9 @@
 >
 > 来源策案：{{source_url}}，Revision `{{source_revision}}`
 >
-> 原始快照：`{{source_snapshot_path}}`
+> 策划确认快照：`{{planner_confirmation_snapshot_path}}`
 >
-> 功能拆解文件：`{{decomposition_path}}`
+> 功能拆解文件：`{{decomposition_path}}`（唯一 A-02 文件，包含来源快照和拆解内容）
 >
 > 文档用途：只确认策划规则、真实歧义和需要补充的内容。完整功能理解与功能拆解保存在本地功能拆解文件，不放在本文档中。
 
@@ -49,7 +49,7 @@
 > 这一节只给 PCTR-B / OUF / 程序追溯来源使用，策划确认时可以不看。
 
 - 来源策案：{{source_url}}，Revision `{{source_revision}}`
-- 来源快照：`{{source_snapshot_path}}`
+- 来源快照：已写入功能拆解文件 `{{decomposition_path}}`
 - 功能拆解文件：`{{decomposition_path}}`
 - ACSDM / 历史开发文档索引：
 {{evidence_index}}

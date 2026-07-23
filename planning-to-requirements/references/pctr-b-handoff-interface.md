@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Allow Orange Unity Forge to hand off one newly generated local role-based SDD Markdown file to an existing PCTR-B feature section. In the normal active path, this interface consumes the receipt from `pctr-b-feature-lookup-interface.md`. Use the narrow fallback only when PCTR is disabled and the SDD already contains an exact Feature ID obtained earlier. Never create a separate Feishu SDD document.
+Allow Orange Unity Forge to hand off one newly generated feature-local `B-01-runtime-sdd.md` role-based SDD Markdown file to an existing PCTR-B feature section. In the normal active path, this interface consumes the receipt from `pctr-b-feature-lookup-interface.md`. Use the narrow fallback only when PCTR is disabled and the SDD already contains an exact Feature ID obtained earlier. Never create a separate Feishu SDD document.
 
 ## Gate
 
@@ -11,7 +11,7 @@ Normal coexisting path requires:
 - `orange_unity_forge=true`;
 - `pctr=true` and `pctr_mode=B`.
 - a fresh lookup receipt matching the current sidecar/source revision;
-- SDD metadata matching the receipt's full/base Feature IDs, planning sequence, exact title, heading path, source identity, and development document.
+- SDD metadata matching the receipt's full/base Feature IDs, planning sequence, exact title, heading path, source identity, development document, confirmed A-02 decomposition path, and B-01 output path.
 
 Fallback path requires:
 
@@ -28,12 +28,12 @@ The fallback does not set `pctr=true` or `pctr_mode=B`.
 
 For one Feature ID only:
 
-1. Read the generated SDD.
+1. Read the generated SDD and require its path/name to equal the receipt's `.PCTR/<planning-version>/<FEATURE-ID>/B-01-runtime-sdd.md`.
 2. Read the matching feature section and sidecar entry identified by the receipt.
 3. Validate SDD identity, required role sections, status, local path, source metadata, and lookup receipt freshness.
 4. Insert the local `.md` file itself as an attachment directly inside the matching feature section only when exact-position insertion and the resulting block can be verified.
 5. Write only:
-   - local SDD path;
+   - local SDD path, which must be the feature-local `B-01-runtime-sdd.md`;
    - attachment name/token/URL;
    - containing development-document revision and SDD status/version;
    - synchronization time.
@@ -63,7 +63,7 @@ Stop before external write when:
 
 - Feature ID is missing or duplicated;
 - the lookup receipt is missing/stale or differs from SDD metadata;
-- zero or multiple SDDs match;
+- zero or multiple SDDs match, or the SDD is not named `B-01-runtime-sdd.md` under the matched feature folder;
 - document/sidecar identity differs;
 - Feishu development document or exact feature section is missing or ambiguous;
 - the SDD validator fails;

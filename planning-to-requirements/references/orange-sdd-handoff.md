@@ -24,13 +24,13 @@ The role-based SDD must contain:
 - SDD template version;
 - role sections for planner, program, QA, risk, rollback, and pending decisions.
 
-Preferred filename:
+Required PCTR-B output path:
 
 ```text
-YYYY-MM-DD-<feature-id-lowercase>-<slug>-sdd.md
+.PCTR/<planning-version>/<FEATURE-ID>/B-01-runtime-sdd.md
 ```
 
-Identity comes from metadata, not filename-only matching.
+Identity comes from metadata and the returned PCTR-B B-01 path, not filename-only matching.
 
 ## Markdown Attachment Contract
 
@@ -38,7 +38,7 @@ The manual PCTR-B path uses `同步PCTR-B SDD <FEATURE-ID>`. When both suites ar
 
 The attachment workflow may:
 
-1. read the matched local Markdown;
+1. read the matched feature-local `B-01-runtime-sdd.md`;
 2. validate it;
 3. insert the local `.md` file itself as an attachment directly inside the matching feature section when exact-position insertion can be verified;
 4. update the PCTR-B development document with the local path, attachment reference, status/version, and confirmation blocks;
@@ -55,7 +55,7 @@ Attachment does not equal confirmation.
 - Draft or In Review SDDs may be attached, but plan generation stays locked.
 - `SDD已确认` requires a current local Markdown identity, attachment reference, containing-document revision, and no blocking pending decision.
 - `SDD存在歧义需要修改` records ambiguity and keeps the feature locked.
-- A revised SDD replaces or adds a new file attachment snapshot inside the same feature section and advances the containing document revision; never silently overwrite planner-entered notes.
+- A revised SDD updates the same `B-01-runtime-sdd.md` and replaces or adds a new file attachment snapshot inside the same feature section and advances the containing document revision; never silently overwrite planner-entered notes.
 
 ## Implementation Plan Contract
 

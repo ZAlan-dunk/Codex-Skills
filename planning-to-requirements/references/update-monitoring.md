@@ -18,7 +18,7 @@ PCTR-B tracks:
 
 Record document IDs, revisions, heading fingerprints, feature mappings, last synchronization time, processed change IDs, and human-maintained fields.
 
-Active local paths must resolve beneath `.PCTR/A/<document-code>/` or `.PCTR/B/<document-code>/` according to the registered mode. Treat `docs/pctr/` and `CodexTemp/PCTR/` as legacy locations: report them, migrate by copy when authorized, update active path fields, and do not delete the source without explicit permission.
+Active local paths must resolve beneath `.PCTR/A/<document-code>/` for PCTR-A or `.PCTR/<planning-version>/` for PCTR-B. In PCTR-B, feature-local Markdown paths must be under `.PCTR/<planning-version>/<FEATURE-ID>/` and use `A-01-planner-confirmation-snapshot.md`, `A-02-feature-decomposition.md`, or `B-01-runtime-sdd.md`. Treat `docs/pctr/`, `.PCTR/B/<document-code>/`, `CodexTemp/PCTR/`, and PCTR-B SDD files under `CodexTemp/OrangeUnityForge/` as legacy locations: report them, migrate by copy when authorized, update active path fields, and do not delete the source without explicit permission.
 
 ## Comparison
 
@@ -28,7 +28,7 @@ Compare heading hierarchy, normalized content, tables/lists, deletion marks, med
 
 - Planning source: original requirement authority.
 - Planning confirmation document: PCTR-A planner decision and acceptance authority.
-- Attached local role-based SDD Markdown and its mutually exclusive checkbox state: PCTR-B planner decision authority.
+- `A-01` planner confirmation snapshot and `A-02` decomposition: PCTR-B planner decision authority; `B-01-runtime-sdd.md` and its mutually exclusive checkbox state: program/SDD decision authority.
 - Requirement document: technical specification, route, development, and completion authority.
 
 ## Synchronization

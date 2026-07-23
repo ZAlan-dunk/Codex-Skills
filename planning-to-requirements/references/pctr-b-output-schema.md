@@ -24,7 +24,7 @@ Record:
 - SDD, plan, and bug artifact roots;
 - last synchronization time.
 
-The local development document and sidecar must live under `<project root>/.PCTR/B/<document-code>/`; plan and bug roots must be descendants of the same directory. `docs/` is not a valid PCTR output root. `CodexTemp/OrangeUnityForge/` may appear only as the external Orange-owned SDD/brief handoff location.
+The local development document and sidecar must live under `<project root>/.PCTR/<planning-version>/`, for example `.PCTR/M032v1.2/`. Every feature must have one direct child folder named by its full Feature ID, for example `.PCTR/M032v1.2/1.2.1-XK5A-SAVE-F004/`. `docs/` and `CodexTemp/PCTR/` are not valid PCTR output roots.
 
 ### Feature ID
 
@@ -104,10 +104,13 @@ PCTR-B uses a lightweight per-feature planner confirmation document before OUF S
 Default paths:
 
 ```text
-.PCTR/B/<document-code>/snapshots/<FEATURE-ID>-source-snapshot.md
-.PCTR/B/<document-code>/decompositions/<FEATURE-ID>-planning-decomposition.md
-.PCTR/B/<document-code>/confirmations/<FEATURE-ID>-planner-confirmation.md
+.PCTR/<planning-version>/
+.PCTR/<planning-version>/<FEATURE-ID>/A-01-planner-confirmation-snapshot.md
+.PCTR/<planning-version>/<FEATURE-ID>/A-02-feature-decomposition.md
+.PCTR/<planning-version>/<FEATURE-ID>/B-01-runtime-sdd.md
 ```
+
+The `A-` prefix is reserved for planner-facing confirmation and the single living decomposition file. A feature folder must contain exactly two `A-*.md` artifacts. Do not create `snapshots/`, `decompositions/`, or `confirmations/` subfolders for PCTR-B feature artifacts. Put source snapshot/fingerprint content inside `A-02-feature-decomposition.md` instead of creating another Markdown file.
 
 The planner confirmation document must contain:
 
@@ -137,39 +140,58 @@ The sidecar is machine state, not a second human document. Store:
 
 ```json
 {
-  "schema_version": 2,
+  "schema_version": 3,
   "mode": "B",
-  "document_code": "EXAMPLE",
-  "source": {"url": "", "revision": -1},
-  "development_document": {"url": "", "revision": -1, "local_path": ""},
+  "planning_version": "M032v1.2",
+  "document_code": "XK5A-SAVE",
+  "artifact_root": "C:/Project/.PCTR/M032v1.2",
+  "source": {
+    "url": "",
+    "revision": -1
+  },
+  "development_document": {
+    "url": "",
+    "revision": -1,
+    "local_path": "C:/Project/.PCTR/M032v1.2/M032v1.2-PCTR-B-development-document.md",
+    "last_sync_at": ""
+  },
   "features": [
     {
-      "feature_id": "1.1-EXAMPLE-F001",
-      "base_feature_id": "EXAMPLE-F001",
-      "legacy_feature_ids": ["EXAMPLE-F001"],
-      "planning_sequence": "1.1",
-      "source_heading": "",
-      "source_heading_path": "",
+      "feature_id": "1.2.1-XK5A-SAVE-F004",
+      "base_feature_id": "XK5A-SAVE-F004",
+      "legacy_feature_ids": [
+        "XK5A-SAVE-F004"
+      ],
+      "planning_sequence": "1.2.1",
+      "source_heading": "Feature title",
+      "source_heading_path": "Parent / Feature title",
       "source_fingerprint": "",
+      "feature_artifact_dir": "C:/Project/.PCTR/M032v1.2/1.2.1-XK5A-SAVE-F004",
+      "artifact_paths": {
+        "planner_confirmation_snapshot": "C:/Project/.PCTR/M032v1.2/1.2.1-XK5A-SAVE-F004/A-01-planner-confirmation-snapshot.md",
+        "decomposition": "C:/Project/.PCTR/M032v1.2/1.2.1-XK5A-SAVE-F004/A-02-feature-decomposition.md",
+        "runtime_sdd": "C:/Project/.PCTR/M032v1.2/1.2.1-XK5A-SAVE-F004/B-01-runtime-sdd.md"
+      },
       "requirement_summary": "",
       "requirement_description": "",
       "requirement_detail_fingerprint": "",
-      "source_snapshot_path": "",
+      "source_snapshot_path": "C:/Project/.PCTR/M032v1.2/1.2.1-XK5A-SAVE-F004/A-02-feature-decomposition.md",
       "source_snapshot_hash": "",
       "planner_confirmation": {
         "status": "missing",
-        "local_path": "",
+        "local_path": "C:/Project/.PCTR/M032v1.2/1.2.1-XK5A-SAVE-F004/A-01-planner-confirmation-snapshot.md",
         "feishu_url": "",
         "document_revision": -1,
         "must_answer_ambiguities": [],
         "confirmation_items": [],
         "resolved_decisions": []
       },
-      "decomposition_path": "",
+      "decomposition_path": "C:/Project/.PCTR/M032v1.2/1.2.1-XK5A-SAVE-F004/A-02-feature-decomposition.md",
       "decomposition_hash": "",
       "sdd_generation": {
         "status": "locked",
-        "input_decomposition_path": "",
+        "input_decomposition_path": "C:/Project/.PCTR/M032v1.2/1.2.1-XK5A-SAVE-F004/A-02-feature-decomposition.md",
+        "output_sdd_path": "C:/Project/.PCTR/M032v1.2/1.2.1-XK5A-SAVE-F004/B-01-runtime-sdd.md",
         "generated_by": "",
         "generated_at": ""
       },
@@ -205,6 +227,6 @@ Allowed `sdd_confirmation_status`: `pending`, `confirmed`, `ambiguous`.
 
 - Planning source: feature title/order and planning facts.
 - Single development document: concise table summaries, optional active-feature description/main points, confirmation surface, attachment placement, and artifact navigation.
-- Local role-based SDD Markdown attachment: planner/program/QA confirmation content for one feature.
+- Local `B-01-runtime-sdd.md`: detailed role-based SDD content for one feature; it is generated from the confirmed `A-02-feature-decomposition.md`.
 - Sidecar: machine synchronization, aliases, attachment identity, and gate state.
 - ACSDM: project rules, code evidence, and optional implementation/bug/completion records.

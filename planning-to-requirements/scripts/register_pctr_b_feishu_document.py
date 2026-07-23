@@ -47,8 +47,8 @@ def main() -> int:
     state_path = Path(args.state)
     text = document_path.read_text(encoding="utf-8-sig")
     state = json.loads(state_path.read_text(encoding="utf-8-sig"))
-    if state.get("mode") != "B" or state.get("schema_version") != 2:
-        raise SystemExit("state schema/mode is not PCTR-B v2")
+    if state.get("mode") != "B" or state.get("schema_version") not in (2, 3):
+        raise SystemExit("state schema/mode is not PCTR-B v2/v3")
 
     synced_at = args.synced_at or datetime.now(timezone.utc).isoformat()
     text = replace_metadata_row(text, "本开发文档", args.feishu_url)

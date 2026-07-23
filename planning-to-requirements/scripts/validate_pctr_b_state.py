@@ -35,8 +35,8 @@ def main() -> int:
     text = Path(args.document).read_text(encoding="utf-8-sig")
     state = json.loads(Path(args.state).read_text(encoding="utf-8-sig"))
     errors = []
-    if state.get("schema_version") != 2 or state.get("mode") != "B":
-        errors.append("state schema/mode must be 2/B")
+    if state.get("schema_version") not in (2, 3) or state.get("mode") != "B":
+        errors.append("state schema/mode must be 2/B or 3/B")
     matches = list(FEATURE_RE.finditer(text))
     document_items = []
     for index, match in enumerate(matches):
@@ -66,6 +66,33 @@ def main() -> int:
         aliases = item.get("legacy_feature_ids", [])
         if not isinstance(aliases, list) or base_id not in aliases:
             errors.append(f"{feature_id}: legacy aliases must include base feature ID")
+        if state.get("schema_version") == 3:
+            planning_version = state.get("planning_version", "")
+            artifact_root = Path(str(state.get("artifact_root", "")))
+            feature_dir = Path(str(item.get("feature_artifact_dir", "")))
+            paths = item.get("artifact_paths") or {}
+            expected_dir = artifact_root / feature_id
+            artifact_parts = artifact_root.parts
+            if not planning_version or len(artifact_parts) < 2 or artifact_parts[-2:] != (".PCTR", planning_version):
+                errors.append(f"{feature_id}: invalid PCTR v3 planning_version/artifact_root")
+            if feature_dir != expected_dir or feature_dir.name != feature_id:
+                errors.append(f"{feature_id}: feature_artifact_dir must be .PCTR/<planning-version>/<feature_id>")
+            expected_files = {
+                "planner_confirmation_snapshot": feature_dir / "A-01-planner-confirmation-snapshot.md",
+                "decomposition": feature_dir / "A-02-feature-decomposition.md",
+                "runtime_sdd": feature_dir / "B-01-runtime-sdd.md",
+            }
+            for key, expected_path in expected_files.items():
+                if Path(str(paths.get(key, ""))) != expected_path:
+                    errors.append(f"{feature_id}: artifact_paths.{key} must be {expected_path}")
+            if Path(str((item.get("planner_confirmation") or {}).get("local_path", ""))) != expected_files["planner_confirmation_snapshot"]:
+                errors.append(f"{feature_id}: planner confirmation path must be A-01")
+            if Path(str(item.get("decomposition_path", ""))) != expected_files["decomposition"]:
+                errors.append(f"{feature_id}: decomposition_path must be A-02")
+            if Path(str((item.get("sdd_generation") or {}).get("output_sdd_path", ""))) != expected_files["runtime_sdd"]:
+                errors.append(f"{feature_id}: SDD output path must be B-01")
+            if item.get("sdd_local_path") and Path(str(item.get("sdd_local_path"))) != expected_files["runtime_sdd"]:
+                errors.append(f"{feature_id}: sdd_local_path must be the B-01 runtime SDD path")
         if not item.get("requirement_summary") or not item.get("requirement_detail_fingerprint"):
             errors.append(f"{feature_id}: requirement summary/detail fingerprint missing")
         document_description = requirement_description(body)
